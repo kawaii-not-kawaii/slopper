@@ -345,45 +345,6 @@ private fun <T> ChipRowPref(
 }
 
 @Composable
-private fun PlayerGestureSettings(viewModel: SettingsViewModel) {
-    val seekMsPerPx by viewModel.playerPreferences.seekMsPerPx
-        .collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_SEEK_MS_PER_PX)
-    val doubleTapSec by viewModel.playerPreferences.doubleTapSeekSeconds
-        .collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_DOUBLE_TAP_SEEK_SEC)
-
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Player gestures", style = MaterialTheme.typography.titleSmall)
-            Text(
-                "Scrub sensitivity: ${seekMsPerPx.toInt()} ms/px",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Slider(
-                value = seekMsPerPx,
-                onValueChange = viewModel::setSeekMsPerPx,
-                valueRange = PlayerPreferences.SEEK_MS_PER_PX_MIN..PlayerPreferences.SEEK_MS_PER_PX_MAX,
-            )
-            Text(
-                "Double-tap seek: ${doubleTapSec}s",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Slider(
-                value = doubleTapSec.toFloat(),
-                onValueChange = { viewModel.setDoubleTapSeekSeconds(it.toInt()) },
-                valueRange = PlayerPreferences.DOUBLE_TAP_SEEK_MIN.toFloat()..PlayerPreferences.DOUBLE_TAP_SEEK_MAX.toFloat(),
-                steps = PlayerPreferences.DOUBLE_TAP_SEEK_MAX - PlayerPreferences.DOUBLE_TAP_SEEK_MIN - 1,
-            )
-        }
-    }
-}
-
-@Composable
 private fun CodecStatusCard() {
     val usable = CodecCapabilities.ffmpegExtensionUsable
     val present = CodecCapabilities.ffmpegExtensionPresent
