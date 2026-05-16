@@ -62,6 +62,14 @@ Requirements for the modernization milestone. Each maps to one of the 4 roadmap 
 
 ## Deferred to Future Milestones
 
+### Phase 1 trim (DEPS-17, auto-logged 2026-05-16)
+
+Recorded via plan 01.2 Task 4. Source of truth for the why: `.planning/phases/01-deps-foundation-bump/01.1-SUMMARY.md` (Option A unblock). Phase 1 stays on Gradle 8.11.1 / AGP 8.7.3 / compileSdk 35 because no published Hilt supports AGP 9 yet (latest is 2.56.2; the plan referenced a nonexistent 2.57.1).
+
+- **DEPS-03** — Gradle 9.4.1 — blocked on Hilt AGP-9 support. Revisit once Dagger publishes a Hilt release that supports AGP 9.
+- **DEPS-04** — AGP 9.2.0 + compileSdk/targetSdk 36 — same blocker. AGP 9 also broke `CommonExtension` generics, Action-taking DSL overloads, `LibraryExtension.targetSdk`, and the `org.jetbrains.kotlin.android` plugin; the migration deserves a dedicated phase.
+- **DEPS-10 (1.10.0 upgrade path)** — Media3 1.10.0 + nextlibMedia3Ext 1.10.0-0.12.1 — requires compileSdk 36 (blocked by DEPS-04). Phase 1 keeps Media3 1.9.1 / nextlibMedia3Ext 1.9.1-0.11.0 (CASE B forced).
+
 ### Bump deferral (auto-logged 2026-05-16)
 - **DEPS-07**: Lifecycle 2.10.0 and Activity Compose 1.13.0 require AGP 8.9.1+/compileSdk 36; Phase 1 stays on AGP 8.7.3/compileSdk 35 per Option A unblock (Hilt AGP-9 incompat). Full sweep deferred.
 
