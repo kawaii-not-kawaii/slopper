@@ -89,6 +89,8 @@ Tracked but explicitly out of this modernization milestone.
 
 - **SEC-01**: Migrate `androidx.security:security-crypto` (EncryptedSharedPreferences) off the deprecated artifact once a stable replacement ships; design re-key/re-enter-credentials flow
 - **SEC-02**: Tighten `network_security_config.xml` cleartext scope (currently global)
+- **SEC-CI-01** (carry from Phase 1 01-SECURITY T-T-04 ACCEPT, 2026-05-17): Wire a Forgejo Actions workflow `.forgejo/workflows/dependency-check.yml` that runs `./gradlew dependencyCheckAggregate --no-configuration-cache` weekly (cron) on a CI runner with `NVD_API_KEY` provisioned via repo secrets. Local-host first-run took 2h 47m and faulted on `Region [POM] : Not alive` H2-lifecycle error without the API key. CI gives reproducible scans, archived HTML/JSON reports, and break-the-build on HIGH+ CVE (`failBuildOnCVSS=7.0f` already configured in `build.gradle.kts`). Also: add `dependencyCheckAggregate` to PR checks on `phase-*`/`release/*` branches.
+- **SEC-VERIFY-01** (carry from Phase 1 01-SECURITY T-T-02 ACCEPT, 2026-05-17): Generate `gradle/verification-metadata.xml` via `./gradlew --write-verification-metadata sha256 help` to lock every transitive dependency hash. File will be several thousand lines of XML and deserves its own phase (review impact: every dep bump requires re-generation; team must agree on policy). Best landed alongside the AGP-9 migration (DEPS-03/04) when the catalog churns anyway.
 
 ### Networking (NET)
 

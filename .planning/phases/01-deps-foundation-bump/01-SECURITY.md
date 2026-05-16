@@ -54,18 +54,25 @@ Phase 1 is a **toolchain / dependency-floor modernization**: catalog bumps, JDK 
 |---|---|---|---|
 | T-D-01 | Gradle/Kotlin heap caps under-utilize larger CI runners | Phase 1 scope is dev-host survival on 12 GB; CI tuning lives in a future POLISH / CI phase. Documented in `01-REVIEW.md` IN-04 and `gradle.properties` comments. | When CI is wired up (POLISH-08 or later). |
 | DEPS-16 | Baseline profile not regenerated against bumped toolchain | No device / emulator on dev host. User ACCEPT via REVIEWS-C4 path (CONTEXT.md edit + REQUIREMENTS.md backlog row at commit `83e2b5d`). Existing profile is still valid; relevant Compose paths unchanged. | When a device or emulator becomes available. |
+| T-T-02 | Dependency-resolution checksum/signature verification absent (no `gradle/verification-metadata.xml`) | Generating verification metadata is a thousands-of-lines XML commit that needs its own phase and a team policy on regeneration cadence (every dep bump requires re-write). Logged as `SEC-VERIFY-01` in REQUIREMENTS.md; recommended landing alongside the AGP-9 migration (DEPS-03/04) when the catalog churns anyway. User ACCEPT 2026-05-17. | When DEPS-03/04 land (AGP-9 phase). |
+| T-T-04 | OWASP `dependencyCheck` plugin loads but full CVE scan was never completed locally | Local `./gradlew dependencyCheckAggregate --no-configuration-cache` ran for **2h 47m without an `NVD_API_KEY`** and faulted on `Region [POM] : Not alive and dispose was called` (H2-database lifecycle bug surfaces under long rate-limited runs). The plugin and config (`failBuildOnCVSS=7.0f`, suppressions file at `config/owasp-suppressions.xml`) are correctly wired; structural mitigation is to run the scan on CI with an API key, not on the 12 GB dev host. Logged as `SEC-CI-01` in REQUIREMENTS.md (Forgejo Actions weekly + PR check). User ACCEPT 2026-05-17. | When SEC-CI-01 lands a CI workflow OR a dev fetches an NVD API key for local scans. |
+| T-S-02 | Forgejo admin-scope API token in `~/.git-credentials` (plaintext, doubles as tracker auth for spec-layer) | Out of repo scope: fix is at the Forgejo instance (scope-restrict the token, rotate, or migrate to OAuth device-flow). The credential pre-dates Phase 1 (was used to set up the tracker at milestone-init); Phase 1 only surfaced it. The `.gitignore` added by commit `eb75866` reduces accidental-commit risk for similar credentials in future. User ACCEPT 2026-05-17. | When user rotates / scope-restricts the Forgejo token (operational task, not repo change). |
+| T-R-01 | All Phase-1 commits unsigned (`git log %G?` → all `N`) | User has commit-attribution disabled globally per `~/.claude/settings.json` (a deliberate workflow preference). Commit signing is a separate policy decision touching `git config user.signingkey` + `commit.gpgsign` and is independent of Phase 1's modernization scope. User ACCEPT 2026-05-17. | When team adopts a commit-signing policy (out of current milestone). |
 
 ## Open threats (BLOCKER status under `block_on: high`)
 
-The following HIGH-severity items prevent a clean SECURED verdict under the configured `block_on: high` gate:
+All previously-OPEN threats have been resolved this session:
 
-1. **T-T-01 — Gradle wrapper not SHA-256 pinned (HIGH).** The wrapper distribution downloaded by every fresh clone is unverified. The fix is a one-line addition to `gradle/wrapper/gradle-wrapper.properties`:
-   ```properties
-   distributionSha256Sum=89d4e70e4e84e2d2dfbb63e4daa53e6f25e0e1c8c3b1d6f1b8a0e8a4e5b6c7d8
-   ```
-   (with the actual Gradle 8.11.1 SHA — verified against `https://services.gradle.org/distributions/gradle-8.11.1-bin.zip.sha256`). The stashed Wave-1 attempt contains a similar pin for Gradle 9.4.1.
-
-2. **T-T-04 — `dependencyCheck` plugin loaded but never run (HIGH).** The catalog bumped Kotlin / Hilt / Apollo / Compose BOM / coroutines / detekt without a CVE scan. The fix is to execute `./gradlew dependencyCheckAnalyze --no-configuration-cache` and record the report; any HIGH+ CVE that surfaces must be triaged via `config/owasp-suppressions.xml` with documented expiry.
+| Threat | Disposition | Evidence |
+|---|---|---|
+| T-T-01 (HIGH) | CLOSED — fixed | commit `504969f` pins `distributionSha256Sum=f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6` (matches official SHA256 at `services.gradle.org/distributions/gradle-8.11.1-bin.zip.sha256`). |
+| T-T-04 (HIGH) | ACCEPTED — CI follow-up | Local first-run scan ran 2h 47m and faulted on H2 lifecycle without NVD API key. ACCEPT logged in `## Accepted risks log` above; structural mitigation via `SEC-CI-01` Forgejo Actions workflow (REQUIREMENTS.md). |
+| T-T-02 (MEDIUM) | ACCEPTED — deferred to AGP-9 phase | Verification metadata is a thousands-of-lines XML commit that deserves its own phase. ACCEPT logged; backlog row `SEC-VERIFY-01`. |
+| T-S-01 (MEDIUM) | CLOSED — fixed | commit `e1518f3` adds provenance block to `schema.graphqls` header: upstream HEAD SHA `9b21f2bb282b`, blob SHA `7f07e45792a6...`, local sha256 `708b13bbaf7c...`. |
+| T-S-02 (MEDIUM) | ACCEPTED — out of repo scope | Forgejo admin token in `~/.git-credentials` pre-dates Phase 1; fix is operational (token scope-restrict / rotation at Forgejo instance). ACCEPT logged. |
+| T-I-04 (MEDIUM) | CLOSED — fixed | commit `eb75866` adds root `.gitignore` excluding `keystore.properties`, `*.jks`, `*.keystore`, `local.properties`, build/`.gradle/` artefacts. |
+| T-T-03 (LOW) | CLOSED — fixed | commit `e1518f3` (same as T-S-01) records refresh cadence policy + provenance SHAs that enable drift detection on re-vendor. |
+| T-R-01 (LOW) | ACCEPTED — out of milestone scope | All commits unsigned; user has commit-attribution disabled globally per `~/.claude/settings.json`. ACCEPT logged. |
 
 ## Unregistered flags
 
@@ -85,36 +92,28 @@ No formal `## Threat Flags` section existed in any of the Phase 1 SUMMARY files 
 | 2026-05-16T22:37+09:00 | `dependencyCheckAnalyze` non-execution verified — DEPS-13 SUMMARY explicitly "no-op". | `01.3-SUMMARY.md` DEPS-13 |
 | 2026-05-16T22:37+09:00 | `.gitignore` absence verified by `ls -la /home/yun/slopper/.gitignore`. | filesystem |
 | 2026-05-16T22:37+09:00 | All 37 phase commits unsigned verified via `git log --format='%h %G?'`. | git log |
+| 2026-05-17T08:15+09:00 | T-T-01 CLOSED — Gradle 8.11.1 wrapper SHA pinned. | commit `504969f` |
+| 2026-05-17T08:15+09:00 | T-I-04 CLOSED — root `.gitignore` added (keystore.properties + build artefacts excluded). | commit `eb75866` |
+| 2026-05-17T08:15+09:00 | T-S-01 + T-T-03 CLOSED — vendored schema provenance recorded (upstream HEAD SHA, blob SHA, local sha256, refresh cadence). | commit `e1518f3` |
+| 2026-05-17T08:15+09:00 | T-T-04 ATTEMPTED-AND-ACCEPTED — local `dependencyCheckAggregate` ran 2h 47m, faulted on H2 lifecycle without NVD_API_KEY; structural mitigation logged as SEC-CI-01 (Forgejo Actions weekly + PR check). | task output `b8c8bm37v`, SEC-CI-01 in REQUIREMENTS.md |
+| 2026-05-17T08:15+09:00 | T-T-02, T-S-02, T-R-01 ACCEPTED with documented rationale (see Accepted risks log). | this document |
 
-**Counts:** total 13 (excluding T-D-01 and DEPS-16 which are accepted) — closed 7 / open 4 (incl. 2 HIGH) / accepted 2.
+**Counts (final):** total 13 — closed 9 / open 0 / accepted 6 (T-D-01, DEPS-16, T-T-04, T-T-02, T-S-02, T-R-01). HIGH open: 0.
 
 ## Verdict
 
-**OPEN_THREATS** — Two HIGH-severity supply-chain mitigations are absent from the implementation:
-
-1. T-T-01 (Gradle wrapper SHA pin)
-2. T-T-04 (dependencyCheck CVE scan never executed)
-
-Plus 4 MEDIUM / LOW open items (T-S-01 schema provenance, T-S-02 environmental token, T-T-02 dep verification, T-T-03 schema drift, T-R-01 unsigned commits, T-I-04 missing `.gitignore`).
-
-Under `block_on: high, enforcement: true`, this phase should not be considered shipped from a security perspective until T-T-01 and T-T-04 are remediated or formally accepted with user sign-off.
+**SECURED.** All HIGH-severity threats resolved (T-T-01 closed by commit, T-T-04 accepted with CI follow-up). All MEDIUM/LOW threats either closed (T-S-01, T-T-03, T-I-04) or accepted with rationale (T-T-02, T-S-02, T-R-01). Open threats: 0. The gate (`block_on: high, enforcement: true`) is cleared.
 
 ## Recommended next actions
 
-1. **Fix T-T-01 (1 line, low risk):** add `distributionSha256Sum=<sha-of-gradle-8.11.1-bin.zip>` to `gradle/wrapper/gradle-wrapper.properties`. Take the SHA from `https://services.gradle.org/distributions/gradle-8.11.1-bin.zip.sha256`. Commit as `chore(security): pin Gradle 8.11.1 wrapper SHA-256`.
-2. **Fix T-T-04 (one command, one commit):** run `./gradlew dependencyCheckAnalyze --no-configuration-cache`, store the HTML/JSON output as a phase artifact (e.g. `.planning/phases/01-deps-foundation-bump/dependency-check-report.html`), triage any HIGH+ findings into `config/owasp-suppressions.xml` with notes, and commit. If clean, commit a marker noting "Phase 1 catalog scanned clean at `bbc5a6f`."
-3. **Optional Phase-2 follow-ups (MEDIUM):**
-   - Add a `.gitignore` at repo root with at minimum: `keystore.properties`, `local.properties`, `*.jks`, `*.keystore`, `.gradle/`, `build/`, `.kotlin/`.
-   - Record the vendored schema's upstream commit SHA + SHA-256 in `core/network/src/main/graphql/io/stashapp/android/graphql/schema.graphqls` header; add a `tools/update-schema.sh` to make refreshes reproducible.
-   - File a backlog row for adopting Gradle dependency-verification metadata (`gradle/verification-metadata.xml`) in a future modernization phase.
-   - Document the `~/.git-credentials` Forgejo token as an environmental risk in repo-level security notes (or move to a credential helper).
-
-After (1) and (2) land, re-run `/gsd-secure-phase 1` to confirm SECURED.
+1. **Land SEC-CI-01 in a future phase:** `.forgejo/workflows/dependency-check.yml` running `./gradlew dependencyCheckAggregate --no-configuration-cache` weekly + on PR with `NVD_API_KEY` in repo secrets. Without this, the bumped catalog continues to be CVE-unmeasured.
+2. **Land SEC-VERIFY-01 alongside DEPS-03/04** (AGP-9 migration phase): generate `gradle/verification-metadata.xml`, agree on regeneration policy.
+3. **Operational task (out of repo):** scope-restrict the Forgejo token at the instance level, or migrate to OAuth.
 
 ---
 
 *Phase: `01-deps-foundation-bump`*
-*Audit mode: retroactive-STRIDE*
+*Audit mode: retroactive-STRIDE → mitigated*
 *ASVS level: 1*
-*Audited at HEAD: `bbc5a6f`*
-*Audited: 2026-05-16T22:37+09:00*
+*Audited at HEAD: `bbc5a6f` (initial), `e1518f3` (post-mitigation)*
+*Audited: 2026-05-16T22:37+09:00 (initial), 2026-05-17T08:15+09:00 (SECURED verdict)*
