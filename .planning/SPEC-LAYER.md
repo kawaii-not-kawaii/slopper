@@ -96,11 +96,18 @@ command_manifest:
     cmd: "/gsd-execute-phase 1"
     output_file: ".planning/phases/01-deps-foundation-bump/VERIFICATION.md"
     gate_file: "gates/execute.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
+    status: complete
+    gate_passed: true
+    tracker_synced: false  # FORGEJO_TOKEN unset in this session; sync via /spec-layer 1 when token is available
+    completed_at: 2026-05-16T21:55:00+09:00
     tracker_comment_url: null
+    notes:
+      - "PASS-WITH-NOTES: 12/17 reqs landed, 5/17 deferred with REVIEWS-C4-compliant hygiene (DEPS-03/04/07/10-1.10/16)"
+      - "AGP 9 / compileSdk 36 / Media3 1.10 deferred via DEPS-17 (no Hilt supports AGP 9 yet)"
+      - "DEPS-16 baseline profile regen deferred via REVIEWS-C4 path (CONTEXT.md edit + user ACCEPT) — no device on host"
+      - "Re-plan landed at 4aed48c after Wave 1 partial halt (Hilt/AGP-9 reality check)"
+      - "VERIFICATION.md commit: d7594f9"
+      - "Final phase HEAD: d7594f9 on phase-1/deps-bump"
   - step: 6
     cmd: "/gsd-verify-work 1"
     output_file: ".planning/phases/01-deps-foundation-bump/01-UAT.md"
