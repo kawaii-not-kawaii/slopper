@@ -32,6 +32,7 @@ internal fun Project.configureKotlinAndroid(
     }
 
     extensions.configure<KotlinAndroidProjectExtension> {
+        jvmToolchain(17)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
             freeCompilerArgs.addAll(
