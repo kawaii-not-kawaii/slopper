@@ -23,7 +23,9 @@ securityCrypto = "1.1.0"
 room = "2.6.1"
 
 # Media3 — kept in sync with nextlib for the FFmpeg extension.
-# Stay on 1.9.x until we bump AGP / compileSdk (1.10 requires compileSdk 36).
+# CASE B (forced 2026-05-16, Phase 1 DEPS, Option A unblock from 01.1-SUMMARY.md):
+# Media3 1.10.0 is deferred along with AGP 9 + compileSdk 36 (DEPS-17 in REQUIREMENTS.md).
+# Revisit once Hilt publishes AGP-9 support and the AGP-9 transition phase ships.
 media3 = "1.9.1"
 nextlibMedia3Ext = "1.9.1-0.11.0"
 
