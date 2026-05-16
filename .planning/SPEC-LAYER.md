@@ -73,17 +73,25 @@ command_manifest:
     cmd: "/gsd-review --phase 1 --all"
     output_file: ".planning/phases/01-deps-foundation-bump/REVIEWS.md"
     gate_file: "gates/review.md"
-    status: blocked
-    gate_passed: false
+    status: complete
+    gate_passed: true
     tracker_synced: true
-    completed_at: null
-    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-413
-    blocking_concerns:
-      - "C1: Gradle 9.4.1 + AGP 8.7.3 incompatibility (DEPS-03→04)"
-      - "C2: revert-and-continue mechanics underspecified for uncommitted edits"
-      - "C3: Media3 probe regex too loose (locked target is 1.10.0 exactly)"
-      - "C4: DEPS-16 device-unavailable fallback violates locked acceptance"
-      - "C6: releaseRuntimeClasspath grep doesn't prove Compose Compiler uniqueness"
+    completed_at: 2026-05-16T00:00:00Z
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-415
+    unblock_history:
+      blocked_at: 2026-05-16T00:00:00Z
+      blocked_comment: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-413
+      blocking_concerns_resolved:
+        - "C1: merged DEPS-03+04 into one atomic commit; CONTEXT.md §Decision 1 Refinement added"
+        - "C2: per-task <on_failure> 3-branch revert protocol + awk REQUIREMENTS.md logger"
+        - "C3: Media3 regex tightened to 1\\.10\\.0[^<]*"
+        - "C4: DEPS-16 hard-fail on no device, no task-level defer path"
+        - "C6: switched to kotlinCompilerPluginClasspathRelease"
+      additional_fixes:
+        - "kimi unique: R8 fullMode audit moved 01.1 → 01.3 Task 4"
+        - "glm unique: DEPS-14 bisect hard-stops on lockstep-set culprit match"
+        - "Bonus: distributionSha256Sum lookup at execution time for Gradle wrapper"
+      replan_commit: 9487c9d
   - step: 5
     cmd: "/gsd-execute-phase 1"
     output_file: ".planning/phases/01-deps-foundation-bump/VERIFICATION.md"
