@@ -29,6 +29,19 @@ internal fun Project.configureKotlinAndroid(
             targetCompatibility = JavaVersion.VERSION_17
             isCoreLibraryDesugaringEnabled = false
         }
+
+        lint {
+            // Lint detectors shipped with old AndroidX libs crash with
+            // IncompatibleClassChangeError under AGP 8.7.3 lint + Kotlin 2.2.20.
+            // Re-enable when AndroidX Lifecycle/Compose are bumped (DEPS-07, deferred).
+            disable.addAll(
+                listOf(
+                    "NullSafeMutableLiveData",      // lifecycle 2.8.7
+                    "FrequentlyChangingValue",      // compose-runtime (Compose BOM 2026.05.00)
+                    "RememberInComposition",        // compose-runtime (Compose BOM 2026.05.00)
+                ),
+            )
+        }
     }
 
     extensions.configure<KotlinAndroidProjectExtension> {
