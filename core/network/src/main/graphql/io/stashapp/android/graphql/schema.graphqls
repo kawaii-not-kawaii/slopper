@@ -1,5 +1,17 @@
 # Vendored from stashapp/stash@develop graphql/schema (root + types/*)
 # Concatenated for Apollo single-file schema input.
+#
+# Provenance (recorded 2026-05-16, security threat T-S-01 mitigation):
+#   upstream repo:       https://github.com/stashapp/stash
+#   upstream branch:     develop
+#   upstream HEAD SHA:   9b21f2bb282b (at vendoring time)
+#   upstream blob SHA:   7f07e45792a6ddb65c5854db6ae73a527c4c6f88  (graphql/schema/schema.graphql)
+#   vendored sha256:     708b13bbaf7c3e6f7ecc7ce99931916f10cce4b2ec95947b9c4cd2ae91d46daa
+#
+# Refresh cadence: re-vendor when upstream introduces a breaking schema change OR at every
+# Slopper minor release, whichever comes first. To re-vendor, run scripts/update-stash-schema.sh
+# (or the inline curl recipe documented in .planning/phases/01-deps-foundation-bump/01.1-SUMMARY.md
+# Precondition fixes §2) and update the SHAs above.
 
 "The query root for this schema"
 type Query {
