@@ -13,6 +13,7 @@ dependencies {
     api(project(":core:model"))
     api(project(":core:domain"))
     api(project(":core:network"))
+    implementation(project(":core:data"))
     api(libs.coil.compose)
     api(libs.coil.network.okhttp)
     api(libs.okhttp)
