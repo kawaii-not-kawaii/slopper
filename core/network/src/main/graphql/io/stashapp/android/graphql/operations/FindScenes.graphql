@@ -1,0 +1,60 @@
+query FindScenes(
+  $filter: FindFilterType
+  $scene_filter: SceneFilterType
+  $ids: [ID!]
+) {
+  findScenes(filter: $filter, scene_filter: $scene_filter, ids: $ids) {
+    count
+    duration
+    filesize
+    scenes {
+      ...SceneCard
+    }
+  }
+}
+
+fragment SceneCard on Scene {
+  id
+  title
+  details
+  date
+  rating100
+  organized
+  o_counter
+  play_count
+  resume_time
+  interactive
+  files {
+    basename
+    duration
+    width
+    height
+    video_codec
+    audio_codec
+    size
+    bit_rate
+    frame_rate
+  }
+  paths {
+    screenshot
+    preview
+    stream
+    sprite
+    vtt
+  }
+  studio {
+    id
+    name
+    image_path
+  }
+  performers {
+    id
+    name
+    image_path
+    gender
+  }
+  tags {
+    id
+    name
+  }
+}

@@ -1,0 +1,25 @@
+mutation SceneSaveActivity(
+  $id: ID!
+  $resumeTime: Float
+  $playDuration: Float
+) {
+  sceneSaveActivity(id: $id, resume_time: $resumeTime, playDuration: $playDuration)
+}
+
+mutation SceneAddPlay($id: ID!) {
+  sceneAddPlay(id: $id) {
+    count
+  }
+}
+
+mutation SceneIncrementO($id: ID!) {
+  sceneAddO(id: $id) {
+    count
+  }
+}
+
+mutation SceneDecrementO($id: ID!) {
+  sceneDeleteO(id: $id) {
+    count
+  }
+}

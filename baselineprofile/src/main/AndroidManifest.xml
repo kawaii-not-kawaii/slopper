@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Macrobenchmark manifest — instrumented test only, no app components. -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <queries>
+        <package android:name="io.stashapp.android.debug" />
+        <package android:name="io.stashapp.android" />
+    </queries>
+</manifest>

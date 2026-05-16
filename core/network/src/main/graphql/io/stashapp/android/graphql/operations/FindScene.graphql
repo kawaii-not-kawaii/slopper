@@ -1,0 +1,23 @@
+query FindScene($id: ID!) {
+  findScene(id: $id) {
+    ...SceneCard
+    scene_markers {
+      id
+      title
+      seconds
+      primary_tag {
+        id
+        name
+      }
+    }
+    sceneStreams {
+      url
+      mime_type
+      label
+    }
+    captions {
+      language_code
+      caption_type
+    }
+  }
+}

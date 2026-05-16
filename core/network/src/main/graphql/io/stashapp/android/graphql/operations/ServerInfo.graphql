@@ -1,0 +1,13 @@
+query ServerInfo {
+  version {
+    version
+    hash
+    build_time
+  }
+  stats {
+    scene_count
+    performer_count
+    studio_count
+    tag_count
+  }
+}

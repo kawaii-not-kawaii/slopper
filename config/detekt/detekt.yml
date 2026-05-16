@@ -1,0 +1,49 @@
+# Project detekt config — loosens a few rules that conflict with Compose
+# idioms and keeps the focus on real quality issues.
+
+build:
+  maxIssues: 0
+
+complexity:
+  LongMethod:
+    threshold: 150          # Compose screens routinely hit 100+ lines
+  LongParameterList:
+    functionThreshold: 12   # Compose components with lots of slots
+    constructorThreshold: 12
+  TooManyFunctions:
+    thresholdInFile: 30
+    thresholdInClass: 20
+  CyclomaticComplexMethod:
+    threshold: 20
+  LargeClass:
+    threshold: 800
+
+naming:
+  FunctionNaming:
+    # Allow PascalCase for @Composable functions (idiomatic).
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][_A-Z0-9]*|[a-z][A-Za-z0-9]*'
+
+style:
+  MagicNumber:
+    active: false           # Noisy in Compose layout code
+  ReturnCount:
+    max: 5
+  ForbiddenComment:
+    active: true
+    values: ['FIXME:', 'STOPSHIP:']
+  MaxLineLength:
+    maxLineLength: 140
+    excludePackageStatements: true
+    excludeImportStatements: true
+
+potential-bugs:
+  UnsafeCast:
+    active: true
+  LateinitUsage:
+    active: false           # Hilt injection uses lateinit
+
+performance:
+  SpreadOperator:
+    active: true

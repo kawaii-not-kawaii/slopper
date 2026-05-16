@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple "S" glyph placeholder. Replace with brand artwork before release. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/ic_launcher_foreground"
+        android:pathData="M54,30 C44,30 36,36 36,46 C36,54 42,58 52,62 L58,64 C64,66 68,68 68,72 C68,76 64,78 58,78 C52,78 46,76 42,72 L38,80 C44,84 52,86 58,86 C70,86 78,80 78,70 C78,62 72,58 62,54 L56,52 C50,50 46,48 46,44 C46,40 50,38 56,38 C62,38 68,40 72,44 L76,36 C70,32 62,30 54,30 Z" />
+</vector>

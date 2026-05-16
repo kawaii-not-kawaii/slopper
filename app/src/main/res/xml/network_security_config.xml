@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Base config:
+    - Cleartext allowed (Stash on LAN commonly runs plain HTTP).
+    - User-installed CAs intentionally NOT trusted, so a rogue MDM / profile
+      CA / malicious app-installed root can't MITM HTTPS Stash traffic and
+      harvest the API key (security review H2).
+  If you need a self-signed Stash cert, install it as a system cert on a rooted
+  device or add it to app/src/main/res/raw/ and reference it here via
+  <certificates src="@raw/mycert" />.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Debug-only overrides: allow user certs so Charles / mitmproxy works
+         during development without affecting release builds. -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="user" />
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

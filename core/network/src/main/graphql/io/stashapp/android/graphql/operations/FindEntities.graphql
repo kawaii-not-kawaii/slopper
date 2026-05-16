@@ -1,0 +1,37 @@
+query FindPerformersList($filter: FindFilterType) {
+  findPerformers(filter: $filter) {
+    count
+    performers {
+      id
+      name
+      image_path
+      gender
+      scene_count
+      favorite
+    }
+  }
+}
+
+query FindStudiosList($filter: FindFilterType) {
+  findStudios(filter: $filter) {
+    count
+    studios {
+      id
+      name
+      image_path
+      scene_count
+    }
+  }
+}
+
+query FindTagsList($filter: FindFilterType) {
+  findTags(filter: $filter) {
+    count
+    tags {
+      id
+      name
+      image_path
+      scene_count
+    }
+  }
+}

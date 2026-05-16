@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OWASP dependency-check suppression file.
+
+  Add entries below for false positives or accepted risks. Each suppression
+  SHOULD include a comment explaining the rationale and an expiry / review
+  date so we don't silently swallow real issues.
+
+  Docs: https://jeremylong.github.io/DependencyCheck/general/suppression.html
+-->
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- Example:
+    <suppress until="2026-12-31Z">
+        <notes>Bundled FFmpeg via nextlib — we ship it dynamically linked; the
+               CVE concerns applications that feed untrusted bytestreams to
+               FFmpeg's probe/demux layer. Our content is user-owned and
+               network-protected.</notes>
+        <packageUrl regex="true">^pkg:maven/io\.github\.anilbeesetti/nextlib-media3ext@.*$</packageUrl>
+        <cve>CVE-2024-XXXXX</cve>
+    </suppress>
+    -->
+</suppressions>
