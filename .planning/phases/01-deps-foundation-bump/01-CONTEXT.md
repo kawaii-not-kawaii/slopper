@@ -114,7 +114,15 @@ These were not user-decided; downstream agents handle them per the guidance belo
 
 Captured during discussion; not in this phase.
 
-- (none surfaced this round — scope discipline held)
+- **DEPS-16 baseline profile regen — DEFERRED (2026-05-16, user ACCEPT)**
+  REVIEWS C4 hard-fails DEPS-16 on missing device with no task-level escape. This dev host
+  has no connected device or emulator (`adb devices` empty) and provisioning one is out of
+  scope for the dev-box. User explicitly chose option "Land DEPS-14/15 inline; defer DEPS-16"
+  when prompted in execute-phase, which satisfies the "CONTEXT.md edit + user ACCEPT" gate
+  REVIEWS C4 requires for a true deferral. Backlog row in REQUIREMENTS.md `## Deferred to
+  Future Milestones`. Resume when a device/emulator is available — the existing
+  `baseline-prof.txt` shipped with the app is still valid (predates the Compose BOM bump
+  but the relevant Compose code paths haven't changed shape).
 
 ## Out of Scope (Reminder)
 

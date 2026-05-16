@@ -72,6 +72,7 @@ Recorded via plan 01.2 Task 4. Source of truth for the why: `.planning/phases/01
 
 ### Bump deferral (auto-logged 2026-05-16)
 - **DEPS-07**: Lifecycle 2.10.0 and Activity Compose 1.13.0 require AGP 8.9.1+/compileSdk 36; Phase 1 stays on AGP 8.7.3/compileSdk 35 per Option A unblock (Hilt AGP-9 incompat). Full sweep deferred.
+- **DEPS-16**: Baseline profile regen requires a connected device or running emulator; this dev host has none and provisioning one is out of dev-box scope (REVIEWS C4 hard-fails the task without one). User-accepted deferral 2026-05-16 (see CONTEXT.md `## Deferred Ideas`). Existing committed `baseline-prof.txt` is retained; resume when a device/emulator is available.
 
 Tracked but explicitly out of this modernization milestone.
 
