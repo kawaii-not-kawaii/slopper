@@ -20,7 +20,6 @@ paging = "3.3.5"
 pagingCompose = "3.3.5"
 datastore = "1.1.1"
 securityCrypto = "1.1.0"
-room = "2.6.1"
 
 # Media3 — kept in sync with nextlib for the FFmpeg extension.
 # CASE B (forced 2026-05-16, Phase 1 DEPS, Option A unblock from 01.1-SUMMARY.md):
@@ -42,6 +41,7 @@ coil = "3.0.4"
 # Serialization
 kotlinxSerialization = "1.7.3"
 kotlinxCoroutines = "1.9.0"
+kotlinxCollectionsImmutable = "0.4.0"   # stable; 0.5.0-beta01 excluded by stable-only policy
 
 # Test
 junit = "4.13.2"
@@ -81,12 +81,6 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 
-# Room
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
-androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-
 # Hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
@@ -118,6 +112,7 @@ coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version
 # Kotlinx
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 
 # Test
 junit = { module = "junit:junit", version.ref = "junit" }
