@@ -380,7 +380,5 @@ private fun AppNavHost(
                 onBrowseTags = { navController.navigate(Routes.browse("tags")) },
             )
         }
-            } // end NavHost content
-        } // end else
-    } // end Surface
+    }
 }
