@@ -16,7 +16,7 @@ tracker:
   milestone_number: 12
   milestone_title: v1.0
   health_status: ok
-  last_health_check: 2026-05-16T14:05:00Z
+  last_health_check: 2026-05-16T23:25:00Z
   last_error: null
   issues:
     1: 1
@@ -152,11 +152,15 @@ command_manifest:
     cmd: "/gsd-validate-phase 1"
     output_file_glob: ".planning/phases/01-deps-foundation-bump/*VALIDATION*"
     gate_file: "gates/validation.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-17T08:35:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-421
+    notes:
+      - "documented-stub mode: workflow.nyquist_validation=false in config; Phase 1 is infrastructure-only (no new behavior surface)"
+      - "17 reqs: 12 COVERED via build/UAT/security gates, 5 DEFERRED with hygiene; 0 new tests generated"
+      - "POLISH-04 + POLISH-05 backlog will land the test pyramid in a future phase"
   - step: 10
     cmd: "/gsd-docs-update 1"
     output_marker: "docs_updated_at"
