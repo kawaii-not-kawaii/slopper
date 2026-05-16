@@ -1,10 +1,4 @@
-    implementation(project(":feature:connection"))
-    implementation(project(":feature:library"))
-    implementation(project(":feature:browse"))
-    implementation(project(":feature:home"))
-    implementation(project(":feature:detail"))
-    implementation(project(":feature:player"))
-    implementation(project(":feature:settings"))import java.util.Properties
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.stash.android.application)
