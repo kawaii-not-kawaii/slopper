@@ -68,6 +68,11 @@
   - **Files likely touched:** `gradle/libs.versions.toml`, `app/src/release/generated/baselineProfiles/baseline-prof.txt`, `baselineprofile/build.gradle.kts`, `app/proguard-rules.pro`.
   - **Dependency:** Plan 1.2.
 
+**Created plans** (executable PLAN.md files in `.planning/phases/01-deps-foundation-bump/`):
+- [ ] `01.1-PLAN.md` — Preflight + Toolchain Floor (DEPS-01..06, lockstep, stop-on-failure)
+- [ ] `01.2-PLAN.md` — Library Sweep (DEPS-07..10, revert-and-continue)
+- [ ] `01.3-PLAN.md` — Catalog hygiene, quality gates, verification, baseline profile (DEPS-11..16, revert-and-continue; DEPS-15/16 added beyond original REQUIREMENTS.md DEPS-01..14)
+
 **Verification Gate:**
 
 ```
