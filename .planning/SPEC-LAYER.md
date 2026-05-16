@@ -112,11 +112,15 @@ command_manifest:
     cmd: "/gsd-verify-work 1"
     output_file: ".planning/phases/01-deps-foundation-bump/01-UAT.md"
     gate_file: "gates/verify.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-16T22:45:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-418
+    notes:
+      - "7/7 tests pass; 7-step manual smoke on Galaxy S23+ Android 16 — all green"
+      - "Confirms no runtime regression from Kotlin 2.2.20 + Compose BOM 2026.05.00 + Hilt 2.56.2 + Apollo 4.4.3 lockstep"
+      - "Validates precondition cleanups (orphan code blocks in app/build.gradle.kts, PlayerScreen, SettingsScreen, MainActivity) didn't lose UI surface"
   - step: 7
     cmd: "/gsd-extract-learnings 1"
     output_file: ".planning/phases/01-deps-foundation-bump/LEARNINGS.md"
