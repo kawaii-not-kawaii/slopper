@@ -253,6 +253,16 @@ find feature -path '*/src/*Test/*ScreenSmokeTest.kt' | wc -l
 - §15 CI cache invalidation cascade (Medium) — compose cache keys per the pitfall.
 - §18 Lint baseline shrink can become a long tail — bound it at the 30% target; defer the rest with explicit rationale.
 
+### Phase 5: SPINE (Compose UI Redesign)
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 4
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 5 to break down)
+
 ---
 
 ## Cross-Phase Dependencies
@@ -276,7 +286,6 @@ find feature -path '*/src/*Test/*ScreenSmokeTest.kt' | wc -l
 | 2 | Strong-skipping regression in `PlayerScreen` (PITFALLS §5) — auto-memoized lambdas stop re-triggering `LaunchedEffect`; not catchable by lint | High | DEPS verify + PERF audit + POLISH refactor | Plan 3.2 audits every `LaunchedEffect`/`DisposableEffect` key list; manual `DEVICE_TESTING.md` player checklist post-BOM-bump and post-split. |
 | 3 | R8 keep-rule invalidation under AGP 9 + serialization 1.9 + Apollo 4.4.x (PITFALLS §9) — release-only crashes | High | DEPS bump + PERF release smoke | `assembleRelease` with full R8 mode; read every warning; smoke-test `benchmark` build type across primary screens. |
 | 4 | Edge-to-edge breaks player gestures + filter-sheet insets on 3-button-nav OEMs (PITFALLS §7) | High (player) / Med (sheet) | COMPLY | Dual-device manual test in Plan 2.1's gate. |
-| 5 | KSP / Kotlin / Compose-Compiler version drift (PITFALLS §§3, 4) — silent miscompilation or stale Hilt codegen → `MissingBindingException` | High | DEPS | `mismatch=fail` KSP arg; convention-plugin assertion comparing version prefixes; single `compose-compiler` artifact in deps report. |
 
 Honorable mentions: §1 JDK toolchain mismatch (DEPS), §13 macrobench variance (PERF), §16 `nextlib-media3ext` lockstep (DEPS — explicitly scope-checked via DEPS-10), §18 missing `lint-baseline.xml` (DEPS first task).
 
@@ -306,7 +315,3 @@ Copied from REQUIREMENTS.md to prevent scope creep:
 | **PERF** | Phase 3 | Measured performance work (GMD wiring, Compose stability reports, ImmutableList migration, strong-skipping audit, baseline profile expansion, cold-start + scroll macrobench floors, shuffle-playback bug fix, `applyVideoFrameRate` relocation, measured-only claims) |
 | **POLISH** | Phase 4 | Test pyramid + cleanup (`PlayerScreen` split, lint/detekt baseline shrink, JUnit5/Turbine/MockK/Robolectric wiring, seed tests, `PlayerSettings`/`UiSettings` interfaces, retire `ConnectionResult`, CI cache keys, docs refresh, VCS hygiene) |
 | **BG-MEDIA / SEC / NET / NAV / ARCH** | Deferred | Tracked in REQUIREMENTS.md "Deferred to Future Milestones" — explicitly *not* part of this milestone |
-
----
-*Roadmap generated: 2026-05-16*
-*Coverage: 41/41 v1 requirements mapped to exactly one phase*

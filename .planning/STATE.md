@@ -1,3 +1,18 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+current_phase: None active — Phase 1 (DEPS) pending
+status: unknown
+last_updated: "2026-05-16T23:31:16.963Z"
+progress:
+  total_phases: 4
+  completed_phases: 1
+  total_plans: 3
+  completed_plans: 3
+  percent: 25
+---
+
 # Project State
 
 **Project:** Slopper (Android Compose multi-module app)
@@ -21,6 +36,11 @@
 | 2 | **COMPLY** — Platform Compliance (edge-to-edge, predictive back, Splash, locales, FGS cleanup) | Pending | 0/2 |
 | 3 | **PERF** — Measured Wins (GMD, baseline profile expansion, shuffle-playback fix) | Pending | 0/3 |
 | 4 | **POLISH** — Test Pyramid & Cleanup (PlayerScreen split, lint/detekt re-baseline, JUnit5/Turbine/MockK/Robolectric) | Pending | 0/3 |
+| 5 | **SPINE** — Compose UI Redesign (Spine direction per `design_handoff_slopper_spine/`) | Pending | 0 |
+
+### Roadmap Evolution
+
+- Phase 5 added (2026-05-17): SPINE (Compose UI Redesign) — added at end of v1.0 milestone after design handoff drop. Source: `design_handoff_slopper_spine/README.md`.
 
 ## Key Locked Decisions
 
