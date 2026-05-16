@@ -137,3 +137,22 @@ From SPEC.md and PROJECT.md, do NOT do in Phase 1:
 
 *Phase: `01-deps-foundation-bump`*
 *Context created: 2026-05-16*
+
+## Decision 1 — Refinement
+
+**Added 2026-05-16 in response to cross-AI review C1 (consensus HIGH from glm / codex / minimax).**
+
+The "atomic per-requirement commit" rule from Decision 1 stands, **except where two requirements
+are physically coupled by the toolchain itself**. Specifically: Gradle 9.x cannot load AGP 8.x —
+running `./gradlew` on a Gradle-9 wrapper with `agp = "8.7.3"` in the catalog fails before any
+task executes. Therefore DEPS-03 (Gradle 9.4.1) and DEPS-04 (AGP 9.2.0 + compileSdk/targetSdk 36)
+**must land in a single atomic commit**.
+
+- Combined commit subject: `chore(deps): DEPS-03+04 — bump Gradle 9.4.1 + AGP 9.2.0 lockstep (Gradle 9 requires AGP 9)`
+- Both requirement IDs retain their own acceptance criteria; the per-commit `assembleDebug` gate
+  runs ONCE after the combined commit (not between, because "between" is unreachable).
+- Bisect-ability is preserved at the granularity of the lockstep pair — a regression caused by
+  EITHER bump is bisected to this single commit; root-cause analysis (Gradle vs AGP) happens
+  inside the failure investigation, not via `git bisect`.
+
+This is the **only** exception. All other DEPS requirements remain one-commit-per-requirement.
