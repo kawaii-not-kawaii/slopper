@@ -111,9 +111,10 @@ fun BrowseScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
             )
         },
     ) { inner ->
@@ -134,11 +135,12 @@ fun BrowseScreen(
     }
 }
 
-private fun titleFor(kind: BrowseKind) = when (kind) {
-    BrowseKind.Performers -> "Performers"
-    BrowseKind.Studios -> "Studios"
-    BrowseKind.Tags -> "Tags"
-}
+private fun titleFor(kind: BrowseKind) =
+    when (kind) {
+        BrowseKind.Performers -> "Performers"
+        BrowseKind.Studios -> "Studios"
+        BrowseKind.Tags -> "Tags"
+    }
 
 @Composable
 private fun PerformersGrid(
@@ -154,9 +156,10 @@ private fun PerformersGrid(
             Surface(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.surfaceContainer,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f),
                 onClick = { onClick(performer.id) },
             ) {
                 Box {
@@ -171,10 +174,11 @@ private fun PerformersGrid(
                             Icons.Filled.Favorite,
                             contentDescription = null,
                             tint = StashColors.Error,
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(8.dp)
-                                .size(18.dp),
+                            modifier =
+                                Modifier
+                                    .align(Alignment.TopEnd)
+                                    .padding(8.dp)
+                                    .size(18.dp),
                         )
                     }
                 }
@@ -208,9 +212,10 @@ private fun StudiosGrid(
             Surface(
                 shape = RoundedCornerShape(8.dp),
                 color = MaterialTheme.colorScheme.surfaceContainer,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16f / 9f),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16f / 9f),
                 onClick = { onClick(studio.id) },
             ) {
                 AsyncImage(
@@ -305,12 +310,13 @@ private fun <T : Any> PagingGrid(
         else -> {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 140.dp),
-                contentPadding = PaddingValues(
-                    start = 12.dp,
-                    end = 12.dp,
-                    top = inner.calculateTopPadding() + 8.dp,
-                    bottom = inner.calculateBottomPadding() + 12.dp,
-                ),
+                contentPadding =
+                    PaddingValues(
+                        start = 12.dp,
+                        end = 12.dp,
+                        top = inner.calculateTopPadding() + 8.dp,
+                        bottom = inner.calculateBottomPadding() + 12.dp,
+                    ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize(),

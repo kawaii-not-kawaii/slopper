@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>UnusedParameter:MainActivity.kt$startDestination: String</ID>
+  </CurrentIssues>
+</SmellBaseline>

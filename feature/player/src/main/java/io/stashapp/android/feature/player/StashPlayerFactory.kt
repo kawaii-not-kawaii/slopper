@@ -37,14 +37,15 @@ class StashPlayerFactory(
     private val endpointProvider: StashEndpointProvider,
 ) {
     fun build(): ExoPlayer {
-        val trackSelector = DefaultTrackSelector(context).apply {
-            setParameters(
-                buildUponParameters()
-                    .setPreferredAudioLanguage(null)
-                    .setTunnelingEnabled(true)
-                    .setAllowVideoMixedMimeTypeAdaptiveness(true),
-            )
-        }
+        val trackSelector =
+            DefaultTrackSelector(context).apply {
+                setParameters(
+                    buildUponParameters()
+                        .setPreferredAudioLanguage(null)
+                        .setTunnelingEnabled(true)
+                        .setAllowVideoMixedMimeTypeAdaptiveness(true),
+                )
+            }
 
         // Wrap OkHttp with an origin-scoped interceptor that attaches the ApiKey
         // ONLY when the request URL belongs to the configured Stash origin.
@@ -52,35 +53,41 @@ class StashPlayerFactory(
         // would stick the key onto every request — including cross-origin
         // redirects (Issue M2 from the security review), leaking it to any
         // CDN / proxy the server might bounce to.
-        val scopedClient = okHttpClient.newBuilder()
-            .addInterceptor(StashStreamAuthInterceptor(endpointProvider))
-            .build()
+        val scopedClient =
+            okHttpClient
+                .newBuilder()
+                .addInterceptor(StashStreamAuthInterceptor(endpointProvider))
+                .build()
 
-        val dataSourceFactory: DataSource.Factory = DataSource.Factory {
-            val delegate = OkHttpDataSource.Factory(scopedClient)
-            DefaultDataSource.Factory(context, delegate).createDataSource()
-        }
+        val dataSourceFactory: DataSource.Factory =
+            DataSource.Factory {
+                val delegate = OkHttpDataSource.Factory(scopedClient)
+                DefaultDataSource.Factory(context, delegate).createDataSource()
+            }
 
         // NextRenderersFactory is a drop-in replacement for DefaultRenderersFactory
         // that ships prebuilt FFmpeg software decoders. We still configure
         // EXTENSION_RENDERER_MODE_PREFER so MediaCodec wins when it can handle
         // the codec natively — the extension only kicks in for codecs the
         // hardware doesn't support (AC3, EAC3, DTS, TrueHD, etc.).
-        val renderersFactory = NextRenderersFactory(context)
-            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
-            .setEnableDecoderFallback(true)
+        val renderersFactory =
+            NextRenderersFactory(context)
+                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+                .setEnableDecoderFallback(true)
 
-        return ExoPlayer.Builder(context, renderersFactory)
+        return ExoPlayer
+            .Builder(context, renderersFactory)
             .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
             .setTrackSelector(trackSelector)
             .setAudioAttributes(
-                androidx.media3.common.AudioAttributes.Builder()
+                androidx.media3.common.AudioAttributes
+                    .Builder()
                     .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
                     .setUsage(C.USAGE_MEDIA)
                     .build(),
-                /* handleAudioFocus = */ true,
-            )
-            .setHandleAudioBecomingNoisy(true)
+                // handleAudioFocus =
+                true,
+            ).setHandleAudioBecomingNoisy(true)
             // Frame-rate matching: ask Android to switch the display refresh
             // rate to match the video's fps whenever the transition would be
             // seamless (no visible black flash). This eliminates 3:2-pulldown
@@ -105,11 +112,15 @@ private class StashStreamAuthInterceptor(
         val request = chain.request()
         val apiKey = endpoint?.apiKey?.takeIf { it.isNotBlank() }
 
-        val finalRequest = if (apiKey != null && endpoint != null &&
-            request.url.matchesOrigin(endpoint.baseUrl)
-        ) {
-            request.newBuilder().addHeader("ApiKey", apiKey).build()
-        } else request
+        val finalRequest =
+            if (apiKey != null &&
+                endpoint != null &&
+                request.url.matchesOrigin(endpoint.baseUrl)
+            ) {
+                request.newBuilder().addHeader("ApiKey", apiKey).build()
+            } else {
+                request
+            }
 
         return chain.proceed(finalRequest)
     }

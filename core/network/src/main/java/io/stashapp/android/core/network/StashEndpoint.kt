@@ -27,7 +27,10 @@ data class StashEndpoint(
         return if (sameOrigin(path, baseUrl)) path else null
     }
 
-    private fun sameOrigin(absoluteUrl: String, baseUrl: String): Boolean {
+    private fun sameOrigin(
+        absoluteUrl: String,
+        baseUrl: String,
+    ): Boolean {
         val a = runCatching { java.net.URI(absoluteUrl) }.getOrNull() ?: return false
         val b = runCatching { java.net.URI(baseUrl) }.getOrNull() ?: return false
         return a.scheme.equals(b.scheme, ignoreCase = true) &&

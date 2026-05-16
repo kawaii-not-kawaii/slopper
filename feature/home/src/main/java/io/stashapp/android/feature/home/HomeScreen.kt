@@ -67,18 +67,20 @@ fun HomeScreen(
                         Icon(Icons.Filled.Settings, contentDescription = "Settings")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                ),
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
             )
         },
     ) { inner ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = inner.calculateTopPadding() + 8.dp,
-                bottom = inner.calculateBottomPadding() + 16.dp,
-            ),
+            contentPadding =
+                PaddingValues(
+                    top = inner.calculateTopPadding() + 8.dp,
+                    bottom = inner.calculateBottomPadding() + 16.dp,
+                ),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             items(
@@ -151,11 +153,12 @@ private fun RailScenes(
     ) {
         items(count = scenes.size, key = { scenes[it].id }) { index ->
             val scene = scenes[index]
-            val resumeFraction = run {
-                val dur = scene.durationSeconds
-                val pos = scene.resumeTimeSeconds
-                if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
-            }
+            val resumeFraction =
+                run {
+                    val dur = scene.durationSeconds
+                    val pos = scene.resumeTimeSeconds
+                    if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
+                }
             Box(Modifier.width(220.dp)) {
                 SceneCard(
                     title = scene.displayTitle,

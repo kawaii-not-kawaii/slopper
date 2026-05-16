@@ -44,49 +44,65 @@ internal fun SceneFilter.toGql(): SceneFilterType? {
 
 private fun SceneFilter.resumeTimeCriterion(): Optional<IntCriterionInput?> =
     when (hasResumeTime) {
-        true -> Optional.present(
-            IntCriterionInput(value = 0, modifier = CriterionModifier.GREATER_THAN),
-        )
-        false -> Optional.present(
-            IntCriterionInput(value = 0, modifier = CriterionModifier.EQUALS),
-        )
+        true ->
+            Optional.present(
+                IntCriterionInput(value = 0, modifier = CriterionModifier.GREATER_THAN),
+            )
+        false ->
+            Optional.present(
+                IntCriterionInput(value = 0, modifier = CriterionModifier.EQUALS),
+            )
         null -> Optional.absent()
     }
 
 /** BETWEEN / GREATER_THAN / LESS_THAN depending on which bounds are set. */
-private fun intRange(min: Int?, max: Int?): Optional<IntCriterionInput?> = when {
-    min != null && max != null -> Optional.present(
-        IntCriterionInput(
-            value = min,
-            value2 = Optional.present(max),
-            modifier = CriterionModifier.BETWEEN,
-        ),
-    )
-    min != null -> Optional.present(
-        IntCriterionInput(value = min, modifier = CriterionModifier.GREATER_THAN),
-    )
-    max != null -> Optional.present(
-        IntCriterionInput(value = max, modifier = CriterionModifier.LESS_THAN),
-    )
-    else -> Optional.absent()
-}
+private fun intRange(
+    min: Int?,
+    max: Int?,
+): Optional<IntCriterionInput?> =
+    when {
+        min != null && max != null ->
+            Optional.present(
+                IntCriterionInput(
+                    value = min,
+                    value2 = Optional.present(max),
+                    modifier = CriterionModifier.BETWEEN,
+                ),
+            )
+        min != null ->
+            Optional.present(
+                IntCriterionInput(value = min, modifier = CriterionModifier.GREATER_THAN),
+            )
+        max != null ->
+            Optional.present(
+                IntCriterionInput(value = max, modifier = CriterionModifier.LESS_THAN),
+            )
+        else -> Optional.absent()
+    }
 
-private fun dateRange(min: String?, max: String?): Optional<DateCriterionInput?> = when {
-    min != null && max != null -> Optional.present(
-        DateCriterionInput(
-            value = min,
-            value2 = Optional.present(max),
-            modifier = CriterionModifier.BETWEEN,
-        ),
-    )
-    min != null -> Optional.present(
-        DateCriterionInput(value = min, modifier = CriterionModifier.GREATER_THAN),
-    )
-    max != null -> Optional.present(
-        DateCriterionInput(value = max, modifier = CriterionModifier.LESS_THAN),
-    )
-    else -> Optional.absent()
-}
+private fun dateRange(
+    min: String?,
+    max: String?,
+): Optional<DateCriterionInput?> =
+    when {
+        min != null && max != null ->
+            Optional.present(
+                DateCriterionInput(
+                    value = min,
+                    value2 = Optional.present(max),
+                    modifier = CriterionModifier.BETWEEN,
+                ),
+            )
+        min != null ->
+            Optional.present(
+                DateCriterionInput(value = min, modifier = CriterionModifier.GREATER_THAN),
+            )
+        max != null ->
+            Optional.present(
+                DateCriterionInput(value = max, modifier = CriterionModifier.LESS_THAN),
+            )
+        else -> Optional.absent()
+    }
 
 private fun SceneFilter.orientationCriterion(): Optional<OrientationCriterionInput?> =
     orientation?.let {
@@ -97,12 +113,14 @@ private fun SceneFilter.orientationCriterion(): Optional<OrientationCriterionInp
 
 private fun SceneFilter.captionsCriterion(): Optional<StringCriterionInput?> =
     when (hasCaptions) {
-        true -> Optional.present(
-            StringCriterionInput(value = "", modifier = CriterionModifier.NOT_NULL),
-        )
-        false -> Optional.present(
-            StringCriterionInput(value = "", modifier = CriterionModifier.IS_NULL),
-        )
+        true ->
+            Optional.present(
+                StringCriterionInput(value = "", modifier = CriterionModifier.NOT_NULL),
+            )
+        false ->
+            Optional.present(
+                StringCriterionInput(value = "", modifier = CriterionModifier.IS_NULL),
+            )
         null -> Optional.absent()
     }
 
@@ -110,25 +128,28 @@ private fun SceneFilter.ratingCriterion(): Optional<IntCriterionInput?> {
     val min = minRating100
     val max = maxRating100
     return when {
-        min != null && max != null -> Optional.present(
-            IntCriterionInput(
-                value = min,
-                value2 = Optional.present(max),
-                modifier = CriterionModifier.BETWEEN,
-            ),
-        )
-        min != null -> Optional.present(
-            IntCriterionInput(
-                value = min,
-                modifier = CriterionModifier.GREATER_THAN,
-            ),
-        )
-        max != null -> Optional.present(
-            IntCriterionInput(
-                value = max,
-                modifier = CriterionModifier.LESS_THAN,
-            ),
-        )
+        min != null && max != null ->
+            Optional.present(
+                IntCriterionInput(
+                    value = min,
+                    value2 = Optional.present(max),
+                    modifier = CriterionModifier.BETWEEN,
+                ),
+            )
+        min != null ->
+            Optional.present(
+                IntCriterionInput(
+                    value = min,
+                    modifier = CriterionModifier.GREATER_THAN,
+                ),
+            )
+        max != null ->
+            Optional.present(
+                IntCriterionInput(
+                    value = max,
+                    modifier = CriterionModifier.LESS_THAN,
+                ),
+            )
         else -> Optional.absent()
     }
 }
@@ -144,25 +165,37 @@ private fun SceneFilter.resolutionCriterion(): Optional<ResolutionCriterionInput
     } ?: Optional.absent()
 
 private fun SceneFilter.tagsCriterion(): Optional<HierarchicalMultiCriterionInput?> =
-    if (tagIds.isEmpty()) Optional.absent() else Optional.present(
-        HierarchicalMultiCriterionInput(
-            value = Optional.present(tagIds),
-            modifier = CriterionModifier.INCLUDES_ALL,
-        ),
-    )
+    if (tagIds.isEmpty()) {
+        Optional.absent()
+    } else {
+        Optional.present(
+            HierarchicalMultiCriterionInput(
+                value = Optional.present(tagIds),
+                modifier = CriterionModifier.INCLUDES_ALL,
+            ),
+        )
+    }
 
 private fun SceneFilter.studiosCriterion(): Optional<HierarchicalMultiCriterionInput?> =
-    if (studioIds.isEmpty()) Optional.absent() else Optional.present(
-        HierarchicalMultiCriterionInput(
-            value = Optional.present(studioIds),
-            modifier = CriterionModifier.INCLUDES,
-        ),
-    )
+    if (studioIds.isEmpty()) {
+        Optional.absent()
+    } else {
+        Optional.present(
+            HierarchicalMultiCriterionInput(
+                value = Optional.present(studioIds),
+                modifier = CriterionModifier.INCLUDES,
+            ),
+        )
+    }
 
 private fun SceneFilter.performersCriterion(): Optional<MultiCriterionInput?> =
-    if (performerIds.isEmpty()) Optional.absent() else Optional.present(
-        MultiCriterionInput(
-            value = Optional.present(performerIds),
-            modifier = CriterionModifier.INCLUDES_ALL,
-        ),
-    )
+    if (performerIds.isEmpty()) {
+        Optional.absent()
+    } else {
+        Optional.present(
+            MultiCriterionInput(
+                value = Optional.present(performerIds),
+                modifier = CriterionModifier.INCLUDES_ALL,
+            ),
+        )
+    }

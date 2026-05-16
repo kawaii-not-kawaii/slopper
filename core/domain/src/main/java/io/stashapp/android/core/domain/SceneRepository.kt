@@ -13,7 +13,11 @@ data class SceneQuery(
     val shuffleSeed: Int? = null,
 )
 
-enum class SceneSort(val label: String, val gqlSort: String, val gqlDir: String) {
+enum class SceneSort(
+    val label: String,
+    val gqlSort: String,
+    val gqlDir: String,
+) {
     DateDesc("Newest first", "date", "DESC"),
     DateAsc("Oldest first", "date", "ASC"),
     CreatedDesc("Recently added", "created_at", "DESC"),
@@ -26,7 +30,10 @@ enum class SceneSort(val label: String, val gqlSort: String, val gqlDir: String)
 }
 
 /** Single-resolution bucket — maps to Stash's [ResolutionEnum]. */
-enum class SceneResolution(val label: String, val gqlName: String) {
+enum class SceneResolution(
+    val label: String,
+    val gqlName: String,
+) {
     Sd480("480p", "STANDARD"),
     Hd720("720p", "STANDARD_HD"),
     Fhd1080("1080p", "FULL_HD"),
@@ -37,14 +44,21 @@ enum class SceneResolution(val label: String, val gqlName: String) {
     Uhd8k("8K", "EIGHT_K"),
 }
 
-enum class SceneOrientation(val label: String, val gqlName: String) {
+enum class SceneOrientation(
+    val label: String,
+    val gqlName: String,
+) {
     Landscape("Landscape", "LANDSCAPE"),
     Portrait("Portrait", "PORTRAIT"),
     Square("Square", "SQUARE"),
 }
 
 /** Preset duration ranges in seconds — quicker than a slider for common cases. */
-enum class SceneDurationBucket(val label: String, val minSeconds: Int?, val maxSeconds: Int?) {
+enum class SceneDurationBucket(
+    val label: String,
+    val minSeconds: Int?,
+    val maxSeconds: Int?,
+) {
     UnderFive("Under 5m", null, 5 * 60),
     FiveToFifteen("5–15m", 5 * 60, 15 * 60),
     FifteenToThirty("15–30m", 15 * 60, 30 * 60),
@@ -53,7 +67,9 @@ enum class SceneDurationBucket(val label: String, val minSeconds: Int?, val maxS
     OverTwoHours("Over 2h", 2 * 60 * 60, null),
 }
 
-enum class DateBucket(val label: String) {
+enum class DateBucket(
+    val label: String,
+) {
     LastWeek("Last week"),
     LastMonth("Last month"),
     LastYear("Last year"),
@@ -95,16 +111,27 @@ data class SceneFilter(
     val hasCaptions: Boolean? = null,
 ) {
     val isActive: Boolean
-        get() = minResolution != null ||
-            minRating100 != null || maxRating100 != null ||
-            organized != null || hasMarkers != null || interactive != null ||
-            performerIds.isNotEmpty() || studioIds.isNotEmpty() || tagIds.isNotEmpty() ||
-            hasResumeTime != null ||
-            minDurationSeconds != null || maxDurationSeconds != null ||
-            minDate != null || maxDate != null ||
-            minPlayCount != null || maxPlayCount != null ||
-            minOCounter != null || maxOCounter != null ||
-            orientation != null || hasCaptions != null
+        get() =
+            minResolution != null ||
+                minRating100 != null ||
+                maxRating100 != null ||
+                organized != null ||
+                hasMarkers != null ||
+                interactive != null ||
+                performerIds.isNotEmpty() ||
+                studioIds.isNotEmpty() ||
+                tagIds.isNotEmpty() ||
+                hasResumeTime != null ||
+                minDurationSeconds != null ||
+                maxDurationSeconds != null ||
+                minDate != null ||
+                maxDate != null ||
+                minPlayCount != null ||
+                maxPlayCount != null ||
+                minOCounter != null ||
+                maxOCounter != null ||
+                orientation != null ||
+                hasCaptions != null
 
     companion object {
         fun withDurationBucket(bucket: SceneDurationBucket?): SceneFilter =
@@ -119,7 +146,10 @@ interface SceneRepository {
     fun pagedScenes(query: SceneQuery): Flow<PagingData<SceneSummary>>
 
     /** One-shot fetch — useful for home rails where paging is overkill. */
-    suspend fun scenes(query: SceneQuery, limit: Int): AppResult<List<SceneSummary>>
+    suspend fun scenes(
+        query: SceneQuery,
+        limit: Int,
+    ): AppResult<List<SceneSummary>>
 
     suspend fun scene(id: String): AppResult<SceneDetail>
 
@@ -140,8 +170,14 @@ interface SceneRepository {
     suspend fun decrementO(sceneId: String): AppResult<Int>
 
     /** Set a scene's rating on the 0-100 scale. Null clears the rating. */
-    suspend fun setRating(sceneId: String, rating100: Int?): AppResult<Unit>
+    suspend fun setRating(
+        sceneId: String,
+        rating100: Int?,
+    ): AppResult<Unit>
 
     /** Toggle the organized flag. */
-    suspend fun setOrganized(sceneId: String, organized: Boolean): AppResult<Unit>
+    suspend fun setOrganized(
+        sceneId: String,
+        organized: Boolean,
+    ): AppResult<Unit>
 }

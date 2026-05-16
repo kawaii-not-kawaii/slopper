@@ -20,8 +20,8 @@ plugins {
 // (plugin is incompatible with Gradle configuration cache as of 11.x).
 dependencyCheck {
     formats = listOf("HTML", "JSON")
-    failBuildOnCVSS = 7.0f                // HIGH+ only — fail on CRITICAL / HIGH
-    suppressionFile = "${rootDir}/config/owasp-suppressions.xml"
+    failBuildOnCVSS = 7.0f // HIGH+ only — fail on CRITICAL / HIGH
+    suppressionFile = "$rootDir/config/owasp-suppressions.xml"
     // Analyzers we don't need — speeds up the scan significantly.
     analyzers.apply {
         assemblyEnabled = false
@@ -38,7 +38,7 @@ subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-        version.set("1.3.1")
+        version.set("1.6.0")
         android.set(true)
         ignoreFailures.set(false)
         // Exclude generated Apollo sources + build output
@@ -50,8 +50,8 @@ subprojects {
 
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         // Keep in sync with gradle/libs.versions.toml :: detekt
-        toolVersion = "1.23.7"
-        config.setFrom(files("${rootDir}/config/detekt/detekt.yml"))
+        toolVersion = "1.23.8"
+        config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
         ignoreFailures = false
         source.setFrom("src/main/java", "src/main/kotlin")

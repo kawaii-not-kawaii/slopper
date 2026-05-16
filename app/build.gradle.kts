@@ -25,12 +25,16 @@ android {
         // root (local release-build pattern). If neither is present, the
         // release build type falls back to the debug keystore — acceptable
         // for personal sideloads but NOT for Play Store distribution.
-        val keystoreProps: Properties? = rootProject.file("keystore.properties")
-            .takeIf { it.exists() }
-            ?.let { file -> Properties().apply { file.inputStream().use { load(it) } } }
+        val keystoreProps: Properties? =
+            rootProject
+                .file("keystore.properties")
+                .takeIf { it.exists() }
+                ?.let { file -> Properties().apply { file.inputStream().use { load(it) } } }
 
-        fun prop(name: String, env: String): String? =
-            keystoreProps?.getProperty(name) ?: System.getenv(env)
+        fun prop(
+            name: String,
+            env: String,
+        ): String? = keystoreProps?.getProperty(name) ?: System.getenv(env)
 
         val hasReleaseKeystore = prop("storeFile", "STASH_KEYSTORE_FILE") != null
         if (hasReleaseKeystore) {
@@ -90,10 +94,11 @@ android {
         checkReleaseBuilds = true
         // Baseline of pre-existing issues; fail the build only on new ones.
         baseline = file("lint-baseline.xml")
-        disable += setOf(
-            // Compose stability warnings tend to be noisy on LazyList item content
-            "MutableCollectionMutableState",
-        )
+        disable +=
+            setOf(
+                // Compose stability warnings tend to be noisy on LazyList item content
+                "MutableCollectionMutableState",
+            )
     }
 
     splits {

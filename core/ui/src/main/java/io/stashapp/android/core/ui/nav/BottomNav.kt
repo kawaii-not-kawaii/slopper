@@ -1,15 +1,9 @@
 package io.stashapp.android.core.ui.nav
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Person
@@ -55,41 +49,46 @@ data class MainNavItem(
 )
 
 object MainNavItems {
-    val Home = MainNavItem(
-        id = "home",
-        route = Routes.Home,
-        label = "Home",
-        iconFilled = Icons.Filled.ViewModule,
-        iconOutlined = Icons.Outlined.Home,
-    )
-    val Scenes = MainNavItem(
-        id = "scenes",
-        route = Routes.Library,
-        label = "Scenes",
-        iconFilled = Icons.Filled.Movie,
-        iconOutlined = Icons.Outlined.Movie,
-    )
-    val Studios = MainNavItem(
-        id = "studios",
-        route = Routes.browse("studios"),
-        label = "Studios",
-        iconFilled = Icons.Filled.Storefront,
-        iconOutlined = Icons.Outlined.Storefront,
-    )
-    val Performers = MainNavItem(
-        id = "performers",
-        route = Routes.browse("performers"),
-        label = "People",
-        iconFilled = Icons.Filled.Person,
-        iconOutlined = Icons.Outlined.Person,
-    )
-    val Tags = MainNavItem(
-        id = "tags",
-        route = Routes.browse("tags"),
-        label = "Tags",
-        iconFilled = Icons.Filled.Label,
-        iconOutlined = Icons.Outlined.Label,
-    )
+    val Home =
+        MainNavItem(
+            id = "home",
+            route = Routes.Home,
+            label = "Home",
+            iconFilled = Icons.Filled.ViewModule,
+            iconOutlined = Icons.Outlined.Home,
+        )
+    val Scenes =
+        MainNavItem(
+            id = "scenes",
+            route = Routes.Library,
+            label = "Scenes",
+            iconFilled = Icons.Filled.Movie,
+            iconOutlined = Icons.Outlined.Movie,
+        )
+    val Studios =
+        MainNavItem(
+            id = "studios",
+            route = Routes.browse("studios"),
+            label = "Studios",
+            iconFilled = Icons.Filled.Storefront,
+            iconOutlined = Icons.Outlined.Storefront,
+        )
+    val Performers =
+        MainNavItem(
+            id = "performers",
+            route = Routes.browse("performers"),
+            label = "People",
+            iconFilled = Icons.Filled.Person,
+            iconOutlined = Icons.Outlined.Person,
+        )
+    val Tags =
+        MainNavItem(
+            id = "tags",
+            route = Routes.browse("tags"),
+            label = "Tags",
+            iconFilled = Icons.Filled.Label,
+            iconOutlined = Icons.Outlined.Label,
+        )
 
     /** All items available to the user. The first four are shown by default,
      *  everything beyond lives in the More sheet. */
@@ -117,9 +116,12 @@ fun MainBottomBar(
         tonalElevation = 0.dp,
     ) {
         visibleItems.forEach { item ->
-            val selected = currentRoute == item.route ||
-                (currentRoute?.startsWith(item.route.substringBefore("?")) == true &&
-                 currentRoute.substringBefore("?") == item.route.substringBefore("?"))
+            val selected =
+                currentRoute == item.route ||
+                    (
+                        currentRoute?.startsWith(item.route.substringBefore("?")) == true &&
+                            currentRoute.substringBefore("?") == item.route.substringBefore("?")
+                    )
             NavigationBarItem(
                 selected = selected,
                 onClick = { onNavigate(item.route) },
@@ -130,13 +132,14 @@ fun MainBottomBar(
                     )
                 },
                 label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = StashColors.AccentPrimary,
-                    selectedTextColor = StashColors.AccentPrimary,
-                    indicatorColor = StashColors.AccentPrimary.copy(alpha = 0.18f),
-                    unselectedIconColor = StashColors.OnSurfaceVariant,
-                    unselectedTextColor = StashColors.OnSurfaceVariant,
-                ),
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = StashColors.AccentPrimary,
+                        selectedTextColor = StashColors.AccentPrimary,
+                        indicatorColor = StashColors.AccentPrimary.copy(alpha = 0.18f),
+                        unselectedIconColor = StashColors.OnSurfaceVariant,
+                        unselectedTextColor = StashColors.OnSurfaceVariant,
+                    ),
             )
         }
         // Always-visible More tab — opens the overflow sheet
@@ -145,10 +148,11 @@ fun MainBottomBar(
             onClick = onOpenMore,
             icon = { Icon(Icons.Filled.Tune, contentDescription = "More") },
             label = { Text("More", style = MaterialTheme.typography.labelSmall) },
-            colors = NavigationBarItemDefaults.colors(
-                unselectedIconColor = StashColors.OnSurfaceVariant,
-                unselectedTextColor = StashColors.OnSurfaceVariant,
-            ),
+            colors =
+                NavigationBarItemDefaults.colors(
+                    unselectedIconColor = StashColors.OnSurfaceVariant,
+                    unselectedTextColor = StashColors.OnSurfaceVariant,
+                ),
         )
     }
 }
@@ -186,10 +190,11 @@ fun MoreSheet(
                 ListItem(
                     headlineContent = { Text(item.label) },
                     leadingContent = { Icon(item.iconOutlined, contentDescription = null) },
-                    modifier = Modifier.clickable {
-                        onNavigate(item.route)
-                        onDismiss()
-                    },
+                    modifier =
+                        Modifier.clickable {
+                            onNavigate(item.route)
+                            onDismiss()
+                        },
                     colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
                 )
             }
@@ -203,10 +208,11 @@ fun MoreSheet(
             ListItem(
                 headlineContent = { Text("Settings") },
                 leadingContent = { Icon(Icons.Filled.Tune, contentDescription = null) },
-                modifier = Modifier.clickable {
-                    onOpenSettings()
-                    onDismiss()
-                },
+                modifier =
+                    Modifier.clickable {
+                        onOpenSettings()
+                        onDismiss()
+                    },
                 colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
             )
             ListItem(
@@ -215,14 +221,13 @@ fun MoreSheet(
                     Text("Choose which items appear at the bottom", style = MaterialTheme.typography.labelSmall)
                 },
                 leadingContent = { Icon(Icons.Filled.ViewModule, contentDescription = null) },
-                modifier = Modifier.clickable {
-                    onCustomize()
-                    onDismiss()
-                },
+                modifier =
+                    Modifier.clickable {
+                        onCustomize()
+                        onDismiss()
+                    },
                 colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
             )
         }
     }
 }
-
-

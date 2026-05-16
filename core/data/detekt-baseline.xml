@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$PerformersPagingSource$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$StudiosPagingSource$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$TagsPagingSource$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:DefaultConnectionRepository.kt$DefaultConnectionRepository$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:DefaultSceneRepository.kt$DefaultSceneRepository$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:ScenePagingSource.kt$ScenePagingSource$e: Throwable</ID>
+  </CurrentIssues>
+</SmellBaseline>

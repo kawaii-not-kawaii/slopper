@@ -8,54 +8,58 @@ import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.crossfade
-import okio.Path.Companion.toOkioPath
-import okio.Path.Companion.toOkioPath
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.network.StashEndpointProvider
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okio.Path.Companion.toOkioPath
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class StashImageLoaderFactory @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val endpointProvider: StashEndpointProvider,
-    private val uiPreferences: UiPreferences,
-) : SingletonImageLoader.Factory {
+class StashImageLoaderFactory
+    @Inject
+    constructor(
+        @ApplicationContext private val context: Context,
+        private val endpointProvider: StashEndpointProvider,
+        private val uiPreferences: UiPreferences,
+    ) : SingletonImageLoader.Factory {
+        override fun newImageLoader(context: PlatformContext): ImageLoader {
+            val cacheMb = runBlocking { uiPreferences.imageCacheSizeMb.first() }
 
-    override fun newImageLoader(context: PlatformContext): ImageLoader {
-        val cacheMb = runBlocking { uiPreferences.imageCacheSizeMb.first() }
-
-        val authClient = OkHttpClient.Builder()
-            .addInterceptor(StashAuthImageInterceptor(endpointProvider))
-            .build()
-
-        return ImageLoader.Builder(context)
-            .crossfade(150)
-            .memoryCache {
-                MemoryCache.Builder()
-                    .maxSizePercent(context, 0.25)
+            val authClient =
+                OkHttpClient
+                    .Builder()
+                    .addInterceptor(StashAuthImageInterceptor(endpointProvider))
                     .build()
-            }
-            .diskCache {
-                DiskCache.Builder()
-                    .directory(this.context.cacheDir.resolve("image_cache").toOkioPath())
-                    .maxSizeBytes(cacheMb.toLong() * 1024 * 1024)
-                    .build()
-            }
-            .components {
-                add(OkHttpNetworkFetcherFactory(callFactory = { authClient }))
-            }
-            .build()
+
+            return ImageLoader
+                .Builder(context)
+                .crossfade(150)
+                .memoryCache {
+                    MemoryCache
+                        .Builder()
+                        .maxSizePercent(context, 0.25)
+                        .build()
+                }.diskCache {
+                    DiskCache
+                        .Builder()
+                        .directory(
+                            this.context.cacheDir
+                                .resolve("image_cache")
+                                .toOkioPath(),
+                        ).maxSizeBytes(cacheMb.toLong() * 1024 * 1024)
+                        .build()
+                }.components {
+                    add(OkHttpNetworkFetcherFactory(callFactory = { authClient }))
+                }.build()
+        }
     }
-}
 
 private class StashAuthImageInterceptor(
     private val endpointProvider: StashEndpointProvider,
@@ -65,11 +69,15 @@ private class StashAuthImageInterceptor(
         val request = chain.request()
         val apiKey = endpoint?.apiKey?.takeIf { it.isNotBlank() }
 
-        val finalRequest = if (apiKey != null && endpoint != null &&
-            request.url.matchesOrigin(endpoint.baseUrl)
-        ) {
-            request.newBuilder().addHeader("ApiKey", apiKey).build()
-        } else request
+        val finalRequest =
+            if (apiKey != null &&
+                endpoint != null &&
+                request.url.matchesOrigin(endpoint.baseUrl)
+            ) {
+                request.newBuilder().addHeader("ApiKey", apiKey).build()
+            } else {
+                request
+            }
 
         return chain.proceed(finalRequest)
     }

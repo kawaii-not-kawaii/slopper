@@ -83,7 +83,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -150,8 +149,11 @@ fun PlayerScreen(
     DisposableEffect(activity, rotationLocked) {
         val prior = activity?.requestedOrientation
         activity?.requestedOrientation =
-            if (rotationLocked) ActivityInfo.SCREEN_ORIENTATION_LOCKED
-            else ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            if (rotationLocked) {
+                ActivityInfo.SCREEN_ORIENTATION_LOCKED
+            } else {
+                ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+            }
         activity?.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         onDispose {
             activity?.requestedOrientation = prior ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -191,12 +193,13 @@ fun PlayerScreen(
         AndroidView(
             modifier = Modifier.fillMaxSize(),
             factory = { ctx ->
-                PlayerView(ctx).apply {
-                    useController = false
-                    player = viewModel.player
-                    setKeepContentOnPlayerReset(true)
-                    this.resizeMode = resizeMode
-                }.also { playerView = it }
+                PlayerView(ctx)
+                    .apply {
+                        useController = false
+                        player = viewModel.player
+                        setKeepContentOnPlayerReset(true)
+                        this.resizeMode = resizeMode
+                    }.also { playerView = it }
             },
             update = {
                 it.player = viewModel.player
@@ -231,8 +234,7 @@ fun PlayerScreen(
                                 lastInteraction = System.currentTimeMillis()
                             },
                         )
-                    }
-                    .pointerInput(seekMsPerPx) {
+                    }.pointerInput(seekMsPerPx) {
                         var dragTotalPx = 0f
                         var startPositionMs = 0L
                         detectHorizontalDragGestures(
@@ -241,8 +243,9 @@ fun PlayerScreen(
                                 startPositionMs = viewModel.position.value.positionMs
                             },
                             onDragEnd = {
-                                val targetMs = (startPositionMs + (dragTotalPx * seekMsPerPx).toLong())
-                                    .coerceAtLeast(0L)
+                                val targetMs =
+                                    (startPositionMs + (dragTotalPx * seekMsPerPx).toLong())
+                                        .coerceAtLeast(0L)
                                 viewModel.seekTo(targetMs)
                                 scrubPreview = null
                             },
@@ -250,10 +253,11 @@ fun PlayerScreen(
                             onHorizontalDrag = { _, delta ->
                                 dragTotalPx += delta
                                 val deltaMs = (dragTotalPx * seekMsPerPx).toLong()
-                                scrubPreview = ScrubPreview(
-                                    targetMs = (startPositionMs + deltaMs).coerceAtLeast(0L),
-                                    deltaMs = deltaMs,
-                                )
+                                scrubPreview =
+                                    ScrubPreview(
+                                        targetMs = (startPositionMs + deltaMs).coerceAtLeast(0L),
+                                        deltaMs = deltaMs,
+                                    )
                             },
                         )
                     },
@@ -328,16 +332,26 @@ fun PlayerScreen(
         if (!locked) {
             AnimatedVisibility(
                 visible = controlsVisible,
-                enter = fadeIn(tween(220, easing = LinearOutSlowInEasing)) +
-                    slideInVertically(tween(220)) { it / 12 },
+                enter =
+                    fadeIn(tween(220, easing = LinearOutSlowInEasing)) +
+                        slideInVertically(tween(220)) { it / 12 },
                 exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
             ) {
                 PlayerControls(
-                    title = state.current?.summary?.displayTitle.orEmpty(),
-                    subtitle = state.current?.summary?.studio?.name,
-                    queuePosition = state.queue?.let {
-                        if (it.items.size > 1) "${it.currentIndex + 1}/${it.items.size}" else null
-                    },
+                    title =
+                        state.current
+                            ?.summary
+                            ?.displayTitle
+                            .orEmpty(),
+                    subtitle =
+                        state.current
+                            ?.summary
+                            ?.studio
+                            ?.name,
+                    queuePosition =
+                        state.queue?.let {
+                            if (it.items.size > 1) "${it.currentIndex + 1}/${it.items.size}" else null
+                        },
                     isPlaying = state.isPlaying,
                     shuffled = state.queue?.shuffled ?: false,
                     repeatMode = state.queue?.repeatMode ?: RepeatMode.OFF,
@@ -346,12 +360,14 @@ fun PlayerScreen(
                     positionFlow = viewModel.position,
                     markers = state.current?.markers.orEmpty(),
                     playbackSpeed = state.playbackSpeed,
-                    canSkipPrev = state.queue?.let {
-                        it.currentIndex > 0 || it.repeatMode == RepeatMode.ALL
-                    } ?: false,
-                    canSkipNext = state.queue?.let {
-                        it.currentIndex < it.items.lastIndex || it.repeatMode != RepeatMode.OFF
-                    } ?: false,
+                    canSkipPrev =
+                        state.queue?.let {
+                            it.currentIndex > 0 || it.repeatMode == RepeatMode.ALL
+                        } ?: false,
+                    canSkipNext =
+                        state.queue?.let {
+                            it.currentIndex < it.items.lastIndex || it.repeatMode != RepeatMode.OFF
+                        } ?: false,
                     codecLabel = codecLabel(),
                     rotationLocked = rotationLocked,
                     resizeMode = resizeMode,
@@ -362,18 +378,39 @@ fun PlayerScreen(
                         if (p.isPlaying) p.pause() else p.play()
                         lastInteraction = System.currentTimeMillis()
                     },
-                    onNext = { viewModel.skipNext(); lastInteraction = System.currentTimeMillis() },
-                    onPrevious = { viewModel.skipPrevious(); lastInteraction = System.currentTimeMillis() },
-                    onShuffle = { viewModel.toggleShuffle(); lastInteraction = System.currentTimeMillis() },
-                    onRepeat = { viewModel.cycleRepeat(); lastInteraction = System.currentTimeMillis() },
-                    onSeek = { pos -> viewModel.seekTo(pos); lastInteraction = System.currentTimeMillis() },
+                    onNext = {
+                        viewModel.skipNext()
+                        lastInteraction = System.currentTimeMillis()
+                    },
+                    onPrevious = {
+                        viewModel.skipPrevious()
+                        lastInteraction = System.currentTimeMillis()
+                    },
+                    onShuffle = {
+                        viewModel.toggleShuffle()
+                        lastInteraction = System.currentTimeMillis()
+                    },
+                    onRepeat = {
+                        viewModel.cycleRepeat()
+                        lastInteraction = System.currentTimeMillis()
+                    },
+                    onSeek = { pos ->
+                        viewModel.seekTo(pos)
+                        lastInteraction = System.currentTimeMillis()
+                    },
                     onSeekBy = { delta ->
                         viewModel.seekBy(delta)
                         lastInteraction = System.currentTimeMillis()
                     },
-                    onPip = { activity?.let { enterPip(it) }; lastInteraction = System.currentTimeMillis() },
+                    onPip = {
+                        activity?.let { enterPip(it) }
+                        lastInteraction = System.currentTimeMillis()
+                    },
                     onClose = onExit,
-                    onLock = { locked = true; lastInteraction = System.currentTimeMillis() },
+                    onLock = {
+                        locked = true
+                        lastInteraction = System.currentTimeMillis()
+                    },
                     onToggleRotationLock = {
                         rotationLocked = !rotationLocked
                         lastInteraction = System.currentTimeMillis()
@@ -449,22 +486,24 @@ private fun PlayerControls(
                 // F2 = 95% opacity — heavier scrim so controls stay legible
                 // over bright scenes without a full blackout.
                 drawRect(
-                    brush = Brush.verticalGradient(
-                        0f to Color(0xF2000000),
-                        0.7f to Color(0x80000000),
-                        1f to Color.Transparent,
-                        endY = topH,
-                    ),
+                    brush =
+                        Brush.verticalGradient(
+                            0f to Color(0xF2000000),
+                            0.7f to Color(0x80000000),
+                            1f to Color.Transparent,
+                            endY = topH,
+                        ),
                     size = Size(size.width, topH),
                 )
                 drawRect(
-                    brush = Brush.verticalGradient(
-                        0f to Color.Transparent,
-                        0.3f to Color(0x80000000),
-                        1f to Color(0xF2000000),
-                        startY = 0f,
-                        endY = bottomH,
-                    ),
+                    brush =
+                        Brush.verticalGradient(
+                            0f to Color.Transparent,
+                            0.3f to Color(0x80000000),
+                            1f to Color(0xF2000000),
+                            startY = 0f,
+                            endY = bottomH,
+                        ),
                     topLeft = Offset(0f, size.height - bottomH),
                     size = Size(size.width, bottomH),
                 )
@@ -560,10 +599,11 @@ private fun PlayerControls(
                     onClick = onShuffle,
                 )
                 UtilityIconButton(
-                    icon = when (repeatMode) {
-                        RepeatMode.ONE -> Icons.Filled.RepeatOne
-                        else -> Icons.Filled.Repeat
-                    },
+                    icon =
+                        when (repeatMode) {
+                            RepeatMode.ONE -> Icons.Filled.RepeatOne
+                            else -> Icons.Filled.Repeat
+                        },
                     active = repeatMode != RepeatMode.OFF,
                     contentDescription = "Repeat",
                     onClick = onRepeat,
@@ -639,7 +679,10 @@ private fun PlayerControls(
 }
 
 @Composable
-private fun PlayPauseFlat(isPlaying: Boolean, onClick: () -> Unit) {
+private fun PlayPauseFlat(
+    isPlaying: Boolean,
+    onClick: () -> Unit,
+) {
     // Flat, no circle wrapper — matches MX Player. AnimatedContent gives the
     // icon swap a bit of motion so it doesn't feel too austere.
     IconButton(
@@ -711,13 +754,15 @@ private fun CodecBadge(label: String) {
         color = StashColors.AccentSecondary.copy(alpha = 0.18f),
         contentColor = StashColors.AccentSecondary,
         shape = TopChipShape,
-        border = androidx.compose.foundation.BorderStroke(
-            width = 1.dp,
-            color = StashColors.AccentSecondary.copy(alpha = 0.6f),
-        ),
-        modifier = Modifier
-            .height(TopChipHeight)
-            .widthIn(min = TopChipMinWidth),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                width = 1.dp,
+                color = StashColors.AccentSecondary.copy(alpha = 0.6f),
+            ),
+        modifier =
+            Modifier
+                .height(TopChipHeight)
+                .widthIn(min = TopChipMinWidth),
     ) {
         Box(
             Modifier.padding(horizontal = 10.dp).fillMaxHeight(),
@@ -732,20 +777,29 @@ private fun CodecBadge(label: String) {
 }
 
 @Composable
-private fun SpeedPill(speed: Float, onClick: () -> Unit) {
+private fun SpeedPill(
+    speed: Float,
+    onClick: () -> Unit,
+) {
     val active = speed != 1f
     Surface(
         color = if (active) StashColors.AccentPrimary else StashColors.SurfaceHigh.copy(alpha = 0.85f),
         contentColor = if (active) StashColors.AccentOnPrimary else Color.White,
         shape = TopChipShape,
-        border = if (!active) androidx.compose.foundation.BorderStroke(
-            width = 1.dp,
-            color = Color.White.copy(alpha = 0.25f),
-        ) else null,
-        modifier = Modifier
-            .height(TopChipHeight)
-            .widthIn(min = TopChipMinWidth)
-            .clickable(onClick = onClick),
+        border =
+            if (!active) {
+                androidx.compose.foundation.BorderStroke(
+                    width = 1.dp,
+                    color = Color.White.copy(alpha = 0.25f),
+                )
+            } else {
+                null
+            },
+        modifier =
+            Modifier
+                .height(TopChipHeight)
+                .widthIn(min = TopChipMinWidth)
+                .clickable(onClick = onClick),
     ) {
         Row(
             Modifier.padding(horizontal = 10.dp).fillMaxHeight(),
@@ -771,14 +825,16 @@ private fun PipChip(onClick: () -> Unit) {
         color = StashColors.SurfaceHigh.copy(alpha = 0.85f),
         contentColor = Color.White,
         shape = TopChipShape,
-        border = androidx.compose.foundation.BorderStroke(
-            width = 1.dp,
-            color = Color.White.copy(alpha = 0.25f),
-        ),
-        modifier = Modifier
-            .height(TopChipHeight)
-            .widthIn(min = TopChipMinWidth)
-            .clickable(onClick = onClick),
+        border =
+            androidx.compose.foundation.BorderStroke(
+                width = 1.dp,
+                color = Color.White.copy(alpha = 0.25f),
+            ),
+        modifier =
+            Modifier
+                .height(TopChipHeight)
+                .widthIn(min = TopChipMinWidth)
+                .clickable(onClick = onClick),
     ) {
         Box(Modifier.fillMaxHeight().padding(horizontal = 10.dp), contentAlignment = Alignment.Center) {
             Icon(
@@ -792,11 +848,21 @@ private fun PipChip(onClick: () -> Unit) {
 
 // ---- Transient pieces -------------------------------------------------------
 
-private data class ScrubPreview(val targetMs: Long, val deltaMs: Long)
-private data class StepSeek(val totalSeconds: Int, val generation: Int)
+private data class ScrubPreview(
+    val targetMs: Long,
+    val deltaMs: Long,
+)
+
+private data class StepSeek(
+    val totalSeconds: Int,
+    val generation: Int,
+)
 
 @Composable
-private fun StepSeekCallout(step: StepSeek, alignment: Alignment) {
+private fun StepSeekCallout(
+    step: StepSeek,
+    alignment: Alignment,
+) {
     val progress by animateFloatAsState(
         targetValue = 1f,
         animationSpec = tween(380, easing = FastOutLinearInEasing),
@@ -819,10 +885,11 @@ private fun StepSeekCallout(step: StepSeek, alignment: Alignment) {
                         startAngle = -130f,
                         sweepAngle = 260f,
                         useCenter = false,
-                        topLeft = Offset(
-                            (size.width - 2 * r) / 2f,
-                            (size.height - 2 * r) / 2f,
-                        ),
+                        topLeft =
+                            Offset(
+                                (size.width - 2 * r) / 2f,
+                                (size.height - 2 * r) / 2f,
+                            ),
                         size = Size(2 * r, 2 * r),
                         style = Stroke(width = 2f),
                     )
@@ -839,7 +906,10 @@ private fun StepSeekCallout(step: StepSeek, alignment: Alignment) {
 }
 
 @Composable
-private fun ScrubPreviewCard(preview: ScrubPreview, durationMs: Long) {
+private fun ScrubPreviewCard(
+    preview: ScrubPreview,
+    durationMs: Long,
+) {
     val target = formatDuration(preview.targetMs)
     val total = durationMs.takeIf { it > 0 }?.let { formatDuration(it) }
     val deltaSeconds = preview.deltaMs / 1000
@@ -881,13 +951,14 @@ private fun BannerPill(text: String) {
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = StashColors.SurfaceHigh.copy(alpha = 0.92f),
-        modifier = Modifier.drawBehind {
-            drawRect(
-                color = StashColors.AccentPrimary,
-                topLeft = Offset.Zero,
-                size = Size(3.dp.toPx(), size.height),
-            )
-        },
+        modifier =
+            Modifier.drawBehind {
+                drawRect(
+                    color = StashColors.AccentPrimary,
+                    topLeft = Offset.Zero,
+                    size = Size(3.dp.toPx(), size.height),
+                )
+            },
     ) {
         Text(
             text,
@@ -961,8 +1032,7 @@ private fun TimelineBar(
                             dragFraction = (change.position.x / size.width).coerceIn(0f, 1f)
                         },
                     )
-                }
-                .pointerInput(durationMs) {
+                }.pointerInput(durationMs) {
                     if (!hasDuration) return@pointerInput
                     detectTapGestures(onTap = { offset ->
                         val frac = (offset.x / size.width).coerceIn(0f, 1f)
@@ -977,20 +1047,26 @@ private fun TimelineBar(
                 drawRoundRect(
                     color = StashColors.OnSurfaceFaint,
                     size = Size(size.width, th),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner, corner),
+                    cornerRadius =
+                        androidx.compose.ui.geometry
+                            .CornerRadius(corner, corner),
                 )
                 if (bufferedFraction > 0f) {
                     drawRoundRect(
                         color = Color(0x59A8B0C0),
                         size = Size(size.width * bufferedFraction, th),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner, corner),
+                        cornerRadius =
+                            androidx.compose.ui.geometry
+                                .CornerRadius(corner, corner),
                     )
                 }
                 if (displayFraction > 0f) {
                     drawRoundRect(
                         color = StashColors.AccentPrimary,
                         size = Size(size.width * displayFraction, th),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner, corner),
+                        cornerRadius =
+                            androidx.compose.ui.geometry
+                                .CornerRadius(corner, corner),
                     )
                 }
             }
@@ -1031,20 +1107,23 @@ private fun TimelineBar(
             }
         }
         // Right-side time label — tap to toggle total vs remaining
-        val remainingMs = (durationMs - (dragFraction?.let { (it * durationMs).toLong() } ?: positionMs))
-            .coerceAtLeast(0L)
-        val rightText = when {
-            !hasDuration -> "--:--"
-            showRemaining -> "-${formatDuration(remainingMs)}"
-            else -> formatDuration(durationMs)
-        }
+        val remainingMs =
+            (durationMs - (dragFraction?.let { (it * durationMs).toLong() } ?: positionMs))
+                .coerceAtLeast(0L)
+        val rightText =
+            when {
+                !hasDuration -> "--:--"
+                showRemaining -> "-${formatDuration(remainingMs)}"
+                else -> formatDuration(durationMs)
+            }
         Text(
             rightText,
             style = MaterialTheme.typography.labelSmall,
             color = StashColors.OnSurfaceVariant,
-            modifier = Modifier
-                .size(width = 56.dp, height = 14.dp)
-                .clickable(onClick = onToggleRightLabel),
+            modifier =
+                Modifier
+                    .size(width = 56.dp, height = 14.dp)
+                    .clickable(onClick = onToggleRightLabel),
         )
     }
 }
@@ -1059,7 +1138,10 @@ private fun TimelineBar(
  * every compose `update` pass of the [AndroidView]; cheap because
  * `setFrameRate()` is idempotent when the value hasn't changed.
  */
-private fun applyVideoFrameRate(playerView: PlayerView, fps: Float?) {
+private fun applyVideoFrameRate(
+    playerView: PlayerView,
+    fps: Float?,
+) {
     if (fps == null || android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.R) return
     val videoView = playerView.videoSurfaceView ?: return
     val surface = (videoView as? android.view.SurfaceView)?.holder?.surface
@@ -1070,31 +1152,36 @@ private fun applyVideoFrameRate(playerView: PlayerView, fps: Float?) {
 
 private fun enterPip(activity: Activity) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val params = PictureInPictureParams.Builder()
-            .setAspectRatio(Rational(16, 9))
-            .build()
+        val params =
+            PictureInPictureParams
+                .Builder()
+                .setAspectRatio(Rational(16, 9))
+                .build()
         activity.enterPictureInPictureMode(params)
     }
 }
 
-private fun codecLabel(): String = when {
-    CodecCapabilities.ffmpegExtensionUsable -> "HW+FF"
-    else -> "HW"
-}
+private fun codecLabel(): String =
+    when {
+        CodecCapabilities.ffmpegExtensionUsable -> "HW+FF"
+        else -> "HW"
+    }
 
-private fun nextResize(current: Int): Int = when (current) {
-    AspectRatioFrameLayout.RESIZE_MODE_FIT -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-    AspectRatioFrameLayout.RESIZE_MODE_ZOOM -> AspectRatioFrameLayout.RESIZE_MODE_FILL
-    AspectRatioFrameLayout.RESIZE_MODE_FILL -> AspectRatioFrameLayout.RESIZE_MODE_FIT
-    else -> AspectRatioFrameLayout.RESIZE_MODE_FIT
-}
+private fun nextResize(current: Int): Int =
+    when (current) {
+        AspectRatioFrameLayout.RESIZE_MODE_FIT -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+        AspectRatioFrameLayout.RESIZE_MODE_ZOOM -> AspectRatioFrameLayout.RESIZE_MODE_FILL
+        AspectRatioFrameLayout.RESIZE_MODE_FILL -> AspectRatioFrameLayout.RESIZE_MODE_FIT
+        else -> AspectRatioFrameLayout.RESIZE_MODE_FIT
+    }
 
-private fun resizeLabel(mode: Int): String = when (mode) {
-    AspectRatioFrameLayout.RESIZE_MODE_FIT -> "Fit"
-    AspectRatioFrameLayout.RESIZE_MODE_ZOOM -> "Crop"
-    AspectRatioFrameLayout.RESIZE_MODE_FILL -> "Stretch"
-    else -> "Fit"
-}
+private fun resizeLabel(mode: Int): String =
+    when (mode) {
+        AspectRatioFrameLayout.RESIZE_MODE_FIT -> "Fit"
+        AspectRatioFrameLayout.RESIZE_MODE_ZOOM -> "Crop"
+        AspectRatioFrameLayout.RESIZE_MODE_FILL -> "Stretch"
+        else -> "Fit"
+    }
 
 private fun formatDuration(ms: Long): String {
     val s = (ms / 1000).toInt().coerceAtLeast(0)

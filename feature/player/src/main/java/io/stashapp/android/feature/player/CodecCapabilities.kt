@@ -12,17 +12,17 @@ package io.stashapp.android.feature.player
  * `feature/player/build.gradle.kts` expresses.
  */
 object CodecCapabilities {
-
     /**
      * Classes to probe, in priority order:
      *  1. nextlib's repackaged FfmpegLibrary — what we ship with now.
      *  2. Upstream Media3 FfmpegLibrary — catches custom AARs built via our
      *     `tools/ffmpeg-extension/build.sh` escape hatch.
      */
-    private val FFMPEG_CLASSES = listOf(
-        "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegLibrary",
-        "androidx.media3.decoder.ffmpeg.FfmpegLibrary",
-    )
+    private val FFMPEG_CLASSES =
+        listOf(
+            "io.github.anilbeesetti.nextlib.media3ext.ffdecoder.FfmpegLibrary",
+            "androidx.media3.decoder.ffmpeg.FfmpegLibrary",
+        )
 
     private val ffmpegClass: Class<*>? by lazy {
         FFMPEG_CLASSES.firstNotNullOfOrNull {
@@ -49,9 +49,10 @@ object CodecCapabilities {
     /**
      * Human-facing one-liner for the settings / about screen.
      */
-    val statusLabel: String get() = when {
-        ffmpegExtensionUsable -> "FFmpeg extension active — full codec support"
-        ffmpegExtensionPresent -> "FFmpeg extension detected but failed to load"
-        else -> "MediaCodec only — some audio codecs (AC3, EAC3, DTS) will fail"
-    }
+    val statusLabel: String get() =
+        when {
+            ffmpegExtensionUsable -> "FFmpeg extension active — full codec support"
+            ffmpegExtensionPresent -> "FFmpeg extension detected but failed to load"
+            else -> "MediaCodec only — some audio codecs (AC3, EAC3, DTS) will fail"
+        }
 }

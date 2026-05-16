@@ -40,11 +40,9 @@ import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.designsystem.theme.StashTheme
 import io.stashapp.android.core.domain.ConnectionRepository
 import io.stashapp.android.core.ui.nav.MainBottomBar
-import io.stashapp.android.core.ui.nav.MainNavItems
 import io.stashapp.android.core.ui.nav.MoreSheet
 import io.stashapp.android.core.ui.nav.NavCustomizeSheet
 import io.stashapp.android.core.ui.nav.Routes
-import io.stashapp.android.feature.browse.BrowseScreen
 import io.stashapp.android.feature.browse.BrowseScreen
 import io.stashapp.android.feature.connection.ConnectionScreen
 import io.stashapp.android.feature.detail.DetailScreen
@@ -60,25 +58,27 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RootViewModel @Inject constructor(
-    connectionRepository: ConnectionRepository,
-    val uiPreferences: UiPreferences,
-) : ViewModel() {
-    private val _start = MutableStateFlow<String?>(null)
-    val start: StateFlow<String?> = _start.asStateFlow()
+class RootViewModel
+    @Inject
+    constructor(
+        connectionRepository: ConnectionRepository,
+        val uiPreferences: UiPreferences,
+    ) : ViewModel() {
+        private val _start = MutableStateFlow<String?>(null)
+        val start: StateFlow<String?> = _start.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            connectionRepository.activeServer().collectLatest { server ->
-                _start.value = if (server == null) Routes.Connection else Routes.Home
+        init {
+            viewModelScope.launch {
+                connectionRepository.activeServer().collectLatest { server ->
+                    _start.value = if (server == null) Routes.Connection else Routes.Home
+                }
             }
         }
-    }
 
-    fun saveVisibleNavIds(ids: List<String>) {
-        viewModelScope.launch { uiPreferences.setBottomNavVisibleIds(ids) }
+        fun saveVisibleNavIds(ids: List<String>) {
+            viewModelScope.launch { uiPreferences.setBottomNavVisibleIds(ids) }
+        }
     }
-}
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -108,21 +108,23 @@ class MainActivity : ComponentActivity() {
      */
     private fun requestHighestRefreshRate() {
         val window = window ?: return
-        val display = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            display
-        } else {
-            @Suppress("DEPRECATION") windowManager.defaultDisplay
-        } ?: return
+        val display =
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                display
+            } else {
+                @Suppress("DEPRECATION")
+                windowManager.defaultDisplay
+            } ?: return
 
         val supportedModes = display.supportedModes
         val currentMode = display.mode
-        val bestMode = supportedModes
-            .filter {
-                it.physicalWidth == currentMode.physicalWidth &&
-                    it.physicalHeight == currentMode.physicalHeight
-            }
-            .maxByOrNull { it.refreshRate }
-            ?: currentMode
+        val bestMode =
+            supportedModes
+                .filter {
+                    it.physicalWidth == currentMode.physicalWidth &&
+                        it.physicalHeight == currentMode.physicalHeight
+                }.maxByOrNull { it.refreshRate }
+                ?: currentMode
 
         val lp = window.attributes
         lp.preferredDisplayModeId = bestMode.modeId
@@ -139,14 +141,15 @@ class MainActivity : ComponentActivity() {
 
 /** Routes whose chrome includes the bottom navigation bar. Others (player,
  *  scene detail, connection) are full-bleed and hide it. */
-private fun isMainTabRoute(route: String?): Boolean = when {
-    route == null -> false
-    route == Routes.Home -> true
-    route.startsWith("library") -> true
-    route.startsWith("browse/") -> true
-    route == Routes.Settings -> true
-    else -> false
-}
+private fun isMainTabRoute(route: String?): Boolean =
+    when {
+        route == null -> false
+        route == Routes.Home -> true
+        route.startsWith("library") -> true
+        route.startsWith("browse/") -> true
+        route == Routes.Settings -> true
+        else -> false
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -168,16 +171,17 @@ private fun StashAppContent(rootViewModel: RootViewModel) {
             val currentRoutePattern = backStack?.destination?.route
             // Build the resolved route (e.g. "browse/studios" not "browse/{kind}")
             // so the bottom bar can highlight the correct tab.
-            val currentRoute = backStack?.let { entry ->
-                var resolved = entry.destination.route ?: ""
-                entry.arguments?.let { args ->
-                    for (key in args.keySet()) {
-                        val value = args.getString(key) ?: continue
-                        resolved = resolved.replace("{$key}", value)
+            val currentRoute =
+                backStack?.let { entry ->
+                    var resolved = entry.destination.route ?: ""
+                    entry.arguments?.let { args ->
+                        for (key in args.keySet()) {
+                            val value = args.getString(key) ?: continue
+                            resolved = resolved.replace("{$key}", value)
+                        }
                     }
+                    resolved
                 }
-                resolved
-            }
             val showBottomBar = isMainTabRoute(currentRoutePattern)
 
             val visibleIds by rootViewModel.uiPreferences.bottomNavVisibleIds
@@ -210,10 +214,11 @@ private fun StashAppContent(rootViewModel: RootViewModel) {
                 // padding here would double it, creating a blank strip above
                 // each screen's app bar — so we only pass the bottom padding
                 // (for the nav bar) through to the nav host.
-                val bottomOnly = PaddingValues(
-                    top = 0.dp,
-                    bottom = if (showBottomBar) inner.calculateBottomPadding() else 0.dp,
-                )
+                val bottomOnly =
+                    PaddingValues(
+                        top = 0.dp,
+                        bottom = if (showBottomBar) inner.calculateBottomPadding() else 0.dp,
+                    )
                 AppNavHost(
                     navController = navController,
                     startDestination = startDestination,
@@ -256,7 +261,10 @@ private fun StashAppContent(rootViewModel: RootViewModel) {
  *  switching from `browse/studios` to `browse/performers` was silently
  *  swallowed. `popUpTo + saveState` already prevents back-stack pile-up,
  *  so dropping singleTop has no downside. */
-private fun NavHostController.tabNavigate(route: String, startDestination: String) {
+private fun NavHostController.tabNavigate(
+    route: String,
+    startDestination: String,
+) {
     navigate(route) {
         // popUpTo prevents back-stack pile-up when switching between tabs.
         // saveState is intentionally OFF — the Browse routes share a single
@@ -277,9 +285,10 @@ private fun AppNavHost(
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(contentPadding),
     ) {
         composable(Routes.Connection) {
             ConnectionScreen(
@@ -306,9 +315,13 @@ private fun AppNavHost(
 
         composable(
             Routes.LibraryPattern,
-            arguments = listOf(
-                navArgument("preset") { type = NavType.StringType; defaultValue = "" },
-            ),
+            arguments =
+                listOf(
+                    navArgument("preset") {
+                        type = NavType.StringType
+                        defaultValue = ""
+                    },
+                ),
         ) {
             LibraryScreen(
                 onSceneClick = { sceneId, _, _ ->
@@ -357,12 +370,22 @@ private fun AppNavHost(
 
         composable(
             Routes.PlayerPattern,
-            arguments = listOf(
-                navArgument("sceneId") { type = NavType.StringType },
-                navArgument("queueIds") { type = NavType.StringType; defaultValue = "" },
-                navArgument("index") { type = NavType.IntType; defaultValue = 0 },
-                navArgument("startMs") { type = NavType.LongType; defaultValue = -1L },
-            ),
+            arguments =
+                listOf(
+                    navArgument("sceneId") { type = NavType.StringType },
+                    navArgument("queueIds") {
+                        type = NavType.StringType
+                        defaultValue = ""
+                    },
+                    navArgument("index") {
+                        type = NavType.IntType
+                        defaultValue = 0
+                    },
+                    navArgument("startMs") {
+                        type = NavType.LongType
+                        defaultValue = -1L
+                    },
+                ),
         ) {
             PlayerScreen(onExit = { navController.popBackStack() })
         }

@@ -16,9 +16,23 @@ data class ServerInfo(
 )
 
 sealed class ConnectionResult {
-    data class Success(val info: ServerInfo) : ConnectionResult()
-    data class InvalidUrl(val reason: String) : ConnectionResult()
-    data class AuthFailed(val message: String) : ConnectionResult()
-    data class NetworkError(val message: String) : ConnectionResult()
-    data class ServerError(val message: String) : ConnectionResult()
+    data class Success(
+        val info: ServerInfo,
+    ) : ConnectionResult()
+
+    data class InvalidUrl(
+        val reason: String,
+    ) : ConnectionResult()
+
+    data class AuthFailed(
+        val message: String,
+    ) : ConnectionResult()
+
+    data class NetworkError(
+        val message: String,
+    ) : ConnectionResult()
+
+    data class ServerError(
+        val message: String,
+    ) : ConnectionResult()
 }

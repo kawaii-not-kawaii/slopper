@@ -33,74 +33,76 @@ data class LibraryUiState(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class LibraryViewModel @Inject constructor(
-    savedState: SavedStateHandle,
-    private val sceneRepository: SceneRepository,
-    private val uiPreferences: UiPreferences,
-) : ViewModel() {
+class LibraryViewModel
+    @Inject
+    constructor(
+        savedState: SavedStateHandle,
+        private val sceneRepository: SceneRepository,
+        private val uiPreferences: UiPreferences,
+    ) : ViewModel() {
+        /** Filter derived from an optional nav preset like "tag:42". */
+        private val presetFilter: SceneFilter = parsePreset(savedState["preset"])
 
-    /** Filter derived from an optional nav preset like "tag:42". */
-    private val presetFilter: SceneFilter = parsePreset(savedState["preset"])
+        private val queryFlow = MutableStateFlow(SceneQuery(filter = presetFilter))
+        private val uiFlow = MutableStateFlow(LibraryUiState(query = queryFlow.value))
+        val state: StateFlow<LibraryUiState> = uiFlow.asStateFlow()
 
-    private val queryFlow = MutableStateFlow(SceneQuery(filter = presetFilter))
-    private val uiFlow = MutableStateFlow(LibraryUiState(query = queryFlow.value))
-    val state: StateFlow<LibraryUiState> = uiFlow.asStateFlow()
+        val scenes: Flow<PagingData<SceneSummary>> =
+            queryFlow
+                .flatMapLatest { sceneRepository.pagedScenes(it) }
+                .cachedIn(viewModelScope)
 
-    val scenes: Flow<PagingData<SceneSummary>> = queryFlow
-        .flatMapLatest { sceneRepository.pagedScenes(it) }
-        .cachedIn(viewModelScope)
-
-    init {
-        // If we weren't launched with a preset, apply the user's default filter
-        // (if any). Deep-links win — a preset is a more specific intent.
-        if (!presetFilter.isActive) {
-            viewModelScope.launch {
-                val saved = uiPreferences.defaultSceneFilter.first()
-                if (saved != null) updateQuery { it.copy(filter = saved) }
-                uiFlow.value = uiFlow.value.copy(hasSavedDefault = saved != null)
+        init {
+            // If we weren't launched with a preset, apply the user's default filter
+            // (if any). Deep-links win — a preset is a more specific intent.
+            if (!presetFilter.isActive) {
+                viewModelScope.launch {
+                    val saved = uiPreferences.defaultSceneFilter.first()
+                    if (saved != null) updateQuery { it.copy(filter = saved) }
+                    uiFlow.value = uiFlow.value.copy(hasSavedDefault = saved != null)
+                }
             }
         }
-    }
 
-    fun setSearchExpanded(expanded: Boolean) {
-        uiFlow.value = uiFlow.value.copy(searchExpanded = expanded)
-        if (!expanded && uiFlow.value.searchText.isNotEmpty()) setSearchText("")
-    }
+        fun setSearchExpanded(expanded: Boolean) {
+            uiFlow.value = uiFlow.value.copy(searchExpanded = expanded)
+            if (!expanded && uiFlow.value.searchText.isNotEmpty()) setSearchText("")
+        }
 
-    fun setSearchText(text: String) {
-        uiFlow.value = uiFlow.value.copy(searchText = text)
-        updateQuery { it.copy(searchText = text.ifBlank { null }) }
-    }
+        fun setSearchText(text: String) {
+            uiFlow.value = uiFlow.value.copy(searchText = text)
+            updateQuery { it.copy(searchText = text.ifBlank { null }) }
+        }
 
-    fun setSort(sort: SceneSort) = updateQuery { it.copy(sort = sort) }
+        fun setSort(sort: SceneSort) = updateQuery { it.copy(sort = sort) }
 
-    fun setFilter(filter: SceneFilter) = updateQuery { it.copy(filter = filter) }
+        fun setFilter(filter: SceneFilter) = updateQuery { it.copy(filter = filter) }
 
-    fun clearFilter() = updateQuery { it.copy(filter = SceneFilter()) }
+        fun clearFilter() = updateQuery { it.copy(filter = SceneFilter()) }
 
-    /** Persist the current filter as the user's default. */
-    fun saveAsDefault() {
-        val current = queryFlow.value.filter
-        viewModelScope.launch {
-            uiPreferences.setDefaultSceneFilter(current)
-            uiFlow.value = uiFlow.value.copy(hasSavedDefault = current.isActive)
+        /** Persist the current filter as the user's default. */
+        fun saveAsDefault() {
+            val current = queryFlow.value.filter
+            viewModelScope.launch {
+                uiPreferences.setDefaultSceneFilter(current)
+                uiFlow.value = uiFlow.value.copy(hasSavedDefault = current.isActive)
+            }
+        }
+
+        /** Drop the saved default — next open will start empty. */
+        fun clearDefault() {
+            viewModelScope.launch {
+                uiPreferences.setDefaultSceneFilter(null)
+                uiFlow.value = uiFlow.value.copy(hasSavedDefault = false)
+            }
+        }
+
+        private inline fun updateQuery(transform: (SceneQuery) -> SceneQuery) {
+            val next = transform(queryFlow.value)
+            queryFlow.value = next
+            uiFlow.value = uiFlow.value.copy(query = next)
         }
     }
-
-    /** Drop the saved default — next open will start empty. */
-    fun clearDefault() {
-        viewModelScope.launch {
-            uiPreferences.setDefaultSceneFilter(null)
-            uiFlow.value = uiFlow.value.copy(hasSavedDefault = false)
-        }
-    }
-
-    private inline fun updateQuery(transform: (SceneQuery) -> SceneQuery) {
-        val next = transform(queryFlow.value)
-        queryFlow.value = next
-        uiFlow.value = uiFlow.value.copy(query = next)
-    }
-}
 
 /**
  * Parse a nav preset token like "tag:42" or "performer:17" or "studio:3" into
@@ -109,10 +111,11 @@ class LibraryViewModel @Inject constructor(
  */
 private fun parsePreset(raw: String?): SceneFilter {
     if (raw.isNullOrBlank()) return SceneFilter()
-    val (kind, value) = raw.split(":", limit = 2).let {
-        if (it.size != 2) return SceneFilter()
-        it[0] to it[1]
-    }
+    val (kind, value) =
+        raw.split(":", limit = 2).let {
+            if (it.size != 2) return SceneFilter()
+            it[0] to it[1]
+        }
     return when (kind) {
         "tag" -> SceneFilter(tagIds = listOf(value))
         "performer" -> SceneFilter(performerIds = listOf(value))

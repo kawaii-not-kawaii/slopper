@@ -15,24 +15,32 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DefaultBrowseRepository @Inject constructor(
-    private val apollo: ApolloClient,
-    private val endpointProvider: StashEndpointProvider,
-) : BrowseRepository {
+class DefaultBrowseRepository
+    @Inject
+    constructor(
+        private val apollo: ApolloClient,
+        private val endpointProvider: StashEndpointProvider,
+    ) : BrowseRepository {
+        private val config =
+            PagingConfig(
+                pageSize = 40,
+                prefetchDistance = 20,
+                initialLoadSize = 40,
+                enablePlaceholders = false,
+            )
 
-    private val config = PagingConfig(
-        pageSize = 40,
-        prefetchDistance = 20,
-        initialLoadSize = 40,
-        enablePlaceholders = false,
-    )
+        override fun performers(
+            search: String?,
+            sort: EntitySort,
+        ): Flow<PagingData<PerformerBrowseItem>> = Pager(config) { PerformersPagingSource(apollo, endpointProvider, search, sort) }.flow
 
-    override fun performers(search: String?, sort: EntitySort): Flow<PagingData<PerformerBrowseItem>> =
-        Pager(config) { PerformersPagingSource(apollo, endpointProvider, search, sort) }.flow
+        override fun studios(
+            search: String?,
+            sort: EntitySort,
+        ): Flow<PagingData<StudioBrowseItem>> = Pager(config) { StudiosPagingSource(apollo, endpointProvider, search, sort) }.flow
 
-    override fun studios(search: String?, sort: EntitySort): Flow<PagingData<StudioBrowseItem>> =
-        Pager(config) { StudiosPagingSource(apollo, endpointProvider, search, sort) }.flow
-
-    override fun tags(search: String?, sort: EntitySort): Flow<PagingData<TagBrowseItem>> =
-        Pager(config) { TagsPagingSource(apollo, endpointProvider, search, sort) }.flow
-}
+        override fun tags(
+            search: String?,
+            sort: EntitySort,
+        ): Flow<PagingData<TagBrowseItem>> = Pager(config) { TagsPagingSource(apollo, endpointProvider, search, sort) }.flow
+    }

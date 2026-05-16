@@ -11,8 +11,9 @@ complexity:
     functionThreshold: 12   # Compose components with lots of slots
     constructorThreshold: 12
   TooManyFunctions:
-    thresholdInFile: 30
-    thresholdInClass: 20
+    # detekt 1.23.8 renamed thresholdInFile→thresholdInFiles and thresholdInClass→thresholdInClasses
+    thresholdInFiles: 30
+    thresholdInClasses: 20
   CyclomaticComplexMethod:
     threshold: 20
   LargeClass:
@@ -32,7 +33,12 @@ style:
     max: 5
   ForbiddenComment:
     active: true
-    values: ['FIXME:', 'STOPSHIP:']
+    # detekt 1.23.8 deprecated `values:` in favour of structured `comments:` list.
+    comments:
+      - reason: 'Forbidden FIXME marker in production code'
+        value: 'FIXME:'
+      - reason: 'STOPSHIP marker must be resolved before shipping'
+        value: 'STOPSHIP:'
   MaxLineLength:
     maxLineLength: 140
     excludePackageStatements: true

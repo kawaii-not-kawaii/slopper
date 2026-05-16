@@ -14,10 +14,10 @@ import androidx.compose.ui.graphics.Color
  */
 object StashColors {
     // Surfaces — graduated from deepest (scaffold) to highest (dialogs/modals)
-    val SurfaceBase = Color(0xFF0B0E13)      // app background
-    val SurfaceLow = Color(0xFF121722)       // cards, rails
-    val SurfaceMed = Color(0xFF1A2030)       // elevated cards, sheets
-    val SurfaceHigh = Color(0xFF232B3D)      // dialogs, menus
+    val SurfaceBase = Color(0xFF0B0E13) // app background
+    val SurfaceLow = Color(0xFF121722) // cards, rails
+    val SurfaceMed = Color(0xFF1A2030) // elevated cards, sheets
+    val SurfaceHigh = Color(0xFF232B3D) // dialogs, menus
     val SurfaceHighest = Color(0xFF2E3750)
 
     // Text

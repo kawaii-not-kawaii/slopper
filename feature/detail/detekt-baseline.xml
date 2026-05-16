@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ForEachOnRange:DetailScreen.kt$1..5</ID>
+    <ID>LongMethod:DetailScreen.kt$@OptIn(ExperimentalLayoutApi::class) @Composable private fun SceneBody( scene: SceneDetail, contentPadding: PaddingValues, onPlay: (sceneId: String, startSeconds: Double?) -&gt; Unit, onRatingChange: (Int?) -&gt; Unit, onOrganizedToggle: (Boolean) -&gt; Unit, onIncrementO: () -&gt; Unit, onDecrementO: () -&gt; Unit, )</ID>
+  </CurrentIssues>
+</SmellBaseline>
