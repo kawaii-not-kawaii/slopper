@@ -36,13 +36,8 @@ internal fun Project.configureKotlinAndroid(
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
             freeCompilerArgs.addAll(
-                "-Xcontext-receivers",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                // Tolerate third-party AARs compiled with a newer Kotlin
-                // (nextlib ships built against Kotlin 2.3). kotlin-stdlib is
-                // ABI-stable across minor versions so this is safe at runtime.
-                "-Xskip-metadata-version-check",
             )
         }
     }
