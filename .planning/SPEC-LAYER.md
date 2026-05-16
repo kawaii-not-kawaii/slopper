@@ -16,7 +16,7 @@ tracker:
   milestone_number: 12
   milestone_title: v1.0
   health_status: ok
-  last_health_check: 2026-05-16T13:48:00Z
+  last_health_check: 2026-05-16T14:05:00Z
   last_error: null
   issues:
     1: 1
@@ -137,11 +137,17 @@ command_manifest:
     cmd: "/gsd-secure-phase 1"
     output_file_glob: ".planning/phases/01-deps-foundation-bump/*SECURITY*"
     gate_file: "gates/security.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-17T08:20:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-420
+    notes:
+      - "retroactive-STRIDE — no plan-time threat model existed; auditor built register from implementation"
+      - "13 threats: 9 closed, 0 open, 6 accepted (gate SECURED under block_on: high)"
+      - "Mitigations landed: T-T-01 wrapper SHA pin (504969f), T-I-04 .gitignore (eb75866), T-S-01+T-T-03 schema provenance (e1518f3)"
+      - "T-T-04 local CVE scan failed at 2h47m without NVD_API_KEY; accepted with structural mitigation SEC-CI-01 (Forgejo Actions weekly)"
+      - "T-T-02 dep verification metadata deferred to AGP-9 phase (SEC-VERIFY-01)"
   - step: 9
     cmd: "/gsd-validate-phase 1"
     output_file_glob: ".planning/phases/01-deps-foundation-bump/*VALIDATION*"
