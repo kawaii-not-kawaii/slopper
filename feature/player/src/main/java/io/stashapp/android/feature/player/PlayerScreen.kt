@@ -1,21 +1,4 @@
-        // Media surface — drives `Surface.setFrameRate()` when the video
-        // reports its fps, so the display compositor can schedule refresh
-        // seamlessly on VRR panels (S23 et al.).
-        AndroidView(
-            modifier = Modifier.fillMaxSize(),
-            factory = { ctx ->
-                PlayerView(ctx).apply {
-                    useController = false
-                    player = viewModel.player
-                    setKeepContentOnPlayerReset(true)
-                    this.resizeMode = resizeMode
-                }.also { playerView = it }
-            },
-            update = {
-                it.player = viewModel.player
-                applyVideoFrameRate(it, state.videoFrameRate)
-            },
-        )package io.stashapp.android.feature.player
+package io.stashapp.android.feature.player
 
 import android.app.Activity
 import android.app.PictureInPictureParams
