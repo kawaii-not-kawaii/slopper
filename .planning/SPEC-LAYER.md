@@ -165,11 +165,17 @@ command_manifest:
     cmd: "/gsd-docs-update 1"
     output_marker: "docs_updated_at"
     gate_file: "gates/docs.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-17T09:05:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-422
+    docs_updated_at: 2026-05-17T09:05:00+09:00
+    notes:
+      - "Full canonical pass: 6 docs via 6 parallel doc-writer subagents, 1683 lines total"
+      - "Files: README (rewrite), ARCHITECTURE / GETTING-STARTED / DEVELOPMENT / TESTING / CONFIGURATION (new)"
+      - "3 real bugs surfaced (settings.gradle.kts duplicate include; DEVICE_TESTING.md stale cd-android path; pre-rewrite README JDK-21 claim)"
+      - "4 codebase drifts caught (ConnectionStore is EncryptedSharedPreferences; detekt baselines per-module; no ktlint baselines; :feature:settings→:feature:player anti-pattern)"
   - step: 11
     cmd: "/gsd-ship 1"
     output_marker: "pr_merged_at"
