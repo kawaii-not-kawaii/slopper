@@ -72,7 +72,11 @@ Recorded via plan 01.2 Task 4. Source of truth for the why: `.planning/phases/01
 
 ### Bump deferral (auto-logged 2026-05-16)
 - **DEPS-07**: Lifecycle 2.10.0 and Activity Compose 1.13.0 require AGP 8.9.1+/compileSdk 36; Phase 1 stays on AGP 8.7.3/compileSdk 35 per Option A unblock (Hilt AGP-9 incompat). Full sweep deferred.
+  - WR-01 (carry from Phase 1 01-REVIEW): :core:ui → :core:data dep added by cf5f1f0 introduces layering inversion. When DEPS-07 lands, relocate UiPreferences.imageCacheSizeMb accessor (or define an interface in :core:domain) and remove the dep edge from core/ui/build.gradle.kts.
 - **DEPS-16**: Baseline profile regen requires a connected device or running emulator; this dev host has none and provisioning one is out of dev-box scope (REVIEWS C4 hard-fails the task without one). User-accepted deferral 2026-05-16 (see CONTEXT.md `## Deferred Ideas`). Existing committed `baseline-prof.txt` is retained; resume when a device/emulator is available.
+
+### Performance (POLISH)
+- **POLISH-CACHE-01** (carry from Phase 1 01-REVIEW WR-02): StashImageLoader.kt:33 uses runBlocking { ... } in Coil's newImageLoader() factory to read imageCacheSizeMb from DataStore. Pre-existing on master; surfaces under load when first image paint races DataStore first-emit. Replace with a Coil ImageLoader configured asynchronously via a Hilt-provided Provider<ImageLoader>.
 
 Tracked but explicitly out of this modernization milestone.
 

@@ -31,6 +31,9 @@ findings:
   total: 7
 status: issues_found
 verdict: PASS-WITH-FINDINGS
+disposition:
+  WR-01: deferred-with-backlog
+  WR-02: deferred-with-backlog
 ---
 
 # Phase 1 (DEPS — Foundation Bump): Adversarial Code Review
@@ -129,3 +132,14 @@ _Reviewed: 2026-05-16T22:35+09:00_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: standard_
 _HEAD: `b8875313044e450050a4ac9f6960c4fe9f2c2f05`_
+
+## Disposition
+
+Recorded 2026-05-16T22:30+09:00 via `/gsd-code-review --fix --auto` iteration 1.
+
+- **WR-01** (`:core:ui` → `:core:data` layering inversion) → **deferred-with-backlog**. Tracked as a sub-bullet on the DEPS-07 row in `.planning/REQUIREMENTS.md` under `## Deferred to Future Milestones / ### Bump deferral (auto-logged 2026-05-16)`. Resolved when DEPS-07 lands (AndroidX Lifecycle 2.10.0 + Activity Compose 1.13.0 require AGP 8.9.1+ / compileSdk 36, blocked by DEPS-04 / Hilt AGP-9). Relocation of `UiPreferences.imageCacheSizeMb` into `:core:domain` (or behind a thin interface) is an architectural change out of scope for an auto-fix code-fixer pass.
+- **WR-02** (`runBlocking` in `StashImageLoader.newImageLoader()`) → **deferred-with-backlog**. Tracked as `POLISH-CACHE-01` under `.planning/REQUIREMENTS.md` `## Deferred to Future Milestones / ### Performance (POLISH)`. Pre-existing on `master` (Phase 1 only reformatted the file); fixing inside Phase 1 expands scope from "deps bump" to "perf cleanup" and dirties bisect history.
+
+Info findings (IN-01..05) are out of scope (default `--fix` scope is Critical + Warning; `--all` not passed).
+
+Auto-loop terminates at iteration 1: both Warnings are correctly classified as out-of-Phase-1 scope, so re-running the reviewer on the same HEAD would resurface the same findings without value.
