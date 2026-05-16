@@ -16,7 +16,7 @@ tracker:
   milestone_number: 12
   milestone_title: v1.0
   health_status: ok
-  last_health_check: 2026-05-16T12:55:00Z
+  last_health_check: 2026-05-16T13:48:00Z
   last_error: null
   issues:
     1: 1
@@ -123,13 +123,16 @@ command_manifest:
       - "Validates precondition cleanups (orphan code blocks in app/build.gradle.kts, PlayerScreen, SettingsScreen, MainActivity) didn't lose UI surface"
   - step: 7
     cmd: "/gsd-extract-learnings 1"
-    output_file: ".planning/phases/01-deps-foundation-bump/LEARNINGS.md"
+    output_file: ".planning/phases/01-deps-foundation-bump/01-LEARNINGS.md"
     gate_file: "gates/learnings.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-16T22:55:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-419
+    notes:
+      - "30 learnings extracted: 8 decisions / 9 lessons / 6 patterns / 7 surprises"
+      - "Headline: AGP 9 is not a minor bump (5 distinct breakages); Hilt 2.57.1 doesn't exist; bf01b34 restore had 7 invisible corruptions; lockstep tightened from plan's DEPS-03+04 to executed DEPS-05+08"
   - step: 8
     cmd: "/gsd-secure-phase 1"
     output_file_glob: ".planning/phases/01-deps-foundation-bump/*SECURITY*"
