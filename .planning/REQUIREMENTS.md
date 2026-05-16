@@ -62,6 +62,9 @@ Requirements for the modernization milestone. Each maps to one of the 4 roadmap 
 
 ## Deferred to Future Milestones
 
+### Bump deferral (auto-logged 2026-05-16)
+- **DEPS-07**: Lifecycle 2.10.0 and Activity Compose 1.13.0 require AGP 8.9.1+/compileSdk 36; Phase 1 stays on AGP 8.7.3/compileSdk 35 per Option A unblock (Hilt AGP-9 incompat). Full sweep deferred.
+
 Tracked but explicitly out of this modernization milestone.
 
 ### Background Media (BG-MEDIA)
