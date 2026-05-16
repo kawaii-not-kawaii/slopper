@@ -120,22 +120,3 @@ private fun parsePreset(raw: String?): SceneFilter {
         else -> SceneFilter()
     }
 }
-
-/**
- * Parse a nav preset token like "tag:42" or "performer:17" or "studio:3" into
- * a [SceneFilter] with that single criterion pre-selected. Unknown formats
- * yield an empty filter rather than throwing — keeps deep-linking forgiving.
- */
-private fun parsePreset(raw: String?): SceneFilter {
-    if (raw.isNullOrBlank()) return SceneFilter()
-    val (kind, value) = raw.split(":", limit = 2).let {
-        if (it.size != 2) return SceneFilter()
-        it[0] to it[1]
-    }
-    return when (kind) {
-        "tag" -> SceneFilter(tagIds = listOf(value))
-        "performer" -> SceneFilter(performerIds = listOf(value))
-        "studio" -> SceneFilter(studioIds = listOf(value))
-        else -> SceneFilter()
-    }
-}
