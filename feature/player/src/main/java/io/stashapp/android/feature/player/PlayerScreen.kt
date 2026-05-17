@@ -32,15 +32,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -326,36 +324,47 @@ fun PlayerScreen(
             }
         }
 
-        // Lock-state overlay: show ONLY the unlock button, nothing else
-        if (locked && controlsVisible) {
-            Box(Modifier.fillMaxSize().padding(WindowInsets.systemBars.asPaddingValues()).padding(16.dp)) {
-                IconButton(
-                    onClick = {
-                        locked = false
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    modifier = Modifier.align(Alignment.CenterStart),
-                ) {
-                    Icon(
-                        Icons.Filled.Lock,
-                        contentDescription = "Unlock",
-                        tint = StashColors.AccentPrimary,
-                        modifier = Modifier.size(28.dp),
-                    )
+        // COMPLY-01 (per D-04, RESEARCH §F2): control-overlay layer inset
+        // away from system bars. SurfaceView/PlayerView + gesture-detection
+        // layers stay full-bleed (they are SIBLINGS of this Box). Only the
+        // chrome (locked unlock button + PlayerControls top/bottom bars) is
+        // inset. See 02.1-DEVIATIONS.md DEV-02 for wrap-scope rationale.
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .safeDrawingPadding(),
+        ) {
+            // Lock-state overlay: show ONLY the unlock button, nothing else
+            if (locked && controlsVisible) {
+                Box(Modifier.fillMaxSize().padding(16.dp)) {
+                    IconButton(
+                        onClick = {
+                            locked = false
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        modifier = Modifier.align(Alignment.CenterStart),
+                    ) {
+                        Icon(
+                            Icons.Filled.Lock,
+                            contentDescription = "Unlock",
+                            tint = StashColors.AccentPrimary,
+                            modifier = Modifier.size(28.dp),
+                        )
+                    }
                 }
             }
-        }
 
-        // Full control overlay (only when not locked)
-        if (!locked) {
-            AnimatedVisibility(
-                visible = controlsVisible,
-                enter =
-                    fadeIn(tween(220, easing = LinearOutSlowInEasing)) +
-                        slideInVertically(tween(220)) { it / 12 },
-                exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
-            ) {
-                PlayerControls(
+            // Full control overlay (only when not locked)
+            if (!locked) {
+                AnimatedVisibility(
+                    visible = controlsVisible,
+                    enter =
+                        fadeIn(tween(220, easing = LinearOutSlowInEasing)) +
+                            slideInVertically(tween(220)) { it / 12 },
+                    exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
+                ) {
+                    PlayerControls(
                     title =
                         state.current
                             ?.summary
@@ -452,6 +461,7 @@ fun PlayerScreen(
                         viewModel.flashBanner("Screenshot — coming soon")
                     },
                 )
+                }
             }
         }
     }
@@ -493,7 +503,10 @@ private fun PlayerControls(
     onToggleRemaining: () -> Unit,
     onScreenshot: () -> Unit,
 ) {
-    val sysBarsPadding = WindowInsets.systemBars.asPaddingValues()
+    // Note: outer wrap in PlayerScreen Box(safeDrawingPadding()) already
+    // handles system-bar inset for the entire control overlay layer per
+    // COMPLY-01 (RESEARCH §F2). Internal Column padding(sysBarsPadding) lines
+    // were removed to avoid double-padding (see 02.1-DEVIATIONS.md DEV-02).
 
     Box(
         Modifier
@@ -531,7 +544,6 @@ private fun PlayerControls(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(sysBarsPadding)
                 .padding(horizontal = 8.dp, vertical = 2.dp)
                 .align(Alignment.TopStart),
         ) {
@@ -633,7 +645,6 @@ private fun PlayerControls(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(sysBarsPadding)
                 .padding(horizontal = 8.dp)
                 .align(Alignment.BottomStart),
             verticalArrangement = Arrangement.spacedBy(0.dp),

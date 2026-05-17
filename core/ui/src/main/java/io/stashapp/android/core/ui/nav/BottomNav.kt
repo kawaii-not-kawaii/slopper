@@ -2,6 +2,8 @@ package io.stashapp.android.core.ui.nav
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Label
@@ -178,6 +180,7 @@ fun MoreSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = StashColors.SurfaceLow,
+        contentWindowInsets = { WindowInsets.navigationBars },
     ) {
         Column(Modifier.padding(bottom = 16.dp)) {
             Text(
