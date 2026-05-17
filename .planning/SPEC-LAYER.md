@@ -16,7 +16,7 @@ tracker:
   milestone_number: 12
   milestone_title: v1.0
   health_status: ok
-  last_health_check: 2026-05-17T09:40:00+09:00
+  last_health_check: 2026-05-17T10:10:00+09:00
   last_error: null
   token_source: ~/.claude/settings.json env block (FORGEJO_TOKEN)
   issues:
@@ -327,11 +327,30 @@ command_manifest:
     cmd: "/gsd-execute-phase 2"
     output_file: ".planning/phases/02-comply-platform-compliance/VERIFICATION.md"
     gate_file: "gates/execute.md"
-    status: pending
+    status: paused_at_checkpoint
     gate_passed: false
     tracker_synced: false
     completed_at: null
     tracker_comment_url: null
+    paused_at: 2026-05-17T12:15:00+09:00
+    paused_at_commit: 06b5571
+    progress:
+      wave_1_plan_02_1: complete  # 3 atomic COMPLY commits + summary at 73ef77e
+      wave_2_plan_02_2: partial   # Tasks 1-3 done; Task 4 = human-verify checkpoint; Task 5 awaits resume
+      commits_landed: 8  # 3 (02.1) + 4 (02.2 actions) + 1 (02.2 partial summary); 02.1 summary inside the 3 count
+      build: green       # ./gradlew :app:assembleDebug --no-daemon @ 06b5571
+      deviations:
+        - "02.1: DEV-01 appReady AtomicBoolean threaded into StashAppContent (Pattern A Case B per Step 0 dedup); DEV-02 safeDrawingPadding scoped to overlays only"
+        - "02.2: R-class location — strings co-located in feature/settings/res (module direction app→feature); resources.properties created (AGP 8.7.3 hard error); _generated_res_locale_config.xml naming (documentation only)"
+      remaining:
+        - "Task 4 (human-verify): user captures 12 PNG screenshots on Galaxy S23+ Android 16 per .planning/phases/02-comply-platform-compliance/02-UAT-INSTRUCTIONS.md"
+        - "Task 5: spawn follow-up gsd-executor — write SCREENSHOTS.md + 02-UAT.md (DEVICE_TESTING rows + REVIEWS-C4 ACCEPT) + atomic commit"
+        - "Verification gate: gsd-verifier produces VERIFICATION.md (goal-backward against COMPLY-01..07)"
+        - "SPEC-LAYER step 5 mark complete + Forgejo issuecomment to issue #2"
+      resume_command: "/gsd-execute-phase 2 (re-invoke after screenshots land)"
+    notes:
+      - "User chose 'Stop here for now' at the human checkpoint; no DEFER path taken"
+      - "APK ready at app/build/outputs/apk/debug/app-arm64-v8a-debug.apk"
   - step: 6
     cmd: "/gsd-verify-work 2"
     output_file: ".planning/phases/02-comply-platform-compliance/02-UAT.md"
