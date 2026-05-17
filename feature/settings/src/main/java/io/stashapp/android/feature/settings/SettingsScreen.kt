@@ -1,5 +1,9 @@
 package io.stashapp.android.feature.settings
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,9 +20,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -34,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -124,6 +131,12 @@ fun SettingsScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
+            // ── APP ─────────────────────────────────────────────────────
+            SectionHeader("App")
+            LanguageRow()
+
+            SectionDivider()
+
             // ── PLAYER ──────────────────────────────────────────────────
             SectionHeader("Player")
 
@@ -283,6 +296,40 @@ fun SettingsScreen(
 }
 
 // ---- Reusable settings primitives -------------------------------------------
+
+/**
+ * COMPLY-06 (per D-06): system per-app language picker entry point.
+ * Renders nothing below API 33 (the ACTION_APP_LOCALE_SETTINGS Intent only
+ * resolves on Tiramisu+). With Slopper's English-only resources today, the
+ * dialog opens but shows "App default" only — expected behavior per Pitfall E4;
+ * translation work is out of scope for this milestone.
+ *
+ * Strings live in app/src/main/res/values/strings.xml per CONTEXT.md Claude's
+ * Discretion (system-Intent action belongs to app scope, not feature scope) —
+ * R.string references resolve via the app-scope R import above.
+ */
+@Composable
+private fun LanguageRow() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+
+    val context = LocalContext.current
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.settings_language)) },
+        supportingContent = { Text(stringResource(R.string.settings_language_description)) },
+        leadingContent = {
+            Icon(
+                imageVector = Icons.Outlined.Language,
+                contentDescription = null,
+            )
+        },
+        modifier = Modifier.clickable {
+            val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+                data = Uri.fromParts("package", context.packageName, null)
+            }
+            context.startActivity(intent)
+        },
+    )
+}
 
 @Composable
 private fun SectionHeader(title: String) {
