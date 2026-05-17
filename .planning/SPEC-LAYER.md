@@ -1,8 +1,8 @@
 # Spec-Layer State
 
 project: slopper
-current_phase: 1
-state: phase_1_shipped
+current_phase: 2
+state: phase_2_active
 brownfield: true
 last_updated: 2026-05-17
 
@@ -16,8 +16,9 @@ tracker:
   milestone_number: 12
   milestone_title: v1.0
   health_status: ok
-  last_health_check: 2026-05-17T00:08:00Z
+  last_health_check: 2026-05-17T08:55:00+09:00
   last_error: null
+  token_source: ~/.claude/settings.json env block (FORGEJO_TOKEN)
   issues:
     1: 1
     2: 2
