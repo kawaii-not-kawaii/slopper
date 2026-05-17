@@ -19,7 +19,7 @@ Land the platform-mandated UI and manifest contracts (edge-to-edge, predictive b
 - `AndroidManifest.xml:15` — orphan `POST_NOTIFICATIONS` permission (no notification code exists anywhere in repo)
 - `AndroidManifest.xml` — lacks `android:enableOnBackInvokedCallback="true"`
 - `PlayerScreen.kt:8,187` — single `BackHandler { onExit() }` call site, unconditional; only `BackHandler` in entire repo
-- `FilterSheet.kt` + `NavCustomizeSheet.kt` — only real bottom sheets; both use Material3 `ModalBottomSheet` (handles back natively); `MoreSheet` does NOT exist (roadmap text was speculative)
+- `FilterSheet.kt`, `NavCustomizeSheet.kt`, and `MoreSheet` (a composable function inside `core/ui/.../nav/BottomNav.kt:167`) — three `ModalBottomSheet` call sites total (`BottomNav.kt:177`, `FilterSheet.kt:71`, `NavCustomizeSheet.kt:49`). All three handle back navigation natively via Material3 once the manifest flag is set. (Originally this SPEC said "MoreSheet does NOT exist"; that was incorrect — caught by researcher 2026-05-17 because MoreSheet is a function in BottomNav.kt, not its own file.)
 - `app/build.gradle.kts` — no `generateLocaleConfig = true`
 - `app/src/main/res/xml/` — no `locale_config.xml`
 - No `androidx.core:core-splashscreen` dependency, no `installSplashScreen()` call
@@ -41,7 +41,7 @@ Land the platform-mandated UI and manifest contracts (edge-to-edge, predictive b
      - Manual reviewer sign-off recorded in `02-UAT.md`: no clipped chrome, no unreadable status-bar text.
 
 2. **COMPLY-02 — Predictive back**: Manifest flag enabled; `PlayerScreen` migrates from `BackHandler` to `PredictiveBackHandler`.
-   - **Current:** Manifest has no `android:enableOnBackInvokedCallback`. `PlayerScreen.kt:187` uses `BackHandler { onExit() }` (snap-exit, no animation). Material3 `ModalBottomSheet` instances in `FilterSheet` / `NavCustomizeSheet` already use the system back path natively once the manifest flag is set — no per-sheet code change needed.
+   - **Current:** Manifest has no `android:enableOnBackInvokedCallback`. `PlayerScreen.kt:187` uses `BackHandler { onExit() }` (snap-exit, no animation). Material3 `ModalBottomSheet` instances in `FilterSheet`, `NavCustomizeSheet`, and `BottomNav.MoreSheet` already use the system back path natively once the manifest flag is set — no per-sheet code change needed for predictive-back behavior. (Per-sheet `contentWindowInsets` changes still needed under COMPLY-01 for edge-to-edge.)
    - **Target:** (a) `android:enableOnBackInvokedCallback="true"` in `<application>` element of `AndroidManifest.xml`; (b) `PlayerScreen.kt:187` `BackHandler { onExit() }` → `PredictiveBackHandler { progress -> progress.collect { … }; onExit() }` so the back gesture renders an animated preview before `onExit()` fires.
    - **Acceptance:**
      - `grep -c 'android:enableOnBackInvokedCallback="true"' app/src/main/AndroidManifest.xml` → `1`

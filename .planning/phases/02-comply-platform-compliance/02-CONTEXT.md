@@ -88,11 +88,11 @@ Three pattern decisions for COMPLY-01:
 
 1. **`themes.xml`** — strip `statusBarColor` and `navigationBarColor` overrides. Keep `windowBackground = @android:color/black` (it only paints below the Compose surface; harmless and visually consistent with the player's letterbox).
 2. **`PlayerScreen`** — wrap the player surface in `Box(Modifier.fillMaxSize())`, place control overlays inside an inner `Box(Modifier.safeDrawingPadding())`. The SurfaceView itself must NOT receive `safeDrawing` insets or video letterboxes incorrectly.
-3. **`FilterSheet` + `NavCustomizeSheet`** — pass `contentWindowInsets = { WindowInsets.navigationBars }` to `ModalBottomSheet`. Available in Compose BOM 2026.05.00 (material3 ≥ 1.7).
+3. **`FilterSheet` + `NavCustomizeSheet` + `BottomNav.MoreSheet`** — pass `contentWindowInsets = { WindowInsets.navigationBars }` to **all three** `ModalBottomSheet` call sites (`FilterSheet.kt:71`, `NavCustomizeSheet.kt:49`, `BottomNav.kt:177`). Available in Compose BOM 2026.05.00 (material3 ≥ 1.7). **Correction (2026-05-17, research finding):** SPEC.md originally said only FilterSheet + NavCustomizeSheet exist; researcher found MoreSheet is a function inside BottomNav.kt at line 167 with a `ModalBottomSheet(...)` call at line 177. All three need the same treatment.
 
 These are the minimum-touch patterns from PITFALLS §7. No Scaffold restructuring; no migration to a custom `WindowInsetsControllerCompat` wrapper.
 
-**Locked for planner:** the inset modifier sites are exhaustively listed (themes.xml + PlayerScreen + FilterSheet + NavCustomizeSheet). Other screens (Home, Library, Settings, Connection) get a grep-audit: any top-level `Scaffold` declaration is verified to either use the default `contentWindowInsets = ScaffoldDefaults.contentWindowInsets` (which is `WindowInsets.systemBars`) or an explicit `WindowInsets`. If the audit finds a Scaffold passing `contentWindowInsets = WindowInsets(0)` without explicit per-child inset handling, the planner flags it as a follow-up (not a Phase 2 blocker — Material3 default Scaffold already does the right thing).
+**Locked for planner:** the inset modifier sites are exhaustively listed (themes.xml + PlayerScreen + FilterSheet + NavCustomizeSheet + BottomNav.MoreSheet). Acceptance grep: `grep -rn "ModalBottomSheet(" --include="*.kt"` returns 3 matches; all three must follow with explicit `contentWindowInsets = { WindowInsets.navigationBars }` (or equivalent). Other screens (Home, Library, Settings, Connection) get a grep-audit: any top-level `Scaffold` declaration is verified to either use the default `contentWindowInsets = ScaffoldDefaults.contentWindowInsets` (which is `WindowInsets.systemBars`) or an explicit `WindowInsets`. If the audit finds a Scaffold passing `contentWindowInsets = WindowInsets(0)` without explicit per-child inset handling, the planner flags it as a follow-up (not a Phase 2 blocker — Material3 default Scaffold already does the right thing).
 
 ### 5. Splash — `core-splashscreen` artifact gated on `RootViewModel.start != null`
 
@@ -225,7 +225,8 @@ These are not user-decided; the planner / executor exercises judgment per the gu
 - `gradle/libs.versions.toml` — `androidx-core-splashscreen` library entry (COMPLY-04 dep)
 - `feature/player/src/main/java/io/stashapp/android/feature/player/PlayerScreen.kt:187` — `BackHandler` → `PredictiveBackHandler` (COMPLY-02); `Box(Modifier.safeDrawingPadding())` control overlay wrap (COMPLY-01)
 - `feature/library/src/main/java/io/stashapp/android/feature/library/FilterSheet.kt` — `contentWindowInsets = { WindowInsets.navigationBars }` on `ModalBottomSheet` (COMPLY-01)
-- `core/ui/src/main/java/io/stashapp/android/core/ui/nav/NavCustomizeSheet.kt` — same `ModalBottomSheet` inset pattern (COMPLY-01)
+- `core/ui/src/main/java/io/stashapp/android/core/ui/nav/NavCustomizeSheet.kt:49` — same `ModalBottomSheet` inset pattern (COMPLY-01)
+- `core/ui/src/main/java/io/stashapp/android/core/ui/nav/BottomNav.kt:177` (the `MoreSheet` composable at line 167) — same `ModalBottomSheet` inset pattern (COMPLY-01); third call site discovered by researcher (originally missed in spec-phase scout)
 - `feature/settings/src/main/java/io/stashapp/android/feature/settings/SettingsScreen.kt` — add `LanguageRow` (COMPLY-06)
 
 ### Upstream docs (consult during planning, NOT pre-fetched)
