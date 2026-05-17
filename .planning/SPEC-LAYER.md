@@ -327,30 +327,50 @@ command_manifest:
     cmd: "/gsd-execute-phase 2"
     output_file: ".planning/phases/02-comply-platform-compliance/VERIFICATION.md"
     gate_file: "gates/execute.md"
-    status: paused_at_checkpoint
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
-    paused_at: 2026-05-17T12:15:00+09:00
-    paused_at_commit: 06b5571
-    progress:
-      wave_1_plan_02_1: complete  # 3 atomic COMPLY commits + summary at 73ef77e
-      wave_2_plan_02_2: partial   # Tasks 1-3 done; Task 4 = human-verify checkpoint; Task 5 awaits resume
-      commits_landed: 8  # 3 (02.1) + 4 (02.2 actions) + 1 (02.2 partial summary); 02.1 summary inside the 3 count
-      build: green       # ./gradlew :app:assembleDebug --no-daemon @ 06b5571
-      deviations:
-        - "02.1: DEV-01 appReady AtomicBoolean threaded into StashAppContent (Pattern A Case B per Step 0 dedup); DEV-02 safeDrawingPadding scoped to overlays only"
-        - "02.2: R-class location — strings co-located in feature/settings/res (module direction app→feature); resources.properties created (AGP 8.7.3 hard error); _generated_res_locale_config.xml naming (documentation only)"
-      remaining:
-        - "Task 4 (human-verify): user captures 12 PNG screenshots on Galaxy S23+ Android 16 per .planning/phases/02-comply-platform-compliance/02-UAT-INSTRUCTIONS.md"
-        - "Task 5: spawn follow-up gsd-executor — write SCREENSHOTS.md + 02-UAT.md (DEVICE_TESTING rows + REVIEWS-C4 ACCEPT) + atomic commit"
-        - "Verification gate: gsd-verifier produces VERIFICATION.md (goal-backward against COMPLY-01..07)"
-        - "SPEC-LAYER step 5 mark complete + Forgejo issuecomment to issue #2"
-      resume_command: "/gsd-execute-phase 2 (re-invoke after screenshots land)"
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-17T22:55:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-435
+    branch: phase-2/comply-platform-compliance
+    final_head: 4df8e62
+    last_code_commit: 06b5571
+    build: green  # ./gradlew :app:assembleDebug --no-daemon @ 06b5571
+    verdict: PASS_WITH_NOTES
+    score: 17/18  # SPEC acceptance bullets verified
+    plan_results:
+      02.1-PLAN.md:
+        commits: 3  # ba7ff55 (COMPLY-04) + 0b1f4f5 (COMPLY-02) + 2572aad (COMPLY-01)
+        summary_commit: 73ef77e
+        deviations: [DEV-01, DEV-02]
+      02.2-PLAN.md:
+        commits: 5  # 481c303 (COMPLY-05) + 1aff210 (COMPLY-03) + e215699 (COMPLY-06) + 9c65e91 (backlog seed) + 94b6109 (COMPLY-07 verbal-UAT)
+        partial_summary_commit: 06b5571
+        final_summary_commit: a9e93f2
+        deviations: [DEV-01, DEV-02, DEV-03, DEV-04, DEV-05]
+        human_checkpoint:
+          task: 4
+          type: human-verify
+          reached_at: 2026-05-17T12:15:00+09:00
+          paused_commit: 06b5571
+          pause_note_commit: a75cca0
+          resumed_at: 2026-05-17T22:30:00+09:00
+          uat_path: verbal-PASS  # PNG pack elected-skip; verbal "all pass" verdict from reviewer
+          uat_device: "Galaxy S23+ SM-S916U1 / Android 16 / SDK 36 / gesture-nav"
+          uat_apk_install: "adb install -r app-arm64-v8a-debug.apk on 192.168.1.124:34017 (wireless debugging)"
+    verification_commit: 4df8e62
+    accepted_risks_new:
+      - "COMPLY-07-NO-PNG — 12-PNG screenshot pack elected-skip at human checkpoint; recorded in 02-UAT.md; re-shoot punted to Phase 5 Spine"
+    accepted_risks_carryover:
+      - "COMPLY-07-3BTN — 3-button-nav UAT deferred (CONTEXT D-09 / REVIEWS-C4 ACCEPT)"
+      - "COMPLY-02-NAV-EVENT — NavigationBackHandler migration deferred until upstream API stabilizes"
     notes:
-      - "User chose 'Stop here for now' at the human checkpoint; no DEFER path taken"
-      - "APK ready at app/build/outputs/apk/debug/app-arm64-v8a-debug.apk"
+      - "All 7 COMPLY requirements landed observable code; 17/18 SPEC bullets met (the 1 unmet is the PNG pack)"
+      - "Wave sequencing fix from REVIEWS HIGH replan held: Plan 02.2 wave 1 → 2 with depends_on plan-02.1; no manifest conflicts"
+      - "Anti-coupling rule respected — grep -rn 'import.*Spine' = 0 in src/"
+      - "8-commit Decision-2 budget hit exactly (3 + 5 atomic COMPLY commits); 5 docs-scaffolding commits sit outside the budget"
+      - "Build green at last code-changing commit 06b5571; doc-only commits after that did not require re-verification"
+      - "Mid-phase recovery: Plan 02.1 surfaced 2 deviations (Pattern A Case B path; safeDrawingPadding scope); Plan 02.2 surfaced 3 (R-class location; resources.properties hard-error; PNG pack skip)"
   - step: 6
     cmd: "/gsd-verify-work 2"
     output_file: ".planning/phases/02-comply-platform-compliance/02-UAT.md"
