@@ -16,7 +16,7 @@ tracker:
   milestone_number: 12
   milestone_title: v1.0
   health_status: ok
-  last_health_check: 2026-05-17T08:55:00+09:00
+  last_health_check: 2026-05-17T09:40:00+09:00
   last_error: null
   token_source: ~/.claude/settings.json env block (FORGEJO_TOKEN)
   issues:
@@ -291,13 +291,38 @@ command_manifest:
       - "Plan 2.2 NOT autonomous (Task 4 = checkpoint:human-verify for S23+ screenshot capture); execute-phase pauses on `approved` signal"
   - step: 4
     cmd: "/gsd-review --phase 2 --all"
-    output_file: ".planning/phases/02-comply-platform-compliance/REVIEWS.md"
+    output_file: ".planning/phases/02-comply-platform-compliance/02-REVIEWS.md"
     gate_file: "gates/review.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-17T10:05:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-434
+    reviews_commit: 60df7b4
+    reviewers: [gemini, codex, opencode]
+    reviewers_skipped:
+      - claude (self — running inside Claude Code)
+    reviewers_unavailable: [qwen, cursor, coderabbit, lm_studio]
+    opencode_model: opencode-go/glm-5.1
+    convergent_findings:
+      - severity: HIGH
+        agreement: 3/3
+        finding: "wave-1 parallelism incorrect — both plans modified AndroidManifest.xml + app/build.gradle.kts; plan 02.2 UAT needed 02.1 UI changes"
+        resolution: "replan via /gsd-plan-phase 2 --reviews; plan 02.2 wave 1 → 2 + depends_on plan-02.1; commits 52c5531 + ece7c80"
+    should_fix_addressed:
+      - "splash collectAsState dedup pre-check (02.1 T1 step 0)"
+      - "splash safety-timeout commit-body SPEC deviation citation (RESEARCH §A4/E3)"
+      - "LanguageRow R-class verification pre-task grep (02.2 T2 step 0) + strings stay in app/"
+      - "PredictiveBackHandler cancel-semantics commit-body citation (RESEARCH §A2 + CONTEXT D-03)"
+    nice_to_have_deferred:
+      - "WindowInsets import pre-check on 3 sheet files"
+      - "kotlinx.coroutines.delay import qualification"
+      - "resources.properties follow-up commit vs --amend (style)"
+    notes:
+      - "REVIEWS.md gate would have FAILED on convergent HIGH; replan via --reviews flag fixed it cleanly"
+      - "Consolidation path (move COMPLY-03+05 into 02.1) considered but not taken — preserves 2-plan semantic split per CONTEXT D-07"
+      - "Step 3 (plan) was retroactively revised with commits 52c5531 + ece7c80; original plan SHAs (c1db4bd, 9d26ba2) preserved in git history for audit"
+      - "Plan-checker NOT re-run for the surgical revision (narrow scope: wave field + 4 small task additions; no structural changes that would alter the original PASS_WITH_NOTES verdict)"
   - step: 5
     cmd: "/gsd-execute-phase 2"
     output_file: ".planning/phases/02-comply-platform-compliance/VERIFICATION.md"
