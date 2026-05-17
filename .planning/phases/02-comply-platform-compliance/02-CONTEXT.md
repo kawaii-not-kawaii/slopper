@@ -206,6 +206,11 @@ These are not user-decided; the planner / executor exercises judgment per the gu
 - `.planning/research/PITFALLS.md` §7 — edge-to-edge enforcement on PlayerScreen + FilterSheet inset patterns; **MUST read for COMPLY-01 implementation**
 - `.planning/research/PITFALLS.md` §8 — predictive back hazards; `PredictiveBackHandler` vs deprecated `NavigationBackHandler`; **MUST read for COMPLY-02**
 
+### Phase 5 SPINE forward-pointer (NOT current implementation guide)
+- `design_handoff_slopper_spine/README.md` — **Phase 5 SPINE design contract**; informs WHAT Phase 2 visual choices will be overwritten by, NOT what they should be now. **Open Question #6** of the handoff directly depends on Phase 2 COMPLY-01 (transparent status bar + 38dp inset extension). Read for forward awareness; do NOT use as Phase 2 styling source — Phase 2 follows the *current* SettingsScreen/MainActivity visual conventions.
+- `design_handoff_slopper_spine/Slopper Spine.html` — full hi-fi prototype (reference for Phase 5; ignore for Phase 2)
+- `design_handoff_slopper_spine/theme.jsx`, `spine-palettes.jsx`, `screens-spine.jsx`, `spine-flows.jsx`, `spine-states.jsx` — design source files (Phase 5 implementation reference)
+
 ### Codebase maps
 - `.planning/codebase/ARCHITECTURE.md` — module graph (`:feature:settings` → `:core:ui` boundaries relevant for `LanguageRow`)
 - `.planning/codebase/CONCERNS.md` — pre-existing concerns (verify any flagged inset / back issues not already documented)
@@ -263,6 +268,30 @@ These are not user-decided; the planner / executor exercises judgment per the gu
 - **`02-UAT.md` cover sheet:** device, build SHA, capture timestamp, reviewer name, summary verdict (PASS / PASS-WITH-NOTES / FAIL).
 
 </specifics>
+
+<spine_forward_compatibility>
+## Phase 5 SPINE — Forward Compatibility Notes
+
+Phase 5 (SPINE Compose UI Redesign) ships a complete visual re-skin of the app — new color tokens, new typography (Space Grotesk + JetBrains Mono), new shapes, redesigned bottom nav (floating pill), redesigned `SettingsScreen` (Surface-grouped sections with MetaMono section headers), redesigned `PlayerScreen` (Spine chrome with chapter strip), splash on Spine `Bg #0A0D12` + Sage accent, etc.
+
+**Implication for Phase 2:** Every visible surface Phase 2 touches will be repainted by Phase 5. Phase 2's job is **behavioral plumbing** — make the platform contracts (insets, predictive back, splash, locale, manifest hygiene) work — not to choose visual treatments that Phase 5 will overwrite.
+
+| Phase 2 visual choice | What Phase 5 does to it |
+|---|---|
+| Splash uses `@mipmap/ic_launcher` + black bg via existing `Theme.Stash` parent | Re-themed to `Bg #0A0D12` + Sage glow over launcher icon, possibly with subtle accent ring; same `installSplashScreen()` plumbing reused |
+| `LanguageRow` uses current `SettingsScreen.kt` row scaffold | Entire `SettingsScreen` rewritten with Spine row pattern (SpaceGrotesk 13sp key + MetaMono sub-label + JetBrainsMono right-value); `LanguageRow` re-styled to match but the underlying `Intent(Settings.ACTION_APP_LOCALE_SETTINGS)` call site stays |
+| `PlayerScreen` BackHandler→PredictiveBackHandler + inner `Box(safeDrawingPadding())` for control overlays | PlayerScreen chrome fully redesigned; the `PredictiveBackHandler` survives the rewrite (it's behavior, not visual); the `safeDrawingPadding` wrap pattern carries forward because Spine ALSO requires inset-aware overlays (Spine PlayerScreen has scrim gradients that need to know where insets are) |
+| `themes.xml` strip of `statusBarColor` / `navigationBarColor` | Stays stripped — Spine requires transparent system bars (Open Question #6). Phase 2 lays this foundation |
+| `enableOnBackInvokedCallback` manifest flag | Stays set — Spine uses predictive back natively |
+| `generateLocaleConfig = true` + new `LanguageRow` | Stays — Spine inherits |
+
+**Direct support:** Spine handoff Open Question #6 says: "Status bar region is 38dp (Compose `WindowInsets.statusBars`). The Home top bar and Detail hero must extend behind it with a transparent status bar." This is **exactly** what COMPLY-01 unlocks. Phase 2 makes Phase 5 possible.
+
+**Anti-coupling:** Phase 2 plans MUST NOT speculatively pre-paint anything in Spine colors / tokens / typography. The Spine palette decision (Sage / Ember / Signal) hasn't been made; the font loading isn't wired; the color tokens aren't defined. Phase 2 must produce code that *looks like the current Slopper* and *behaves like Spine needs it to*. Phase 5 then paints.
+
+**No Phase 2 UI-SPEC.md.** Phase 2's new visual surfaces (splash + LanguageRow) are too small and too short-lived (re-skinned in Phase 5) to warrant a design contract. Phase 5 owns the UI-SPEC for the full Spine system — to be generated via `/gsd-ui-phase 5` when Phase 4 lands and Phase 5 starts.
+
+</spine_forward_compatibility>
 
 <deferred>
 ## Deferred Ideas
