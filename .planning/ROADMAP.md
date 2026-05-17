@@ -20,7 +20,7 @@
 | Phase | Plans | Status | Completed |
 |-------|-------|--------|-----------|
 | 1. DEPS (Foundation Bump) | 0/3 | Not started | — |
-| 2. COMPLY (Platform Compliance) | 0/2 | Not started | — |
+| 2. COMPLY (Platform Compliance) | 2/2 | Planned | — |
 | 3. PERF (Measured Wins) | 0/3 | Not started | — |
 | 4. POLISH (Test Pyramid & Cleanup) | 0/3 | Not started | — |
 
@@ -141,6 +141,10 @@ grep -c 'android:enableOnBackInvokedCallback="true"' app/src/main/AndroidManifes
 - §7 Edge-to-edge breaks `PlayerScreen` gestures + `FilterSheet` insets on 3-button-nav OEMs (High) — mitigated by mandatory dual-device test.
 - §8 Predictive back regression on conditional `BackHandler(enabled=…)` (Medium) — gate `enabled` flag stability mid-gesture; never mutate during the gesture.
 - Permission UX: requesting `POST_NOTIFICATIONS` at app start is a known anti-pattern — gate behind first-use.
+
+**Created plans** (executable PLAN.md files in `.planning/phases/02-comply-platform-compliance/`):
+- [ ] `02.1-PLAN.md` — Insets + Back + Splash (COMPLY-01, COMPLY-02, COMPLY-04)
+- [ ] `02.2-PLAN.md` — Permissions + Locales + Manifest hygiene + UAT (COMPLY-03, COMPLY-05, COMPLY-06, COMPLY-07)
 
 ---
 
