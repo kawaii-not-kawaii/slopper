@@ -214,11 +214,22 @@ command_manifest:
     cmd: "/gsd-spec-phase 2"
     output_file: ".planning/phases/02-comply-platform-compliance/02-SPEC.md"
     gate_file: "gates/spec.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-17T09:05:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-430
+    branch: phase-2/comply-platform-compliance
+    base_branch: phase-1/deps-bump (73a5677) — rebase onto master post PR #5 merge
+    commit: b5b51f0
+    requirement_count: 7
+    ambiguity_score: 0.2015
+    notes:
+      - "Premise reframed on current floor (AGP 8.7.3 / compileSdk 35 / Activity Compose 1.9.3) per DEPS-17 deferral"
+      - "COMPLY-03 + COMPLY-05 both REMOVE orphan permissions (POST_NOTIFICATIONS + FGS_MEDIA_PLAYBACK); BG-MEDIA milestone re-introduces them"
+      - "COMPLY-07 partial (S23+ gesture-nav only); 3-button-nav deferred via REVIEWS-C4 ACCEPT → backlog COMPLY-07-3BTN"
+      - "Ambiguity 0.2015 — at boundary; all 4 dimensions cleared minimums; 4 residuals captured under Open Questions for discuss-phase"
+      - "Commit b5b51f0 moved off phase-1/deps-bump (PR #5 branch) onto fresh phase-2/comply-platform-compliance branch to prevent PR ballooning"
   - step: 2
     cmd: "/gsd-discuss-phase 2"
     output_file: ".planning/phases/02-comply-platform-compliance/02-CONTEXT.md"
