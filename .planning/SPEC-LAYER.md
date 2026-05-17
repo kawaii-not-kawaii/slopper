@@ -249,14 +249,46 @@ command_manifest:
       - "Splash keep-condition uses Pattern A (LaunchedEffect→AtomicBoolean); planner picks final pattern at plan time"
       - "Companion DISCUSSION-LOG.md committed for audit trail"
   - step: 3
-    cmd: "/gsd-plan-phase 2"
+    cmd: "/gsd-plan-phase 2 --auto"
     output_file_glob: ".planning/phases/02-comply-platform-compliance/02*-PLAN.md"
     gate_file: "gates/plan.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-17T09:35:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-433
+    plan_count: 2
+    plans:
+      - file: 02.1-PLAN.md
+        commit: c1db4bd
+        wave: 1
+        autonomous: true
+        requirements: [COMPLY-01, COMPLY-02, COMPLY-04]
+        task_count: 3
+      - file: 02.2-PLAN.md
+        commit: 9d26ba2
+        wave: 1
+        autonomous: false
+        requirements: [COMPLY-03, COMPLY-05, COMPLY-06, COMPLY-07]
+        task_count: 5
+        human_checkpoint: "Task 4 — S23+ UAT screenshot capture"
+    research_file: 02-RESEARCH.md
+    research_commit: a3c6512
+    mid_flow_corrections:
+      - "commit 26b0595 — SPEC + CONTEXT patched: MoreSheet exists (3 ModalBottomSheet sites, not 2); researcher caught spec-phase scout error"
+      - "commit 86e22e3 — CONTEXT amended with Spine forward-compat section (user pointed at design_handoff_slopper_spine/)"
+      - "commit 4697824 — 05-UI-SPEC.md lightweight scaffold (Phase 5 Spine contract) so Phase 2 plans honor Anti-coupling rule"
+    plan_checker_verdict: PASS_WITH_NOTES
+    plan_checker_findings_low: 4
+    plan_checker_findings_high: 0
+    notes:
+      - "Multi-agent flow: gsd-phase-researcher (a3c6512 02-RESEARCH.md) → gsd-planner (c1db4bd + 9d26ba2) → gsd-plan-checker (verdict)"
+      - "Pattern-mapper skipped for token efficiency (CONTEXT + RESEARCH already prescriptive)"
+      - "UI-SPEC for Phase 2 skipped (--skip-ui semantics); behavioral plumbing surface; Phase 5 owns UI-SPEC for the full Spine system"
+      - "Phase 5 UI-SPEC pre-scaffolded informally (4697824) from design_handoff_slopper_spine/; formal /gsd-ui-phase 5 + checker deferred until Phase 5 starts in roadmap order"
+      - "Anti-coupling verified: zero Spine palette/typography references in plan actions; explicit `grep -rn 'import.*Spine'` check in 02.1 Task 3"
+      - "100% requirement coverage (7/7 COMPLY-XX); 8 atomic commits planned; both plans wave 1 parallel-safe"
+      - "Plan 2.2 NOT autonomous (Task 4 = checkpoint:human-verify for S23+ screenshot capture); execute-phase pauses on `approved` signal"
   - step: 4
     cmd: "/gsd-review --phase 2 --all"
     output_file: ".planning/phases/02-comply-platform-compliance/REVIEWS.md"
