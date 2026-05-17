@@ -5,7 +5,8 @@ import android.app.PictureInPictureParams
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.util.Rational
-import androidx.activity.compose.BackHandler
+import androidx.activity.BackEventCompat
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -98,7 +99,9 @@ import io.stashapp.android.core.data.prefs.PlayerPreferences
 import io.stashapp.android.core.designsystem.theme.StashColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.RepeatMode
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Native fullscreen player — MX Player-inspired utility-dense layout.
@@ -184,7 +187,22 @@ fun PlayerScreen(
         }
     }
 
-    BackHandler { onExit() }
+    PredictiveBackHandler { progress: Flow<BackEventCompat> ->
+        try {
+            progress.collect { backEvent ->
+                // Phase 2: no animation work — accept the system's default preview.
+                // (Future Spine Phase 5 MAY consume backEvent.progress here to drive
+                // custom scale/fade on the player surface.)
+            }
+            // Flow completed normally → commit the back action.
+            onExit()
+        } catch (e: CancellationException) {
+            // User cancelled the swipe; do NOT call onExit().
+            // Re-throw to preserve coroutine cancellation propagation
+            // (Kotlin etiquette — never swallow CancellationException).
+            throw e
+        }
+    }
 
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         // Media surface — drives `Surface.setFrameRate()` when the video
