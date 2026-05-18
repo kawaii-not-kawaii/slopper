@@ -97,6 +97,8 @@ import io.stashapp.android.core.data.prefs.PlayerPreferences
 import io.stashapp.android.core.designsystem.theme.StashColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.RepeatMode
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -162,6 +164,7 @@ fun PlayerScreen(
         }
     }
 
+    // playerView is a top-level remember ref set once by AndroidView.factory — stable after first frame (PERF-04: STABLE)
     // Sync resizeMode into the native PlayerView whenever it changes
     LaunchedEffect(resizeMode, playerView) { playerView?.resizeMode = resizeMode }
 
@@ -219,9 +222,12 @@ fun PlayerScreen(
             },
             update = {
                 it.player = viewModel.player
-                applyVideoFrameRate(it, state.videoFrameRate)
             },
         )
+    // Rate-limit frame-rate setting to actual videoFrameRate changes, not every recomposition (PERF-09)
+    LaunchedEffect(state.videoFrameRate) {
+        playerView?.let { applyVideoFrameRate(it, state.videoFrameRate) }
+    }
 
         if (!locked) {
             // Gesture layer — tap / double-tap / horizontal drag
@@ -385,7 +391,7 @@ fun PlayerScreen(
                     // Playhead state flow is observed inside TimelineBar so
                     // ticks only recompose the bar, not the full control tree.
                     positionFlow = viewModel.position,
-                    markers = state.current?.markers.orEmpty(),
+                    markers = state.current?.markers.orEmpty().toPersistentList(),
                     playbackSpeed = state.playbackSpeed,
                     canSkipPrev =
                         state.queue?.let {
@@ -478,7 +484,7 @@ private fun PlayerControls(
     shuffled: Boolean,
     repeatMode: RepeatMode,
     positionFlow: kotlinx.coroutines.flow.StateFlow<PlayerPositionState>,
-    markers: List<Marker>,
+    markers: ImmutableList<Marker>,
     playbackSpeed: Float,
     canSkipPrev: Boolean,
     canSkipNext: Boolean,
@@ -1003,7 +1009,7 @@ private fun BannerPill(text: String) {
 @Composable
 private fun TimelineBar(
     positionFlow: kotlinx.coroutines.flow.StateFlow<PlayerPositionState>,
-    markers: List<Marker>,
+    markers: ImmutableList<Marker>,
     showRemaining: Boolean,
     onSeek: (Long) -> Unit,
     onToggleRightLabel: () -> Unit,
