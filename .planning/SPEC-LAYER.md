@@ -412,11 +412,19 @@ command_manifest:
     cmd: "/gsd-secure-phase 2"
     output_file_glob: ".planning/phases/02-comply-platform-compliance/*SECURITY*"
     gate_file: "gates/security.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-18T22:35:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-440
+    commit: 477585f
+    threats_total: 9
+    threats_closed: 9
+    threats_open: 0
+    register_authored_at_plan_time: true
+    notes:
+      - "9 threats: 3 mitigated (T-02-01 splash ANR safety-timeout, T-02-05 POST_NOTIFICATIONS removed, T-02-06 FGS_MEDIA_PLAYBACK removed), 6 accepted (system contracts / build-time ops)"
+      - "All mitigations verified in codebase: MainActivity.kt:182-191 + AndroidManifest.xml grep counts = 0"
   - step: 9
     cmd: "/gsd-validate-phase 2"
     output_file_glob: ".planning/phases/02-comply-platform-compliance/*VALIDATION*"
