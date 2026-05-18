@@ -31,37 +31,39 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class LibraryScrollBenchmark {
-
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
     @Test
-    fun libraryScroll() = benchmarkRule.measureRepeated(
-        packageName = TARGET_PACKAGE,
-        metrics = listOf(FrameTimingMetric()),
-        compilationMode = CompilationMode.Partial(
-            baselineProfileMode = BaselineProfileMode.Require,
-            warmupIterations = 3,
-        ),
-        startupMode = StartupMode.WARM,
-        iterations = 5,
-    ) {
-        startActivityAndWait()
+    fun libraryScroll() =
+        benchmarkRule.measureRepeated(
+            packageName = TARGET_PACKAGE,
+            metrics = listOf(FrameTimingMetric()),
+            compilationMode =
+                CompilationMode.Partial(
+                    baselineProfileMode = BaselineProfileMode.Require,
+                    warmupIterations = 3,
+                ),
+            startupMode = StartupMode.WARM,
+            iterations = 5,
+        ) {
+            startActivityAndWait()
 
-        val grid = device.wait(Until.findObject(By.scrollable(true)), 3_000)
-            ?: return@measureRepeated  // no scrollable grid found — iteration skipped, not failed
+            val grid =
+                device.wait(Until.findObject(By.scrollable(true)), 3_000)
+                    ?: return@measureRepeated // no scrollable grid found — iteration skipped, not failed
 
-        // Scroll down then up to exercise the full LazyVerticalGrid composition path
-        // including item recycling, thumbnail pre-fetching, and overscroll edge effects.
-        repeat(5) {
-            grid.scroll(Direction.DOWN, 0.8f)
-            device.waitForIdle()
+            // Scroll down then up to exercise the full LazyVerticalGrid composition path
+            // including item recycling, thumbnail pre-fetching, and overscroll edge effects.
+            repeat(5) {
+                grid.scroll(Direction.DOWN, 0.8f)
+                device.waitForIdle()
+            }
+            repeat(5) {
+                grid.scroll(Direction.UP, 0.8f)
+                device.waitForIdle()
+            }
         }
-        repeat(5) {
-            grid.scroll(Direction.UP, 0.8f)
-            device.waitForIdle()
-        }
-    }
 
     private companion object {
         const val TARGET_PACKAGE = "io.stashapp.android"

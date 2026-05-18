@@ -9,14 +9,14 @@ import io.stashapp.android.core.domain.SceneQuery
 import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.domain.SceneSort
 import io.stashapp.android.core.model.SceneSummary
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -78,7 +78,12 @@ class HomeViewModel
                                         rail
                                     } else {
                                         when (result) {
-                                            is AppResult.Success -> rail.copy(loading = false, scenes = result.data.toPersistentList(), error = null)
+                                            is AppResult.Success ->
+                                                rail.copy(
+                                                    loading = false,
+                                                    scenes = result.data.toPersistentList(),
+                                                    error = null,
+                                                )
                                             is AppResult.Failure -> rail.copy(loading = false, error = result.error.message)
                                         }
                                     }

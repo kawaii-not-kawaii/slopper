@@ -50,8 +50,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.model.RepeatMode
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CancellationException
@@ -179,10 +179,10 @@ fun PlayerScreen(
                 it.player = viewModel.player
             },
         )
-    // Rate-limit frame-rate setting to actual videoFrameRate changes, not every recomposition (PERF-09)
-    LaunchedEffect(state.videoFrameRate) {
-        playerView?.let { applyVideoFrameRate(it, state.videoFrameRate) }
-    }
+        // Rate-limit frame-rate setting to actual videoFrameRate changes, not every recomposition (PERF-09)
+        LaunchedEffect(state.videoFrameRate) {
+            playerView?.let { applyVideoFrameRate(it, state.videoFrameRate) }
+        }
 
         if (!locked) {
             // Gesture layer — tap / double-tap / horizontal drag
@@ -326,102 +326,106 @@ fun PlayerScreen(
                     exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
                 ) {
                     PlayerControls(
-                    title =
-                        state.current
-                            ?.summary
-                            ?.displayTitle
-                            .orEmpty(),
-                    subtitle =
-                        state.current
-                            ?.summary
-                            ?.studio
-                            ?.name,
-                    queuePosition =
-                        state.queue?.let {
-                            if (it.items.size > 1) "${it.currentIndex + 1}/${it.items.size}" else null
+                        title =
+                            state.current
+                                ?.summary
+                                ?.displayTitle
+                                .orEmpty(),
+                        subtitle =
+                            state.current
+                                ?.summary
+                                ?.studio
+                                ?.name,
+                        queuePosition =
+                            state.queue?.let {
+                                if (it.items.size > 1) "${it.currentIndex + 1}/${it.items.size}" else null
+                            },
+                        isPlaying = state.isPlaying,
+                        shuffled = state.queue?.shuffled ?: false,
+                        repeatMode = state.queue?.repeatMode ?: RepeatMode.OFF,
+                        // Playhead state flow is observed inside TimelineBar so
+                        // ticks only recompose the bar, not the full control tree.
+                        positionFlow = viewModel.position,
+                        markers =
+                            state.current
+                                ?.markers
+                                .orEmpty()
+                                .toPersistentList(),
+                        playbackSpeed = state.playbackSpeed,
+                        canSkipPrev =
+                            state.queue?.let {
+                                it.currentIndex > 0 || it.repeatMode == RepeatMode.ALL
+                            } ?: false,
+                        canSkipNext =
+                            state.queue?.let {
+                                it.currentIndex < it.items.lastIndex || it.repeatMode != RepeatMode.OFF
+                            } ?: false,
+                        codecLabel = codecLabel(),
+                        rotationLocked = rotationLocked,
+                        resizeMode = resizeMode,
+                        doubleTapSeekSec = doubleTapSeekSec,
+                        showRemaining = showRemaining,
+                        onPlayPause = {
+                            val p = viewModel.player
+                            if (p.isPlaying) p.pause() else p.play()
+                            lastInteraction = System.currentTimeMillis()
                         },
-                    isPlaying = state.isPlaying,
-                    shuffled = state.queue?.shuffled ?: false,
-                    repeatMode = state.queue?.repeatMode ?: RepeatMode.OFF,
-                    // Playhead state flow is observed inside TimelineBar so
-                    // ticks only recompose the bar, not the full control tree.
-                    positionFlow = viewModel.position,
-                    markers = state.current?.markers.orEmpty().toPersistentList(),
-                    playbackSpeed = state.playbackSpeed,
-                    canSkipPrev =
-                        state.queue?.let {
-                            it.currentIndex > 0 || it.repeatMode == RepeatMode.ALL
-                        } ?: false,
-                    canSkipNext =
-                        state.queue?.let {
-                            it.currentIndex < it.items.lastIndex || it.repeatMode != RepeatMode.OFF
-                        } ?: false,
-                    codecLabel = codecLabel(),
-                    rotationLocked = rotationLocked,
-                    resizeMode = resizeMode,
-                    doubleTapSeekSec = doubleTapSeekSec,
-                    showRemaining = showRemaining,
-                    onPlayPause = {
-                        val p = viewModel.player
-                        if (p.isPlaying) p.pause() else p.play()
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onNext = {
-                        viewModel.skipNext()
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onPrevious = {
-                        viewModel.skipPrevious()
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onShuffle = {
-                        viewModel.toggleShuffle()
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onRepeat = {
-                        viewModel.cycleRepeat()
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onSeek = { pos ->
-                        viewModel.seekTo(pos)
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onSeekBy = { delta ->
-                        viewModel.seekBy(delta)
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onPip = {
-                        activity?.let { enterPip(it) }
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onClose = onExit,
-                    onLock = {
-                        locked = true
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onToggleRotationLock = {
-                        rotationLocked = !rotationLocked
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onCycleResize = {
-                        resizeMode = nextResize(resizeMode)
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onCycleSpeed = {
-                        viewModel.cyclePlaybackSpeed()
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onToggleRemaining = {
-                        showRemaining = !showRemaining
-                        lastInteraction = System.currentTimeMillis()
-                    },
-                    onScreenshot = {
-                        // TODO: capture frame. MediaMetadataRetriever path works
-                        // but needs storage permission + URI handling — punting
-                        // to a follow-up pass since it's more than UI plumbing.
-                        viewModel.flashBanner("Screenshot — coming soon")
-                    },
-                )
+                        onNext = {
+                            viewModel.skipNext()
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onPrevious = {
+                            viewModel.skipPrevious()
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onShuffle = {
+                            viewModel.toggleShuffle()
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onRepeat = {
+                            viewModel.cycleRepeat()
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onSeek = { pos ->
+                            viewModel.seekTo(pos)
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onSeekBy = { delta ->
+                            viewModel.seekBy(delta)
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onPip = {
+                            activity?.let { enterPip(it) }
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onClose = onExit,
+                        onLock = {
+                            locked = true
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onToggleRotationLock = {
+                            rotationLocked = !rotationLocked
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onCycleResize = {
+                            resizeMode = nextResize(resizeMode)
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onCycleSpeed = {
+                            viewModel.cyclePlaybackSpeed()
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onToggleRemaining = {
+                            showRemaining = !showRemaining
+                            lastInteraction = System.currentTimeMillis()
+                        },
+                        onScreenshot = {
+                            // TODO: capture frame. MediaMetadataRetriever path works
+                            // but needs storage permission + URI handling — punting
+                            // to a follow-up pass since it's more than UI plumbing.
+                            viewModel.flashBanner("Screenshot — coming soon")
+                        },
+                    )
                 }
             }
         }

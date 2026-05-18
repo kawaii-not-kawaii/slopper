@@ -29,7 +29,6 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class ColdStartBenchmark {
-
     @get:Rule
     val benchmarkRule = MacrobenchmarkRule()
 
@@ -39,21 +38,23 @@ class ColdStartBenchmark {
      * skip it) if the installed APK has no profile embedded.
      */
     @Test
-    fun startupWithProfile() = benchmarkRule.measureRepeated(
-        packageName = TARGET_PACKAGE,
-        metrics = listOf(StartupTimingMetric()),
-        compilationMode = CompilationMode.Partial(
-            baselineProfileMode = BaselineProfileMode.Require,
-            warmupIterations = 3,
-        ),
-        startupMode = StartupMode.COLD,
-        iterations = 5,
-    ) {
-        pressHome()
-        startActivityAndWait()
-        // Wait for first meaningful frame so startup timing captures the full cold-start path
-        device.wait(Until.hasObject(By.pkg(TARGET_PACKAGE).depth(0)), 5_000)
-    }
+    fun startupWithProfile() =
+        benchmarkRule.measureRepeated(
+            packageName = TARGET_PACKAGE,
+            metrics = listOf(StartupTimingMetric()),
+            compilationMode =
+                CompilationMode.Partial(
+                    baselineProfileMode = BaselineProfileMode.Require,
+                    warmupIterations = 3,
+                ),
+            startupMode = StartupMode.COLD,
+            iterations = 5,
+        ) {
+            pressHome()
+            startActivityAndWait()
+            // Wait for first meaningful frame so startup timing captures the full cold-start path
+            device.wait(Until.hasObject(By.pkg(TARGET_PACKAGE).depth(0)), 5_000)
+        }
 
     /**
      * WITHOUT any profile — JIT-only baseline representing a fresh install with no
@@ -61,17 +62,18 @@ class ColdStartBenchmark {
      * the profile benefit ratio.
      */
     @Test
-    fun startupWithoutProfile() = benchmarkRule.measureRepeated(
-        packageName = TARGET_PACKAGE,
-        metrics = listOf(StartupTimingMetric()),
-        compilationMode = CompilationMode.None(),
-        startupMode = StartupMode.COLD,
-        iterations = 5,
-    ) {
-        pressHome()
-        startActivityAndWait()
-        device.wait(Until.hasObject(By.pkg(TARGET_PACKAGE).depth(0)), 5_000)
-    }
+    fun startupWithoutProfile() =
+        benchmarkRule.measureRepeated(
+            packageName = TARGET_PACKAGE,
+            metrics = listOf(StartupTimingMetric()),
+            compilationMode = CompilationMode.None(),
+            startupMode = StartupMode.COLD,
+            iterations = 5,
+        ) {
+            pressHome()
+            startActivityAndWait()
+            device.wait(Until.hasObject(By.pkg(TARGET_PACKAGE).depth(0)), 5_000)
+        }
 
     private companion object {
         // Match the applicationId used in app/build.gradle.kts (no debug suffix for

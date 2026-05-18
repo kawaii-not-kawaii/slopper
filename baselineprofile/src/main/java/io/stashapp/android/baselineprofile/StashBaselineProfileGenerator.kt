@@ -117,7 +117,8 @@ class StashBaselineProfileGenerator {
 
             // Tap first clickable item that looks like a card view
             val firstCard =
-                device.findObjects(By.clickable(true))
+                device
+                    .findObjects(By.clickable(true))
                     .firstOrNull { it.className?.contains("View") == true }
             firstCard?.click()
             device.wait(Until.hasObject(By.pkg(TARGET_PACKAGE).depth(0)), 3_000)

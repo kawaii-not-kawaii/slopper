@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Optional
+import com.apollographql.apollo.exception.ApolloException
 import io.stashapp.android.core.common.AppError
 import io.stashapp.android.core.common.AppResult
 import io.stashapp.android.core.domain.SceneQuery
@@ -22,7 +23,6 @@ import io.stashapp.android.graphql.SceneUpdateMutation
 import io.stashapp.android.graphql.type.FindFilterType
 import io.stashapp.android.graphql.type.SceneUpdateInput
 import io.stashapp.android.graphql.type.SortDirectionEnum
-import com.apollographql.apollo.exception.ApolloException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import java.io.IOException

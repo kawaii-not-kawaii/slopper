@@ -7,10 +7,10 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.stashapp.android.core.domain.SceneFilter
-import io.stashapp.android.core.domain.UiSettings
 import io.stashapp.android.core.domain.SceneQuery
 import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.domain.SceneSort
+import io.stashapp.android.core.domain.UiSettings
 import io.stashapp.android.core.model.SceneSummary
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

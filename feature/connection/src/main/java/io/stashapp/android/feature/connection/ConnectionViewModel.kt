@@ -58,13 +58,14 @@ class ConnectionViewModel
                             it.copy(testing = false, serverInfo = result.data, error = null)
                         }
                     is AppResult.Failure -> {
-                        val msg = when (val err = result.error) {
-                            is AppError.Auth -> err.message
-                            is AppError.Network -> "Can't reach server: ${err.message}"
-                            is AppError.Server -> "Server error: ${err.message}"
-                            is AppError.NotFound -> err.message
-                            is AppError.Unknown -> err.message
-                        }
+                        val msg =
+                            when (val err = result.error) {
+                                is AppError.Auth -> err.message
+                                is AppError.Network -> "Can't reach server: ${err.message}"
+                                is AppError.Server -> "Server error: ${err.message}"
+                                is AppError.NotFound -> err.message
+                                is AppError.Unknown -> err.message
+                            }
                         _state.update { it.copy(testing = false, error = msg) }
                     }
                 }

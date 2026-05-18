@@ -15,14 +15,23 @@ interface PlayerSettings {
     val decoderPreference: Flow<String>
 
     suspend fun setSeekMsPerPx(value: Float)
+
     suspend fun setDoubleTapSeekSeconds(value: Int)
+
     suspend fun setDefaultPlaybackSpeed(value: Float)
+
     suspend fun setAutoPlayNext(value: Boolean)
+
     suspend fun setResumeThresholdSeconds(value: Int)
+
     suspend fun setCompletionThresholdPercent(value: Int)
+
     suspend fun setSkipIntroSeconds(value: Int)
+
     suspend fun setVideoBufferPreset(value: String)
+
     suspend fun setDefaultAspectRatio(value: String)
+
     suspend fun setDecoderPreference(value: String)
 
     companion object {

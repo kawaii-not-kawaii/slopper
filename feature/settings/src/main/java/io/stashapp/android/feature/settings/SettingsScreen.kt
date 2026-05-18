@@ -322,12 +322,14 @@ private fun LanguageRow() {
                 contentDescription = null,
             )
         },
-        modifier = Modifier.clickable {
-            val intent = Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
-                data = Uri.fromParts("package", context.packageName, null)
-            }
-            context.startActivity(intent)
-        },
+        modifier =
+            Modifier.clickable {
+                val intent =
+                    Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
+                        data = Uri.fromParts("package", context.packageName, null)
+                    }
+                context.startActivity(intent)
+            },
     )
 }
 

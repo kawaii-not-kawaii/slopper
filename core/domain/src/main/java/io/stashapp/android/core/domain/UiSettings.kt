@@ -15,13 +15,22 @@ interface UiSettings {
     val autoRotatePlayer: Flow<Boolean>
 
     suspend fun setBottomNavVisibleIds(ids: List<String>)
+
     suspend fun setDefaultSceneFilter(filter: SceneFilter?)
+
     suspend fun setImageCacheSizeMb(value: Int)
+
     suspend fun setGridColumns(value: String)
+
     suspend fun setAmoledBlackMode(value: Boolean)
+
     suspend fun setShowRatingOnCards(value: Boolean)
+
     suspend fun setShowPlayCountOnCards(value: Boolean)
+
     suspend fun setShowResolutionOnCards(value: Boolean)
+
     suspend fun setActivityTracking(value: Boolean)
+
     suspend fun setAutoRotatePlayer(value: Boolean)
 }

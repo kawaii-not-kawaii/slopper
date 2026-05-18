@@ -229,7 +229,8 @@ internal fun ScrubPreviewCard(
                     color = StashColors.OnSurfaceVariant,
                 )
             }
-            androidx.compose.foundation.layout.Spacer(Modifier.size(4.dp))
+            androidx.compose.foundation.layout
+                .Spacer(Modifier.size(4.dp))
             Text(
                 delta,
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
