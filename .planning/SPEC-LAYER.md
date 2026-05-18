@@ -751,14 +751,38 @@ command_manifest:
       - "CI → .forgejo/workflows/ci.yml (Forgejo platform)"
       - "ConnectionResult.InvalidUrl → AppError.Unknown (no new variant)"
   - step: 3
-    cmd: "/gsd-plan-phase 4"
+    cmd: "/gsd-plan-phase 4 --auto"
     output_file_glob: ".planning/phases/04-polish-test-pyramid/04*-PLAN.md"
     gate_file: "gates/plan.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T00:42:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/4#issuecomment-465
+    plan_count: 3
+    plans:
+      - file: 04.1-PLAN.md
+        wave: 1
+        autonomous: true
+        requirements: [POLISH-01, POLISH-06, POLISH-07]
+      - file: 04.2-PLAN.md
+        wave: 1
+        autonomous: true
+        requirements: [POLISH-04, POLISH-05]
+      - file: 04.3-PLAN.md
+        wave: 1
+        autonomous: true
+        requirements: [POLISH-02, POLISH-03, POLISH-08, POLISH-09, POLISH-10]
+        task1_requires: plan-4.1
+    research_file: 04-RESEARCH.md
+    plan_checker_verdict: PASS_WITH_NOTES
+    plan_checker_findings_high: 0
+    plan_checker_findings_advisory: 2
+    commit: 7196e84
+    notes:
+      - "Key insight: 87/92 lint issues are stale GradleDependency entries; updateLintBaseline achieves ≤700L target automatically"
+      - "PlayerScreen split: 8 symbols need internal visibility (not 7); formatDuration goes to PlayerTimeline.kt"
+      - "All 3 plans wave 1 parallel-safe; Plan 4.3 Task 1 (detekt) must follow Plan 4.1 by prose ordering"
   - step: 4
     cmd: "/gsd-review --phase 4 --all"
     output_file: ".planning/phases/04-polish-test-pyramid/REVIEWS.md"
