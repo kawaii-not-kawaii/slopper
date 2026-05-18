@@ -14,25 +14,3 @@ data class ServerInfo(
     val studioCount: Int,
     val tagCount: Int,
 )
-
-sealed class ConnectionResult {
-    data class Success(
-        val info: ServerInfo,
-    ) : ConnectionResult()
-
-    data class InvalidUrl(
-        val reason: String,
-    ) : ConnectionResult()
-
-    data class AuthFailed(
-        val message: String,
-    ) : ConnectionResult()
-
-    data class NetworkError(
-        val message: String,
-    ) : ConnectionResult()
-
-    data class ServerError(
-        val message: String,
-    ) : ConnectionResult()
-}
