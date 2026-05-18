@@ -11,7 +11,7 @@ This repository is on the **v1.0 modernization milestone**. Phases 1–2 have
 landed: Gradle 8.11.1, AGP 8.7.3, Kotlin 2.2.20, Compose BOM 2026.05.00, Hilt
 2.56.2, Apollo 4.4.3, Media3 1.9.1 (Phase 1); plus edge-to-edge, predictive
 back (`PredictiveBackHandler`), Splash Screen API, per-app language picker,
-and orphan-permission cleanup (Phase 2). Phases 3–4 (PERF / POLISH) are
+and orphan-permission cleanup (Phase 2). Phase 4 (POLISH) is
 pending — there is no automated test suite or CI wired up yet.
 
 ## Toolchain
@@ -177,6 +177,7 @@ slopper/
   in [`DEVICE_TESTING.md`](DEVICE_TESTING.md). A test pass is on the POLISH
   backlog.
 - **No CI.** All builds are local. A CI wiring pass is planned but not done.
+- **Phase 3 (PERF) landed.** GMD (Pixel 6 API 34) declared; Compose Compiler stability reports enabled; `ImmutableList<T>` migration for home/player UiState; `applyVideoFrameRate` moved from `AndroidView.update` to `LaunchedEffect`; shuffle queue-exhaustion UX fix; `ColdStartBenchmark` + `LibraryScrollBenchmark` added. Macrobench execution deferred to device testing session.
 - **Platform compliance (Phase 2) landed.** Edge-to-edge enforced via
   `enableEdgeToEdge()` (bar-color overrides stripped from `themes.xml`); all
   three `ModalBottomSheet` sites get `contentWindowInsets`; `PlayerScreen`

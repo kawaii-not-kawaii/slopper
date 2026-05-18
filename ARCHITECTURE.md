@@ -266,6 +266,13 @@ calls. Exceptions never cross the repository boundary — they are caught and
 converted to `AppError` variants (`Network`, `Auth`, `NotFound`, `Server`,
 `Unknown`).
 
+## Performance infrastructure (Phase 3)
+
+- **Compose Compiler stability reports** enabled in `AndroidComposeConventionPlugin.kt` via `ComposeCompilerGradlePluginExtension.reportsDestination`. Reports generated for every Compose module on `compileReleaseKotlin` at `<module>/build/compose-reports/`.
+- **Gradle Managed Device** (Pixel 6 API 34) declared in `baselineprofile/build.gradle.kts` under `android { testOptions { managedDevices { ... } } }`. Task: `./gradlew :baselineprofile:pixel6Api34BenchmarkAndroidTest`.
+- **`ImmutableList<T>`** (`kotlinx-collections-immutable 0.4.0`) used for `HomeRail.scenes`, `HomeUiState.rails`, and `markers: ImmutableList<Marker>` in `PlayerControls`/`TimelineBar` — enables Compose strong-skipping.
+- **`applyVideoFrameRate`** in `PlayerScreen.kt` runs inside `LaunchedEffect(state.videoFrameRate)`, not in the `AndroidView.update` lambda (which fired on every recomposition).
+
 ## What is deliberately not here yet
 
 These are explicit deferrals, not oversights — do not add them ad hoc; they
