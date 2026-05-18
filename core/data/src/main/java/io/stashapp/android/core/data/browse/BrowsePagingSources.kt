@@ -14,6 +14,7 @@ import io.stashapp.android.graphql.FindStudiosListQuery
 import io.stashapp.android.graphql.FindTagsListQuery
 import io.stashapp.android.graphql.type.FindFilterType
 import io.stashapp.android.graphql.type.SortDirectionEnum
+import kotlinx.coroutines.CancellationException
 
 private fun buildFilter(
     page: Int,
@@ -84,7 +85,9 @@ class PerformersPagingSource(
                 prevKey = if (page <= 1) null else page - 1,
                 nextKey = if (page >= totalPages) null else page + 1,
             )
-        } catch (e: Throwable) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
             LoadResult.Error(e)
         }
     }
@@ -138,7 +141,9 @@ class StudiosPagingSource(
                 prevKey = if (page <= 1) null else page - 1,
                 nextKey = if (page >= totalPages) null else page + 1,
             )
-        } catch (e: Throwable) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
             LoadResult.Error(e)
         }
     }
@@ -192,7 +197,9 @@ class TagsPagingSource(
                 prevKey = if (page <= 1) null else page - 1,
                 nextKey = if (page >= totalPages) null else page + 1,
             )
-        } catch (e: Throwable) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
             LoadResult.Error(e)
         }
     }

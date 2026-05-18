@@ -22,7 +22,10 @@ import io.stashapp.android.graphql.SceneUpdateMutation
 import io.stashapp.android.graphql.type.FindFilterType
 import io.stashapp.android.graphql.type.SceneUpdateInput
 import io.stashapp.android.graphql.type.SortDirectionEnum
+import com.apollographql.apollo.exception.ApolloException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -83,8 +86,14 @@ class DefaultSceneRepository
                             ?: return AppResult.Failure(AppError.Server("Empty response"))
                     AppResult.Success(result.scenes.map { it.sceneCard.toSummary(endpoint) })
                 }
-            } catch (e: Throwable) {
-                AppResult.Failure(AppError.Network(e.message ?: "Network error"))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
+                AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
+            } catch (e: IOException) {
+                AppResult.Failure(AppError.Network(e.message ?: "IO error"))
+            } catch (e: Exception) {
+                AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
             }
         }
 
@@ -104,8 +113,14 @@ class DefaultSceneRepository
                             ?: return AppResult.Failure(AppError.NotFound("Scene $id not found"))
                     AppResult.Success(scene.toDetail(endpoint))
                 }
-            } catch (e: Throwable) {
-                AppResult.Failure(AppError.Network(e.message ?: "Network error"))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
+                AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
+            } catch (e: IOException) {
+                AppResult.Failure(AppError.Network(e.message ?: "IO error"))
+            } catch (e: Exception) {
+                AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
             }
         }
 
@@ -190,8 +205,14 @@ class DefaultSceneRepository
                 } else {
                     AppResult.Success(Unit)
                 }
-            } catch (e: Throwable) {
-                AppResult.Failure(AppError.Network(e.message ?: "Network error"))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
+                AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
+            } catch (e: IOException) {
+                AppResult.Failure(AppError.Network(e.message ?: "IO error"))
+            } catch (e: Exception) {
+                AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
             }
 
         private suspend inline fun <T> mutateMapped(
@@ -207,7 +228,13 @@ class DefaultSceneRepository
                     value == null -> AppResult.Failure(AppError.Server("Empty mutation response"))
                     else -> AppResult.Success(value)
                 }
-            } catch (e: Throwable) {
-                AppResult.Failure(AppError.Network(e.message ?: "Network error"))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
+                AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
+            } catch (e: IOException) {
+                AppResult.Failure(AppError.Network(e.message ?: "IO error"))
+            } catch (e: Exception) {
+                AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
             }
     }
