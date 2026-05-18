@@ -520,14 +520,40 @@ command_manifest:
       - "10 decisions: GMD Pixel 6 API 34, stability reports DSL, ImmutableList at VM boundary, 4 baseline journeys, LeakCanary-first shuffle investigation, wave structure (3.1 wave 1; 3.2+3.3 wave 2 parallel)"
       - "Human testing deferred to end-of-milestone per user instruction"
   - step: 3
-    cmd: "/gsd-plan-phase 3"
+    cmd: "/gsd-plan-phase 3 --auto"
     output_file_glob: ".planning/phases/03-perf-measured-wins/03*-PLAN.md"
     gate_file: "gates/plan.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-18T23:25:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/3#issuecomment-450
+    plan_count: 3
+    plans:
+      - file: 03.1-PLAN.md
+        wave: 1
+        autonomous: true
+        requirements: [PERF-01, PERF-02, PERF-05]
+      - file: 03.2-PLAN.md
+        wave: 2
+        autonomous: true
+        requirements: [PERF-03, PERF-04, PERF-09]
+        depends_on: plan-3.1
+      - file: 03.3-PLAN.md
+        wave: 2
+        autonomous: false
+        requirements: [PERF-08, PERF-06, PERF-07, PERF-10]
+        depends_on: plan-3.1
+        human_checkpoint: "Task 3 — macrobench execution + profiling session"
+    research_file: 03-RESEARCH.md
+    plan_checker_verdict: PASS_WITH_NOTES
+    plan_checker_findings_high: 0
+    plan_checker_findings_advisory: 3
+    commit: 3201057
+    notes:
+      - "10/10 PERF requirements covered; wave sequencing correct; file sets 3.2+3.3 disjoint"
+      - "Advisory fixes: grep restricted to feature/ only (core/model out-of-scope); markers call site added to success criteria"
+      - "Human testing deferred to end-of-milestone per user instruction"
   - step: 4
     cmd: "/gsd-review --phase 3 --all"
     output_file: ".planning/phases/03-perf-measured-wins/REVIEWS.md"
