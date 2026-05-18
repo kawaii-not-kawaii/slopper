@@ -16,7 +16,7 @@ tracker:
   milestone_number: 12
   milestone_title: v1.0
   health_status: ok
-  last_health_check: 2026-05-17T10:10:00+09:00
+  last_health_check: 2026-05-18T00:05:00+09:00
   last_error: null
   token_source: ~/.claude/settings.json env block (FORGEJO_TOKEN)
   issues:
@@ -375,11 +375,21 @@ command_manifest:
     cmd: "/gsd-verify-work 2"
     output_file: ".planning/phases/02-comply-platform-compliance/02-UAT.md"
     gate_file: "gates/verify.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-18T13:15:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-438
+    branch: phase-2/comply-platform-compliance
+    commit: ea58c85
+    mode: re-attestation
+    verdict: PASS-WITH-NOTES
+    notes:
+      - "UAT was produced during step 5 (Plan 02.2 Task 4 = human-verify checkpoint); step 6 is a re-attestation gate, not a fresh test"
+      - "51-row UAT table from step 5 carried forward unchanged — verbal verdict from theboy1263@gmail.com on Galaxy S23+ Android 16 (SM-S916U1, gesture-nav) via wireless adb 192.168.1.124:34017"
+      - "No source/manifest changes between step 5 (06b5571) and step 6 (ea58c85); only docs commits"
+      - "3 gaps carried forward, all non-blocking: COMPLY-07-NO-PNG (accepted risk), COMPLY-07-3BTN (backlog), COMPLY-02-NAV-EVENT (backlog)"
+      - "VERIFICATION.md @ 4df8e62 (step 5 verifier) corroborated 17/18 SPEC bullets met"
   - step: 7
     cmd: "/gsd-extract-learnings 2"
     output_file: ".planning/phases/02-comply-platform-compliance/LEARNINGS.md"
