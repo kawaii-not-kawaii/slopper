@@ -4,6 +4,7 @@ import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -16,6 +17,19 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 35
                 defaultConfig.consumerProguardFiles("consumer-rules.pro")
+                testOptions {
+                    unitTests {
+                        all { it.useJUnitPlatform() }
+                    }
+                }
+            }
+            dependencies {
+                add("testImplementation", libs.findLibrary("junit5-api").get())
+                add("testImplementation", libs.findLibrary("junit5-params").get())
+                add("testRuntimeOnly",    libs.findLibrary("junit5-engine").get())
+                add("testImplementation", libs.findLibrary("mockk").get())
+                add("testImplementation", libs.findLibrary("turbine").get())
+                add("testImplementation", libs.findLibrary("robolectric").get())
             }
         }
     }
