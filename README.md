@@ -11,8 +11,8 @@ This repository is on the **v1.0 modernization milestone**. Phases 1–2 have
 landed: Gradle 8.11.1, AGP 8.7.3, Kotlin 2.2.20, Compose BOM 2026.05.00, Hilt
 2.56.2, Apollo 4.4.3, Media3 1.9.1 (Phase 1); plus edge-to-edge, predictive
 back (`PredictiveBackHandler`), Splash Screen API, per-app language picker,
-and orphan-permission cleanup (Phase 2). Phase 4 (POLISH) is
-pending — there is no automated test suite or CI wired up yet.
+and orphan-permission cleanup (Phase 2). All 4 phases (DEPS / COMPLY / PERF / POLISH) of the v1.0 modernization milestone are complete.
+JUnit5 + Turbine + MockK + Robolectric are wired; 17 seed tests pass; Forgejo CI workflow added.
 
 ## Toolchain
 

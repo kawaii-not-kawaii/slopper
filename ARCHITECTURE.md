@@ -278,13 +278,10 @@ converted to `AppError` variants (`Network`, `Auth`, `NotFound`, `Server`,
 These are explicit deferrals, not oversights — do not add them ad hoc; they
 are scheduled work.
 
-- **No automated test suite.** There are no JVM unit tests, no Robolectric
-  tests, and no instrumented/Espresso tests. The test infrastructure work
-  is tracked as POLISH-04.
-- **No CI pipeline.** The repository has no `.github/workflows/` directory.
-  Lint, detekt, ktlint, and the OWASP dependency-check task run only on
-  developer machines today. CI bring-up is tracked as SEC-CI-01 in the
-  backlog.
+- **Test infrastructure landed (POLISH-04/05).** JUnit5 5.11.4 + Turbine 1.2.0 + MockK 1.14.0 + Robolectric 4.14.1 are wired in `stash.android.library` convention plugin. 17 seed tests pass. See TESTING.md for the roadmap to 80%+ coverage.
+- **Forgejo CI added (POLISH-08).** `.forgejo/workflows/ci.yml` runs `assembleDebug detekt ktlintCheck` on push/PR with a correct Gradle cache key. `lintDebug` excluded pending Coil 3.1.x+ upgrade (AR-04-LINT).
+- **`PlayerSettings`/`UiSettings` interfaces in `:core:domain`.** `feature/player` and `feature/library` no longer import `:core:data` directly for preferences.
+- **`ConnectionResult` retired.** `ConnectionRepository.test()` returns `AppResult<ServerInfo>`. All `catch (e: Throwable)` in `core/data` repositories now rethrow `CancellationException` first.
 - **No background `MediaSessionService`.** `:feature:player` uses Media3
   but does not expose a foreground media session for system controls or
   background playback. That work is tracked as BG-MEDIA-01.
