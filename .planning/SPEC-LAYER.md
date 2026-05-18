@@ -443,11 +443,15 @@ command_manifest:
     cmd: "/gsd-docs-update 2"
     output_marker: "docs_updated_at"
     gate_file: "gates/docs.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-18T22:45:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-442
+    docs_updated_at: 2026-05-18T22:45:00+09:00
+    commit: fd7ce4d
+    notes:
+      - "6 docs updated: README (Phase 2 completion note), ARCHITECTURE (splash/edge-to-edge/predictive-back/locale sections), DEVELOPMENT (2 new gotchas), CONFIGURATION (§10 per-app language), TESTING (compliance checks table), GETTING-STARTED (splash note)"
   - step: 11
     cmd: "/gsd-ship 2"
     output_marker: "pr_merged_at"
