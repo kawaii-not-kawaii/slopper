@@ -392,13 +392,22 @@ command_manifest:
       - "VERIFICATION.md @ 4df8e62 (step 5 verifier) corroborated 17/18 SPEC bullets met"
   - step: 7
     cmd: "/gsd-extract-learnings 2"
-    output_file: ".planning/phases/02-comply-platform-compliance/LEARNINGS.md"
+    output_file: ".planning/phases/02-comply-platform-compliance/02-LEARNINGS.md"
     gate_file: "gates/learnings.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-18T22:31:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-439
+    commit: 9b0ec17
+    counts:
+      decisions: 8
+      lessons: 9
+      patterns: 6
+      surprises: 7
+      total: 30
+    notes:
+      - "30 learnings: AGP 8.7.3 resources.properties hard-error; feature R-class module-graph direction; cross-AI wave-sequencing 3/3 HIGH; Pattern A Case B splash; REVIEWS-C4 ACCEPT; _generated_res_locale_config naming; PredictiveBackHandler no enabled= param; verbal-verdict UAT 4-artifact hygiene"
   - step: 8
     cmd: "/gsd-secure-phase 2"
     output_file_glob: ".planning/phases/02-comply-platform-compliance/*SECURITY*"
