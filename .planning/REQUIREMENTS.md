@@ -52,8 +52,8 @@ Requirements for the modernization milestone. Each maps to one of the 4 roadmap 
 - [x] **POLISH-01**: `feature/player/PlayerScreen.kt` (1122 lines) split into `PlayerControls.kt` / `PlayerGestures.kt` / `PlayerSurface.kt`; behavior unchanged
 - [ ] **POLISH-02**: Lint baseline shrunk — at least 30% of baselined issues resolved or explicitly documented as deferred
 - [ ] **POLISH-03**: Detekt + ktlint re-baselined after upgrades; zero new violations in CI
-- [ ] **POLISH-04**: JUnit5 + Turbine + MockK + Robolectric wired into `stash.android.library` convention plugin so every library module has a working test source-set out of the box
-- [ ] **POLISH-05**: Seed test suites added — `core/common`, `core/model`, `core/domain` get baseline unit tests; one ViewModel per feature gets a state-machine test; one Compose smoke test per feature
+- [x] **POLISH-04**: JUnit5 + Turbine + MockK + Robolectric wired into `stash.android.library` convention plugin so every library module has a working test source-set out of the box
+- [x] **POLISH-05**: Seed test suites added — `core/common`, `core/model`, `core/domain` get baseline unit tests; one ViewModel per feature gets a state-machine test; one Compose smoke test per feature
 - [x] **POLISH-06**: `:core:domain` exposes `PlayerSettings` / `UiSettings` interfaces so `feature/*` modules no longer import `:core:data` directly for prefs (within-module refactor only)
 - [x] **POLISH-07**: `ConnectionResult` retired in favor of unified `AppResult`; `catch (e: Throwable)` blocks in repos narrowed and `CancellationException` rethrown
 - [x] **POLISH-08**: CI cache keys composed correctly (Gradle wrapper + JDK + AGP + libs.versions.toml hash); GitHub Actions workflow refreshed

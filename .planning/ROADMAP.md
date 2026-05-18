@@ -22,14 +22,14 @@
 | 1. DEPS (Foundation Bump) | 0/3 | Not started | — |
 | 2. COMPLY (Platform Compliance) | 2/2 | Planned | — |
 | 3. PERF (Measured Wins) | 2/3 | In Progress|  |
-| 4. POLISH (Test Pyramid & Cleanup) | 2/3 | In Progress|  |
+| 4. POLISH (Test Pyramid & Cleanup) | 3/3 | Complete   | 2026-05-18 |
 
 ## Phases
 
 - [ ] **Phase 1: DEPS** — Land toolchain + dependency floor (lint baseline → JDK → Gradle → AGP → Kotlin → Compose BOM → AndroidX/Hilt/Coil sweep) with the build green
 - [ ] **Phase 2: COMPLY** — Resolve every framework-enforced contract that `targetSdk = 36` makes mandatory (edge-to-edge, predictive back, POST_NOTIFICATIONS, Splash API, per-app locales, orphan FGS permission)
 - [ ] **Phase 3: PERF** — Wire GMD, expand baseline profile, hit numeric perf floors, fix the shuffle-playback bug
-- [ ] **Phase 4: POLISH** — Split `PlayerScreen.kt`, shrink lint baseline, wire JUnit5/Turbine/MockK/Robolectric, seed tests, retire `ConnectionResult`, refresh docs
+- [x] **Phase 4: POLISH** — Split `PlayerScreen.kt`, shrink lint baseline, wire JUnit5/Turbine/MockK/Robolectric, seed tests, retire `ConnectionResult`, refresh docs (completed 2026-05-18)
 
 ## Phase Details
 
@@ -262,7 +262,7 @@ find feature -path '*/src/*Test/*ScreenSmokeTest.kt' | wc -l
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 4
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 5 to break down)
