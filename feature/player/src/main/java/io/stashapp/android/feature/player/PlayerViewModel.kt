@@ -368,7 +368,14 @@ class PlayerViewModel
         }
 
         private fun onSceneEnded() {
-            val next = queue.advance() ?: return
+            val next = queue.advance()
+            if (next == null) {
+                // Queue exhausted with RepeatMode.OFF — emit a banner so the user knows
+                // playback stopped intentionally rather than silently "hanging".
+                _state.update { it.copy(banner = "End of queue") }
+                clearBannerLater()
+                return
+            }
             loadAndPlay(next, autoResume = false)
         }
 
