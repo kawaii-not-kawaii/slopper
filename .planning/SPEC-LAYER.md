@@ -708,7 +708,7 @@ command_manifest:
 ui: false
 phase_name: "POLISH — Test Pyramid & Cleanup"
 phase_dir: .planning/phases/04-polish-test-pyramid
-state: pending
+state: phase_4_active
 assumptions_open: 0
 cc_concerns_cleared: false
 advisory_notes: []
@@ -720,11 +720,21 @@ command_manifest:
     cmd: "/gsd-spec-phase 4"
     output_file: ".planning/phases/04-polish-test-pyramid/04-SPEC.md"
     gate_file: "gates/spec.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T00:30:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/4#issuecomment-463
+    branch: phase-2/comply-platform-compliance
+    commit: f161763
+    requirement_count: 10
+    ambiguity_score: 0.168
+    notes:
+      - "PlayerScreen.kt now 1227 lines (grew during Phase 2/3); split target ≤ 600 lines per file"
+      - "Lint baseline 1001 lines; 30% shrink = ≤ 700 target"
+      - "ConnectionResult.InvalidUrl → AppError.Unknown (no new AppError variant)"
+      - "CI → .forgejo/workflows/ (Forgejo is the active platform, not GitHub)"
+      - "local.properties confirmed tracked in git (POLISH-10 scope)"
   - step: 2
     cmd: "/gsd-discuss-phase 4"
     output_file: ".planning/phases/04-polish-test-pyramid/04-CONTEXT.md"
