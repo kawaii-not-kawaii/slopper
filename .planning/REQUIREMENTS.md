@@ -41,11 +41,11 @@ Requirements for the modernization milestone. Each maps to one of the 4 roadmap 
 - [ ] **PERF-03**: All `UiState` types audited; collection fields migrated to `kotlinx.collections.immutable.ImmutableList<T>` where strong-skipping benefits apply
 - [ ] **PERF-04**: `feature/player` strong-skipping audit — every `LaunchedEffect` / `DisposableEffect` key list verified; auto-memoized lambdas not regressing effect re-launch behavior
 - [x] **PERF-05**: Baseline profile *expanded* beyond cold start to cover Home rails, Library scroll + filter, Detail open, Player start
-- [ ] **PERF-06**: Cold-start macrobench shows **p50 ≥ 5% improvement with baseline profile vs without** on the GMD; reproducible across 3 back-to-back runs
-- [ ] **PERF-07**: Library scroll macrobench shows **≥ 95% frames on time at p95** on the GMD
-- [ ] **PERF-08**: **Shuffle / random consecutive playback fix** — diagnose and resolve the hang/slowdown after several videos; root cause documented (likely candidates: leaked `ExoPlayer` instance, accumulating `Player.Listener`s, retained `MediaSource` references, or `AndroidView.update` running `applyVideoFrameRate` per frame); macrobench / steady-state memory profile shows no growth across a 10-video shuffle session
+- [x] **PERF-06**: Cold-start macrobench shows **p50 ≥ 5% improvement with baseline profile vs without** on the GMD; reproducible across 3 back-to-back runs
+- [x] **PERF-07**: Library scroll macrobench shows **≥ 95% frames on time at p95** on the GMD
+- [x] **PERF-08**: **Shuffle / random consecutive playback fix** — diagnose and resolve the hang/slowdown after several videos; root cause documented (likely candidates: leaked `ExoPlayer` instance, accumulating `Player.Listener`s, retained `MediaSource` references, or `AndroidView.update` running `applyVideoFrameRate` per frame); macrobench / steady-state memory profile shows no growth across a 10-video shuffle session
 - [ ] **PERF-09**: `applyVideoFrameRate` moved out of `AndroidView.update` into `LaunchedEffect(targetFps)` (per `CONCERNS.md`)
-- [ ] **PERF-10**: Every perf claim in PR descriptions is backed by a checked-in macrobench output or baseline-profile delta — no unmeasured "feels faster" claims
+- [x] **PERF-10**: Every perf claim in PR descriptions is backed by a checked-in macrobench output or baseline-profile delta — no unmeasured "feels faster" claims
 
 ### Polish, Test Pyramid & Documentation (POLISH)
 
