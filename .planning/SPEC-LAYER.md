@@ -628,13 +628,20 @@ command_manifest:
       - "03-UAT-DEFERRED.md committed with exact commands and acceptance criteria"
   - step: 7
     cmd: "/gsd-extract-learnings 3"
-    output_file: ".planning/phases/03-perf-measured-wins/LEARNINGS.md"
+    output_file: ".planning/phases/03-perf-measured-wins/03-LEARNINGS.md"
     gate_file: "gates/learnings.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T00:10:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/3#issuecomment-454
+    commit: ca9bfec
+    counts:
+      decisions: 7
+      lessons: 9
+      patterns: 5
+      surprises: 6
+      total: 27
   - step: 8
     cmd: "/gsd-secure-phase 3"
     output_file_glob: ".planning/phases/03-perf-measured-wins/*SECURITY*"
