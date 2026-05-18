@@ -36,11 +36,11 @@ Requirements for the modernization milestone. Each maps to one of the 4 roadmap 
 
 ### Performance — Measured Wins (PERF)
 
-- [ ] **PERF-01**: Gradle-managed device wired (`Pixel 6 API 34`) for repeatable macrobench runs
-- [ ] **PERF-02**: Compose Compiler stability reports wired into the `stash.android.library.compose` convention plugin; reports written to `build/compose-reports/`
+- [x] **PERF-01**: Gradle-managed device wired (`Pixel 6 API 34`) for repeatable macrobench runs
+- [x] **PERF-02**: Compose Compiler stability reports wired into the `stash.android.library.compose` convention plugin; reports written to `build/compose-reports/`
 - [ ] **PERF-03**: All `UiState` types audited; collection fields migrated to `kotlinx.collections.immutable.ImmutableList<T>` where strong-skipping benefits apply
 - [ ] **PERF-04**: `feature/player` strong-skipping audit — every `LaunchedEffect` / `DisposableEffect` key list verified; auto-memoized lambdas not regressing effect re-launch behavior
-- [ ] **PERF-05**: Baseline profile *expanded* beyond cold start to cover Home rails, Library scroll + filter, Detail open, Player start
+- [x] **PERF-05**: Baseline profile *expanded* beyond cold start to cover Home rails, Library scroll + filter, Detail open, Player start
 - [ ] **PERF-06**: Cold-start macrobench shows **p50 ≥ 5% improvement with baseline profile vs without** on the GMD; reproducible across 3 back-to-back runs
 - [ ] **PERF-07**: Library scroll macrobench shows **≥ 95% frames on time at p95** on the GMD
 - [ ] **PERF-08**: **Shuffle / random consecutive playback fix** — diagnose and resolve the hang/slowdown after several videos; root cause documented (likely candidates: leaked `ExoPlayer` instance, accumulating `Player.Listener`s, retained `MediaSource` references, or `AndroidView.update` running `applyVideoFrameRate` per frame); macrobench / steady-state memory profile shows no growth across a 10-video shuffle session
