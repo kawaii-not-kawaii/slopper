@@ -12,7 +12,7 @@ import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.stashapp.android.core.common.AppResult
-import io.stashapp.android.core.data.prefs.PlayerPreferences
+import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.model.QueueState
 import io.stashapp.android.core.model.RepeatMode
@@ -67,7 +67,7 @@ class PlayerViewModel
         private val sceneRepository: SceneRepository,
         private val endpointProvider: StashEndpointProvider,
         private val okHttpClient: OkHttpClient,
-        val preferences: PlayerPreferences,
+        val preferences: PlayerSettings,
     ) : AndroidViewModel(application) {
         private val startSceneId: String = savedState["sceneId"] ?: error("sceneId required")
         private val queueIds: List<String> =

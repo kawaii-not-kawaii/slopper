@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.domain.SceneFilter
+import io.stashapp.android.core.domain.UiSettings
 import io.stashapp.android.core.domain.SceneQuery
 import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.domain.SceneSort
@@ -38,7 +38,7 @@ class LibraryViewModel
     constructor(
         savedState: SavedStateHandle,
         private val sceneRepository: SceneRepository,
-        private val uiPreferences: UiPreferences,
+        private val uiPreferences: UiSettings,
     ) : ViewModel() {
         /** Filter derived from an optional nav preset like "tag:42". */
         private val presetFilter: SceneFilter = parsePreset(savedState["preset"])

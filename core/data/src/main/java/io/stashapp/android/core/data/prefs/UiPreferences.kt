@@ -10,6 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import io.stashapp.android.core.domain.SceneFilter
 import io.stashapp.android.core.domain.SceneOrientation
 import io.stashapp.android.core.domain.SceneResolution
+import io.stashapp.android.core.domain.UiSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
@@ -30,7 +31,7 @@ class UiPreferences
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
-    ) {
+    ) : UiSettings {
         private val json =
             Json {
                 ignoreUnknownKeys = true
@@ -39,7 +40,7 @@ class UiPreferences
 
         /** Ordered list of nav-item ids shown in the bottom bar. The "More" tab is
          *  always added separately and is never part of this list. */
-        val bottomNavVisibleIds: Flow<List<String>> =
+        override val bottomNavVisibleIds: Flow<List<String>> =
             context.uiDataStore.data.map { prefs ->
                 prefs[KEY_NAV_VISIBLE]
                     ?.split(",")
@@ -48,7 +49,7 @@ class UiPreferences
                     ?: DefaultVisible
             }
 
-        suspend fun setBottomNavVisibleIds(ids: List<String>) {
+        override suspend fun setBottomNavVisibleIds(ids: List<String>) {
             context.uiDataStore.edit { it[KEY_NAV_VISIBLE] = ids.joinToString(",") }
         }
 
@@ -59,14 +60,14 @@ class UiPreferences
          *
          * Null = no saved default (use empty filter).
          */
-        val defaultSceneFilter: Flow<SceneFilter?> =
+        override val defaultSceneFilter: Flow<SceneFilter?> =
             context.uiDataStore.data.map { prefs ->
                 prefs[KEY_DEFAULT_FILTER]?.let {
                     runCatching { json.decodeFromString<StoredSceneFilter>(it).toFilter() }.getOrNull()
                 }
             }
 
-        suspend fun setDefaultSceneFilter(filter: SceneFilter?) {
+        override suspend fun setDefaultSceneFilter(filter: SceneFilter?) {
             context.uiDataStore.edit { prefs ->
                 if (filter == null || !filter.isActive) {
                     prefs.remove(KEY_DEFAULT_FILTER)
@@ -78,42 +79,42 @@ class UiPreferences
 
         // ---- Cache ---------------------------------------------------------------
 
-        val imageCacheSizeMb: Flow<Int> = flow(KEY_IMAGE_CACHE_MB, DEFAULT_IMAGE_CACHE_MB)
+        override val imageCacheSizeMb: Flow<Int> = flow(KEY_IMAGE_CACHE_MB, DEFAULT_IMAGE_CACHE_MB)
 
-        suspend fun setImageCacheSizeMb(value: Int) = put(KEY_IMAGE_CACHE_MB, value)
+        override suspend fun setImageCacheSizeMb(value: Int) = put(KEY_IMAGE_CACHE_MB, value)
 
         // ---- Display -------------------------------------------------------------
 
         /** "auto" / "2" / "3" / "4" */
-        val gridColumns: Flow<String> = flow(KEY_GRID_COLUMNS, DEFAULT_GRID_COLUMNS)
+        override val gridColumns: Flow<String> = flow(KEY_GRID_COLUMNS, DEFAULT_GRID_COLUMNS)
 
-        suspend fun setGridColumns(value: String) = put(KEY_GRID_COLUMNS, value)
+        override suspend fun setGridColumns(value: String) = put(KEY_GRID_COLUMNS, value)
 
-        val amoledBlackMode: Flow<Boolean> = flow(KEY_AMOLED, DEFAULT_AMOLED)
+        override val amoledBlackMode: Flow<Boolean> = flow(KEY_AMOLED, DEFAULT_AMOLED)
 
-        suspend fun setAmoledBlackMode(value: Boolean) = put(KEY_AMOLED, value)
+        override suspend fun setAmoledBlackMode(value: Boolean) = put(KEY_AMOLED, value)
 
-        val showRatingOnCards: Flow<Boolean> = flow(KEY_SHOW_RATING, true)
+        override val showRatingOnCards: Flow<Boolean> = flow(KEY_SHOW_RATING, true)
 
-        suspend fun setShowRatingOnCards(value: Boolean) = put(KEY_SHOW_RATING, value)
+        override suspend fun setShowRatingOnCards(value: Boolean) = put(KEY_SHOW_RATING, value)
 
-        val showPlayCountOnCards: Flow<Boolean> = flow(KEY_SHOW_PLAY_COUNT, true)
+        override val showPlayCountOnCards: Flow<Boolean> = flow(KEY_SHOW_PLAY_COUNT, true)
 
-        suspend fun setShowPlayCountOnCards(value: Boolean) = put(KEY_SHOW_PLAY_COUNT, value)
+        override suspend fun setShowPlayCountOnCards(value: Boolean) = put(KEY_SHOW_PLAY_COUNT, value)
 
-        val showResolutionOnCards: Flow<Boolean> = flow(KEY_SHOW_RESOLUTION, true)
+        override val showResolutionOnCards: Flow<Boolean> = flow(KEY_SHOW_RESOLUTION, true)
 
-        suspend fun setShowResolutionOnCards(value: Boolean) = put(KEY_SHOW_RESOLUTION, value)
+        override suspend fun setShowResolutionOnCards(value: Boolean) = put(KEY_SHOW_RESOLUTION, value)
 
         // ---- App behavior --------------------------------------------------------
 
-        val activityTracking: Flow<Boolean> = flow(KEY_ACTIVITY_TRACKING, true)
+        override val activityTracking: Flow<Boolean> = flow(KEY_ACTIVITY_TRACKING, true)
 
-        suspend fun setActivityTracking(value: Boolean) = put(KEY_ACTIVITY_TRACKING, value)
+        override suspend fun setActivityTracking(value: Boolean) = put(KEY_ACTIVITY_TRACKING, value)
 
-        val autoRotatePlayer: Flow<Boolean> = flow(KEY_AUTO_ROTATE, true)
+        override val autoRotatePlayer: Flow<Boolean> = flow(KEY_AUTO_ROTATE, true)
 
-        suspend fun setAutoRotatePlayer(value: Boolean) = put(KEY_AUTO_ROTATE, value)
+        override suspend fun setAutoRotatePlayer(value: Boolean) = put(KEY_AUTO_ROTATE, value)
 
         // ---- Helpers -------------------------------------------------------------
 

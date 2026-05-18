@@ -7,10 +7,14 @@ import dagger.hilt.components.SingletonComponent
 import io.stashapp.android.core.data.browse.DefaultBrowseRepository
 import io.stashapp.android.core.data.connection.DefaultConnectionRepository
 import io.stashapp.android.core.data.connection.EndpointStateHolder
+import io.stashapp.android.core.data.prefs.PlayerPreferences
+import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.data.scene.DefaultSceneRepository
 import io.stashapp.android.core.domain.BrowseRepository
 import io.stashapp.android.core.domain.ConnectionRepository
+import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.domain.SceneRepository
+import io.stashapp.android.core.domain.UiSettings
 import io.stashapp.android.core.network.StashEndpointProvider
 import javax.inject.Singleton
 
@@ -37,4 +41,12 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindBrowseRepository(impl: DefaultBrowseRepository): BrowseRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPlayerSettings(impl: PlayerPreferences): PlayerSettings
+
+    @Binds
+    @Singleton
+    abstract fun bindUiSettings(impl: UiPreferences): UiSettings
 }

@@ -50,7 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import io.stashapp.android.core.data.prefs.PlayerPreferences
+import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.designsystem.theme.StashColors
 import io.stashapp.android.core.model.RepeatMode
 import kotlinx.collections.immutable.toPersistentList
@@ -84,9 +84,9 @@ fun PlayerScreen(
     val activity = context as? Activity
 
     val seekMsPerPx by viewModel.preferences.seekMsPerPx
-        .collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_SEEK_MS_PER_PX)
+        .collectAsStateWithLifecycle(initialValue = PlayerSettings.DEFAULT_SEEK_MS_PER_PX)
     val doubleTapSeekSec by viewModel.preferences.doubleTapSeekSeconds
-        .collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_DOUBLE_TAP_SEEK_SEC)
+        .collectAsStateWithLifecycle(initialValue = PlayerSettings.DEFAULT_DOUBLE_TAP_SEEK_SEC)
 
     // Controls visibility, interaction timestamp for auto-hide, and MX-Player-
     // style local UI state (lock, rotation-lock, aspect mode, remaining-time).

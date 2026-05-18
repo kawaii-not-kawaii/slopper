@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.stashapp.android.core.domain.PlayerSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -21,57 +22,57 @@ class PlayerPreferences
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
-    ) {
+    ) : PlayerSettings {
         // ---- Gesture sensitivity ------------------------------------------------
 
-        val seekMsPerPx: Flow<Float> = flow(KEY_SEEK_MS_PER_PX, DEFAULT_SEEK_MS_PER_PX)
-        val doubleTapSeekSeconds: Flow<Int> = flow(KEY_DOUBLE_TAP_SEEK_SEC, DEFAULT_DOUBLE_TAP_SEEK_SEC)
+        override val seekMsPerPx: Flow<Float> = flow(KEY_SEEK_MS_PER_PX, DEFAULT_SEEK_MS_PER_PX)
+        override val doubleTapSeekSeconds: Flow<Int> = flow(KEY_DOUBLE_TAP_SEEK_SEC, DEFAULT_DOUBLE_TAP_SEEK_SEC)
 
-        suspend fun setSeekMsPerPx(value: Float) = put(KEY_SEEK_MS_PER_PX, value)
+        override suspend fun setSeekMsPerPx(value: Float) = put(KEY_SEEK_MS_PER_PX, value)
 
-        suspend fun setDoubleTapSeekSeconds(value: Int) = put(KEY_DOUBLE_TAP_SEEK_SEC, value)
+        override suspend fun setDoubleTapSeekSeconds(value: Int) = put(KEY_DOUBLE_TAP_SEEK_SEC, value)
 
         // ---- Playback defaults --------------------------------------------------
 
         /** Persistent default speed (1.0 = normal). Applied when a new scene starts. */
-        val defaultPlaybackSpeed: Flow<Float> = flow(KEY_DEFAULT_SPEED, DEFAULT_SPEED)
+        override val defaultPlaybackSpeed: Flow<Float> = flow(KEY_DEFAULT_SPEED, DEFAULT_SPEED)
 
-        suspend fun setDefaultPlaybackSpeed(value: Float) = put(KEY_DEFAULT_SPEED, value)
+        override suspend fun setDefaultPlaybackSpeed(value: Float) = put(KEY_DEFAULT_SPEED, value)
 
         /** Auto-advance to the next item in the queue when a scene ends. */
-        val autoPlayNext: Flow<Boolean> = flow(KEY_AUTO_PLAY_NEXT, DEFAULT_AUTO_PLAY_NEXT)
+        override val autoPlayNext: Flow<Boolean> = flow(KEY_AUTO_PLAY_NEXT, DEFAULT_AUTO_PLAY_NEXT)
 
-        suspend fun setAutoPlayNext(value: Boolean) = put(KEY_AUTO_PLAY_NEXT, value)
+        override suspend fun setAutoPlayNext(value: Boolean) = put(KEY_AUTO_PLAY_NEXT, value)
 
         /** Seconds below which resume position is ignored ("start from beginning"). */
-        val resumeThresholdSeconds: Flow<Int> = flow(KEY_RESUME_THRESHOLD, DEFAULT_RESUME_THRESHOLD)
+        override val resumeThresholdSeconds: Flow<Int> = flow(KEY_RESUME_THRESHOLD, DEFAULT_RESUME_THRESHOLD)
 
-        suspend fun setResumeThresholdSeconds(value: Int) = put(KEY_RESUME_THRESHOLD, value)
+        override suspend fun setResumeThresholdSeconds(value: Int) = put(KEY_RESUME_THRESHOLD, value)
 
         /** Percentage of duration watched before a "completed play" is recorded. */
-        val completionThresholdPercent: Flow<Int> = flow(KEY_COMPLETION_THRESHOLD, DEFAULT_COMPLETION_THRESHOLD)
+        override val completionThresholdPercent: Flow<Int> = flow(KEY_COMPLETION_THRESHOLD, DEFAULT_COMPLETION_THRESHOLD)
 
-        suspend fun setCompletionThresholdPercent(value: Int) = put(KEY_COMPLETION_THRESHOLD, value)
+        override suspend fun setCompletionThresholdPercent(value: Int) = put(KEY_COMPLETION_THRESHOLD, value)
 
         /** Seconds to auto-skip at the start of every scene (intro skip). 0 = off. */
-        val skipIntroSeconds: Flow<Int> = flow(KEY_SKIP_INTRO, DEFAULT_SKIP_INTRO)
+        override val skipIntroSeconds: Flow<Int> = flow(KEY_SKIP_INTRO, DEFAULT_SKIP_INTRO)
 
-        suspend fun setSkipIntroSeconds(value: Int) = put(KEY_SKIP_INTRO, value)
+        override suspend fun setSkipIntroSeconds(value: Int) = put(KEY_SKIP_INTRO, value)
 
         /** Video buffer preset — controls ExoPlayer's min/max buffer. */
-        val videoBufferPreset: Flow<String> = flow(KEY_BUFFER_PRESET, DEFAULT_BUFFER_PRESET)
+        override val videoBufferPreset: Flow<String> = flow(KEY_BUFFER_PRESET, DEFAULT_BUFFER_PRESET)
 
-        suspend fun setVideoBufferPreset(value: String) = put(KEY_BUFFER_PRESET, value)
+        override suspend fun setVideoBufferPreset(value: String) = put(KEY_BUFFER_PRESET, value)
 
         /** Default aspect-ratio resize mode. */
-        val defaultAspectRatio: Flow<String> = flow(KEY_ASPECT_RATIO, DEFAULT_ASPECT_RATIO)
+        override val defaultAspectRatio: Flow<String> = flow(KEY_ASPECT_RATIO, DEFAULT_ASPECT_RATIO)
 
-        suspend fun setDefaultAspectRatio(value: String) = put(KEY_ASPECT_RATIO, value)
+        override suspend fun setDefaultAspectRatio(value: String) = put(KEY_ASPECT_RATIO, value)
 
         /** Decoder preference: "auto", "prefer_hw", "prefer_sw". */
-        val decoderPreference: Flow<String> = flow(KEY_DECODER_PREF, DEFAULT_DECODER_PREF)
+        override val decoderPreference: Flow<String> = flow(KEY_DECODER_PREF, DEFAULT_DECODER_PREF)
 
-        suspend fun setDecoderPreference(value: String) = put(KEY_DECODER_PREF, value)
+        override suspend fun setDecoderPreference(value: String) = put(KEY_DECODER_PREF, value)
 
         // ---- Helpers (reduce boilerplate) ----------------------------------------
 

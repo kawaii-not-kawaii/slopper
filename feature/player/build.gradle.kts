@@ -16,9 +16,6 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.kotlinx.collections.immutable)
 
-    // Player prefs (seek sensitivity, etc.) live in :core:data via DataStore.
-    implementation(project(":core:data"))
-
     // Prebuilt FFmpeg extension for Media3 — audio codecs (AC3/EAC3/DTS/TrueHD
     // etc.) plus H.264/HEVC/VP8/VP9 software decode fallback. Ships as a
     // Maven artifact so we don't need to maintain an NDK build.
