@@ -75,14 +75,14 @@ The canonical module list lives in `settings.gradle.kts`.
 | `:core:network` | Apollo 4 client, OkHttp stack, `StashAuthInterceptor`, endpoint provider interface, Apollo-generated GraphQL code under `io.stashapp.android.graphql` | `StashEndpoint`, `StashEndpointProvider`, `NetworkModule` | `:core:common` |
 | `:core:data` | Repository **implementations**, paging sources, mappers, DataStore preference stores, Hilt `@Binds` module | `DefaultSceneRepository`, `DefaultConnectionRepository`, `DefaultBrowseRepository`, `EndpointStateHolder`, `ConnectionStore`, `UiPreferences`, `PlayerPreferences`, `DataModule` | `:core:domain` (api), `:core:network` (api) |
 | `:core:designsystem` | Material3 theme, color, typography, reusable design-system primitives | `StashTheme`, `SceneCard` | — |
-| `:core:ui` | Shared Compose UI utilities: route registry, bottom-nav chrome, sheet UI, Coil image loader factory | `Routes`, `MainBottomBar`, `MoreSheet`, `NavCustomizeSheet`, `StashImageLoader` | `:core:designsystem`, `:core:model`, `:core:domain`, `:core:network`, **`:core:data`** (see Layering rules) |
+| `:core:ui` | Shared Compose UI utilities: route registry, bottom-nav chrome, sheet UI, Coil image loader factory | `Routes`, `MainBottomBar`, `NavCustomizeSheet`, `StashImageLoader`. Note: `MoreSheet` is a **private composable inside `BottomNav.kt:179`**, not a standalone file. | `:core:designsystem`, `:core:model`, `:core:domain`, `:core:network`, **`:core:data`** (see Layering rules) |
 | `:feature:connection` | Sign-in / endpoint setup | `ConnectionScreen`, `ConnectionViewModel` | core modules via `stash.android.feature` |
 | `:feature:home` | Home rails (Continue watching, Recently released, Recently added, Most played) | `HomeScreen`, `HomeViewModel`, `HomeUiState` | core modules via `stash.android.feature` |
 | `:feature:library` | Paged scene grid with filter sheet and presets | `LibraryScreen`, `LibraryViewModel`, `FilterSheet` | + `:core:data` (UiPreferences) |
 | `:feature:browse` | Performers / studios / tags paged listings | `BrowseScreen`, `BrowseViewModel` | core modules via `stash.android.feature` |
 | `:feature:detail` | Single-scene detail + playback launch | `DetailScreen`, `DetailViewModel` | core modules via `stash.android.feature` |
 | `:feature:player` | Media3 ExoPlayer surface, queue handling, codec/capability checks | `PlayerScreen`, `PlayerViewModel`, `PlayerQueue`, `CodecCapabilities`, `StashPlayerFactory` | + `:core:data` (PlayerPreferences); Media3 ExoPlayer + nextlib FFmpeg |
-| `:feature:settings` | Settings UI, disconnect/reconnect, browse entry points | `SettingsScreen`, `SettingsViewModel` | + `:core:data` (UiPreferences) |
+| `:feature:settings` | Settings UI, disconnect/reconnect, browse entry points, per-app language picker | `SettingsScreen`, `SettingsViewModel`, `LanguageRow` (private — fires `ACTION_APP_LOCALE_SETTINGS`; guarded by `Build.VERSION.SDK_INT >= 33`) | + `:core:data` (UiPreferences); + `feature/settings/src/main/res/values/strings.xml` (co-located due to module-graph R-class constraint) |
 | `:baselineprofile` | Macrobenchmark module that generates the baseline profile installed by `:app`'s `androidx.profileinstaller`. Not part of a normal build; invoked via `./gradlew :app:generateBaselineProfile`. | — | drives `:app` |
 | `build-logic:convention` | Included build providing the `stash.android.*` Gradle convention plugins | `AndroidApplicationConventionPlugin`, `AndroidLibraryConventionPlugin`, `AndroidComposeConventionPlugin`, `AndroidHiltConventionPlugin`, `AndroidFeatureConventionPlugin` | — |
 
@@ -152,8 +152,11 @@ that is the entire wiring — every base dep comes from the feature plugin.
 
 End-to-end path for a screen that reads from the Stash server:
 
-1. **Activity boot.** `MainActivity.onCreate` enables edge-to-edge, requests the
-   highest available display refresh rate, then sets the Compose content to
+1. **Activity boot.** `MainActivity.onCreate` calls `installSplashScreen()`
+   (BEFORE `super.onCreate`) and sets a `setKeepOnScreenCondition` gate on
+   `RootViewModel.start` with a 3-second ANR safety-timeout. It then enables
+   edge-to-edge (`enableEdgeToEdge()`), requests the highest available display
+   refresh rate, and sets the Compose content to
    `StashTheme { StashAppContent(rootViewModel) }`.
 2. **Start destination.** `RootViewModel.init` collects
    `ConnectionRepository.activeServer()`. The first emission is either
@@ -233,6 +236,28 @@ prebuilt FFmpeg software decoders covering codecs ExoPlayer's default
 decoders do not (AC3/EAC3/DTS/TrueHD, plus H.264/HEVC/VP8/VP9 fallback).
 The build file also picks up any `media3-decoder-ffmpeg*.aar` dropped in
 `feature/player/libs/` for users running custom decoder sets.
+
+**Edge-to-edge and insets.** `themes.xml` does not set `statusBarColor` or
+`navigationBarColor` (they were removed in COMPLY-01). All three
+`ModalBottomSheet` composables (`FilterSheet`, `NavCustomizeSheet`,
+`BottomNav.MoreSheet`) set `contentWindowInsets = { WindowInsets.navigationBars }`.
+`PlayerScreen` wraps its chrome (controls + locked-overlay) in
+`Box(Modifier.safeDrawingPadding())` while the `AndroidView` ExoPlayer surface
+stays full-bleed. Top-level `Scaffold`s use Material3 defaults
+(`ScaffoldDefaults.contentWindowInsets`, equivalent to `WindowInsets.systemBars`).
+
+**Predictive back.** `AndroidManifest.xml` opts in via
+`android:enableOnBackInvokedCallback="true"`. `PlayerScreen.kt:188` uses
+`PredictiveBackHandler` (from `androidx.activity`) instead of the removed
+`BackHandler`, with `try { progress.collect { … }; onExit() } catch (e: CancellationException) { throw e }`
+cancel semantics. No other back handlers exist in the repo.
+
+**Per-app language picker.** `app/build.gradle.kts` sets
+`androidResources { generateLocaleConfig = true }`. AGP produces
+`_generated_res_locale_config.xml` (referenced via `android:localeConfig` in
+the merged manifest). `SettingsScreen.LanguageRow` fires
+`Intent(Settings.ACTION_APP_LOCALE_SETTINGS)` guarded by
+`Build.VERSION.SDK_INT >= 33 (TIRAMISU)`.
 
 **State management.** ViewModels expose `StateFlow<UiState>`; composables
 consume via `collectAsStateWithLifecycle()`. Repositories return

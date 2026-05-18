@@ -7,9 +7,11 @@ server. Connection flow, paginated library grid with search/filter, scene
 detail with rating + organize + O-counter actions, and a Media3-backed player
 with queue / shuffle / repeat / PiP / marker-seek / resume sync-back.
 
-This repository is on the **v1.0 modernization milestone**. Phase 1 (DEPS) has
+This repository is on the **v1.0 modernization milestone**. Phases 1–2 have
 landed: Gradle 8.11.1, AGP 8.7.3, Kotlin 2.2.20, Compose BOM 2026.05.00, Hilt
-2.56.2, Apollo 4.4.3, Media3 1.9.1. Phases 2–4 (COMPLY / PERF / POLISH) are
+2.56.2, Apollo 4.4.3, Media3 1.9.1 (Phase 1); plus edge-to-edge, predictive
+back (`PredictiveBackHandler`), Splash Screen API, per-app language picker,
+and orphan-permission cleanup (Phase 2). Phases 3–4 (PERF / POLISH) are
 pending — there is no automated test suite or CI wired up yet.
 
 ## Toolchain
@@ -175,6 +177,14 @@ slopper/
   in [`DEVICE_TESTING.md`](DEVICE_TESTING.md). A test pass is on the POLISH
   backlog.
 - **No CI.** All builds are local. A CI wiring pass is planned but not done.
+- **Platform compliance (Phase 2) landed.** Edge-to-edge enforced via
+  `enableEdgeToEdge()` (bar-color overrides stripped from `themes.xml`); all
+  three `ModalBottomSheet` sites get `contentWindowInsets`; `PlayerScreen`
+  chrome wrapped in `safeDrawingPadding`; `PredictiveBackHandler` replaces
+  `BackHandler` at `PlayerScreen.kt:188`; Splash Screen API wired in
+  `MainActivity`; per-app language picker via `generateLocaleConfig`; orphan
+  `POST_NOTIFICATIONS` and `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permissions
+  removed.
 - **Media3 stays on 1.9.1.** The 1.10.0 upgrade is deferred together with
   AGP 9 + compileSdk 36; see the comment block in
   [`gradle/libs.versions.toml`](gradle/libs.versions.toml).

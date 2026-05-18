@@ -96,6 +96,23 @@ captured during the Phase 1 dependency bump. The contract:
 Do not regenerate `lint-baseline.xml` just to make a build green. If you must,
 record the reason in the commit message and call it out in PR review.
 
+## Platform compliance checks (Phase 2)
+
+After any change to `AndroidManifest.xml`, `themes.xml`, `MainActivity.kt`,
+`PlayerScreen.kt`, or the three `ModalBottomSheet` sites, also verify:
+
+| Check | How |
+|---|---|
+| Cold-launch splash visible until library loads | Install fresh, cold-launch; no white flash |
+| Edge-to-edge: no clipped buttons under gesture nav | Enable gesture-nav, check bottom tabs + sheets |
+| Predictive back: preview appears on swipe-right | Enable **Settings → Developer Options → Predictive back animations**; swipe back from `PlayerScreen` |
+| `ModalBottomSheet` sheets (FilterSheet, NavCustomizeSheet, MoreSheet) don't clip content behind nav bar | Open each sheet in gesture-nav mode |
+| Per-app language picker present (API 33+) | Settings screen → Language row fires system picker |
+
+These checks are tracked in `.planning/phases/02-comply-platform-compliance/02-UAT.md`
+(51-row verbal PASS on Galaxy S23+ Android 16, gesture-nav, 2026-05-17).
+For full re-verification criteria see `02-UAT.md`.
+
 ## Manual device testing
 
 Until the automated pyramid lands, **every UI change is gated on the manual

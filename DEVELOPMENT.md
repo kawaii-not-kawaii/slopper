@@ -402,6 +402,23 @@ and `:core:designsystem`. If a feature genuinely needs to reach into
 `:core:data` (rare), add it explicitly in that feature's `build.gradle.kts` —
 but first check whether the abstraction it needs should live in `:core:domain`.
 
+**Feature module string resources cannot use `io.stashapp.android.R`.** The
+Gradle dependency direction is `app → feature`, never the reverse. Feature
+modules cannot resolve the app module's R class. When a feature composable
+needs string resources, co-locate them in
+`feature/<name>/src/main/res/values/strings.xml`. The same strings may also
+exist in `app/src/main/res/values/strings.xml` — AGP deduplicates identical
+values at merge time, so dual-presence is harmless. Never add
+`import io.stashapp.android.R` to a feature module.
+
+**`generateLocaleConfig = true` requires `app/src/main/res/resources.properties`.**
+Under AGP 8.7.3 the `extractSupportedLocales` task fails with
+`No resources.properties file found` if this file does not exist — it is a
+hard build error, not a warning. Create the file with a single line:
+`unqualifiedResLocale=en`. AGP generates the locale config XML as
+`_generated_res_locale_config.xml` (underscore prefix) — adjust any `find`
+commands accordingly.
+
 **Routes are central, navigation lambdas flow down.** All routes live in
 `Routes` (in `app/src/main/java/io/stashapp/android/MainActivity.kt`).
 Feature screens take `onSomethingClick: (id: String) -> Unit` callbacks and
