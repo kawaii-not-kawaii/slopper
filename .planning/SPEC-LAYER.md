@@ -479,7 +479,7 @@ command_manifest:
 ui: false
 phase_name: "PERF — Measured Wins"
 phase_dir: .planning/phases/03-perf-measured-wins
-state: pending
+state: phase_3_active
 assumptions_open: 0
 cc_concerns_cleared: false
 advisory_notes: []
@@ -491,11 +491,20 @@ command_manifest:
     cmd: "/gsd-spec-phase 3"
     output_file: ".planning/phases/03-perf-measured-wins/03-SPEC.md"
     gate_file: "gates/spec.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-18T23:00:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/3#issuecomment-448
+    branch: phase-2/comply-platform-compliance
+    commit: 7c8e2f5
+    requirement_count: 10
+    ambiguity_score: 0.17
+    notes:
+      - "Auto mode: initial ambiguity 0.24 → resolved 4 ambiguities (GMD defer path, PERF-08 investigative cap, PERF-03 ImmutableList scope, benchmarks output dir) → 0.17"
+      - "Premise: AGP 8.7.3 / compileSdk 35 floor (no AGP-9 in Phase 3)"
+      - "PERF-06/07 device-dependent — REVIEWS-C4 ACCEPT path documented if GMD unavailable"
+      - "PERF-08 investigative — diagnosis artifact mandatory; fix conditional"
   - step: 2
     cmd: "/gsd-discuss-phase 3"
     output_file: ".planning/phases/03-perf-measured-wins/03-CONTEXT.md"
