@@ -646,38 +646,61 @@ command_manifest:
     cmd: "/gsd-secure-phase 3"
     output_file_glob: ".planning/phases/03-perf-measured-wins/*SECURITY*"
     gate_file: "gates/security.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T00:15:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/3#issuecomment-455
+    commit: c3df32a
+    threats_total: 10
+    threats_closed: 10
+    threats_open: 0
+    register_authored_at_plan_time: true
+    notes:
+      - "10 threats: 5 mitigated (T-03-02/04/05/06/07 via build+grep), 3 accepted (T-03-01/03/09), 2 mitigated+deferred (T-03-08/10 via UAT-DEFERRED)"
   - step: 9
     cmd: "/gsd-validate-phase 3"
     output_file_glob: ".planning/phases/03-perf-measured-wins/*VALIDATION*"
     gate_file: "gates/validation.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T00:15:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/3#issuecomment-455
+    commit: c3df32a
+    notes:
+      - "documented-stub mode; nyquist_validation=false; 8 COVERED / 2 PARTIAL (device-deferred)"
+      - "4 backlog test items for Phase 4: PERF-08 queue tests, PERF-03 stability test, PERF-09 recomposition test"
   - step: 10
     cmd: "/gsd-docs-update 3"
     output_marker: "docs_updated_at"
     gate_file: "gates/docs.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T00:20:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/3#issuecomment-459
+    docs_updated_at: 2026-05-19T00:20:00+09:00
+    commit: 1537b8d
+    notes:
+      - "3 docs updated: README (Phase 3 landing note), ARCHITECTURE (perf infrastructure section), DEVELOPMENT (3 new gotchas)"
   - step: 11
     cmd: "/gsd-ship 3"
     output_marker: "pr_merged_at"
     gate_file: "gates/ship.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T00:20:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/3#issuecomment-459
+    pr_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/pulls/6
+    pr_number: 6
+    pr_state: open
+    pr_merged_at: null
+    notes:
+      - "Phase 3 commits bundled into Phase 2 PR #6 (single continuous branch strategy)"
+      - "PR #6 title updated to 'Phase 2+3: COMPLY + PERF'"
+      - "Rebase onto master when Phase 1 PR #5 merges; then merge PR #6"
 
 ---
 
