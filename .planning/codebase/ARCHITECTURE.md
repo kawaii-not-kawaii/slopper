@@ -1,4 +1,4 @@
-<!-- refreshed: 2026-05-16 -->
+<!-- refreshed: 2026-05-19 -->
 # Architecture
 
 **Analysis Date:** 2026-05-16
@@ -282,4 +282,38 @@ Cross-cutting (depended on by most layers):
 
 ---
 
-*Architecture analysis: 2026-05-16*
+*Architecture analysis: 2026-05-16 | Last updated: 2026-05-19*
+
+## Phase 4 Changes (POLISH — Test Pyramid & Cleanup)
+
+### POLISH-01 — PlayerScreen split
+
+`feature/player/PlayerScreen.kt` was split into three focused composables to reduce file size and improve testability:
+
+| New file | Responsibility |
+|----------|---------------|
+| `PlayerScreen.kt` | Top-level composable, state hoisting, navigation back, PiP |
+| `PlayerControls.kt` | Play/pause, skip, repeat, shuffle, volume controls overlay |
+| `PlayerTimeline.kt` | Scrubber, markers timeline bar, chapter display |
+
+Marker collections migrated from `List<Marker>` to `ImmutableList<Marker>` (Phase 3 PERF-03 pattern) — detekt baselines regenerated to match new signatures.
+
+### POLISH-06 — PlayerSettings + UiSettings interfaces
+
+Two new preference interfaces extracted into `:core:domain` to break direct `:feature → :core:data` dependency for settings reads:
+
+- `PlayerSettings` — exposes player prefs (frame rate, default quality, resume behaviour)
+- `UiSettings` — exposes UI prefs (bottom-nav layout, theme)
+
+DataStore-backed implementations bound in `DataModule` via `@Binds`. Feature modules that previously imported `:core:data` for `PlayerPreferences`/`UiPreferences` now depend on the domain interfaces only.
+
+### POLISH-07 — ErrorResult + catch narrowing
+
+- `ConnectionResult` sealed type retired; all connection operations now return `AppResult<ServerInfo>` (consistent with the rest of the codebase).
+- All `catch (e: Throwable)` blocks in `:core:data` narrowed to specific exception types (`IOException`, `ApolloException`, etc.). Six `TooGenericExceptionCaught` detekt suppressions removed.
+
+### Anti-pattern updated
+
+The "Importing `:core:data` from a feature module" anti-pattern (see above) is being resolved:
+- `feature/player` and `feature/settings` now inject `PlayerSettings` / `UiSettings` domain interfaces instead of the concrete DataStore classes.
+- `feature/library` still imports `:core:data` directly for `UiPreferences` — tracked for a future cleanup cycle.

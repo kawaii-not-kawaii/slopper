@@ -132,3 +132,43 @@ adb logcat > ~/stash-session.log
 # ... reproduce the issue ...
 # Ctrl+C
 ```
+
+## Phase 2 — Platform Compliance Checks
+
+These checks verify the COMPLY milestone changes from Phase 2. Run on a physical device with Android 13+.
+
+### COMPLY-01 — Edge-to-edge content insets
+1. Open the player screen
+2. Verify UI content (controls, timeline) is not clipped behind the system navigation bar or status bar
+3. In gesture navigation mode, verify the safeDrawingPadding overlay correctly insets all interactive elements
+
+### COMPLY-02 — Predictive back gesture
+1. Enable **Developer Options → Predictive back animations** on the device
+2. Open the player screen, start playback
+3. Swipe back (Android 14+): verify the predictive back preview animation appears before completing the gesture
+4. Verify the player exits cleanly when the gesture completes
+
+### COMPLY-04 — Language settings (Android 13+)
+1. Open **Settings → App Language**
+2. Verify the Language row appears and allows per-app language selection (Android 13+ only; not shown on Android 12)
+
+### COMPLY-06 — Bottom sheet insets
+1. Open Library, tap the filter icon to open the filter sheet
+2. In gesture navigation mode, verify the sheet's content is not obscured by the home indicator or navigation gestures
+3. Open MoreSheet (long-press on a scene card), verify same inset behavior
+
+## Phase 3 — Performance Regression Checks
+
+These checks verify the PERF milestone changes from Phase 3 are still working after the Phase 4 PlayerScreen split.
+
+### PERF-04 / Shuffle fix — Queue completion
+1. Add 10+ scenes to a queue
+2. Enable shuffle mode
+3. Play through all scenes
+4. Verify the "End of queue" banner appears when the last scene finishes (regression: it previously stopped silently)
+
+### PERF-09 — Frame rate adaptation
+1. Open a high-frame-rate video (60fps or 120fps content)
+2. Enable frame rate display in Developer Options
+3. Verify the display refresh rate adjusts to match the video frame rate when the player opens
+4. Verify the first frame appears without jank (no frozen frame on initial load)
