@@ -429,11 +429,16 @@ command_manifest:
     cmd: "/gsd-validate-phase 2"
     output_file_glob: ".planning/phases/02-comply-platform-compliance/*VALIDATION*"
     gate_file: "gates/validation.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-18T22:38:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/2#issuecomment-441
+    commit: dacb9f4
+    notes:
+      - "documented-stub mode: nyquist_validation=false in config; Phase 2 is platform compliance (no new behavior surface)"
+      - "7 reqs: 6 COVERED via build/grep/UAT, 1 PARTIAL (COMPLY-07 verbal-UAT + 3-button-nav deferred)"
+      - "4 backlog test items documented for Phase 4 POLISH-04/05 (COMPLY-01/02/04/06)"
   - step: 10
     cmd: "/gsd-docs-update 2"
     output_marker: "docs_updated_at"
