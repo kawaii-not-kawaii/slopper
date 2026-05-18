@@ -736,14 +736,20 @@ command_manifest:
       - "CI → .forgejo/workflows/ (Forgejo is the active platform, not GitHub)"
       - "local.properties confirmed tracked in git (POLISH-10 scope)"
   - step: 2
-    cmd: "/gsd-discuss-phase 4"
+    cmd: "/gsd-discuss-phase 4 --auto"
     output_file: ".planning/phases/04-polish-test-pyramid/04-CONTEXT.md"
     gate_file: "gates/discuss.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T00:38:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/4#issuecomment-464
+    commit: 22d4f44
+    mode: "--auto (single-pass; recommended defaults)"
+    notes:
+      - "10 decisions: PlayerTimeline.kt split target, JUnit5 5.11.4/MockK 1.14/Turbine 1.2/Robolectric 4.14, PlayerSettings/UiSettings interface scope, lint fix-high-yield strategy, wave 1 parallel all 3 plans"
+      - "CI → .forgejo/workflows/ci.yml (Forgejo platform)"
+      - "ConnectionResult.InvalidUrl → AppError.Unknown (no new variant)"
   - step: 3
     cmd: "/gsd-plan-phase 4"
     output_file_glob: ".planning/phases/04-polish-test-pyramid/04*-PLAN.md"
