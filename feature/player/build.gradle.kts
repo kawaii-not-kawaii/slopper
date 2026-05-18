@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.media3.datasource.okhttp)
     implementation(libs.okhttp)
+    implementation(libs.kotlinx.collections.immutable)
 
     // Player prefs (seek sensitivity, etc.) live in :core:data via DataStore.
     implementation(project(":core:data"))

@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.stashapp.android.core.designsystem.component.SceneCard
 import io.stashapp.android.core.designsystem.component.resolutionLabel
 import io.stashapp.android.core.model.SceneSummary
+import kotlinx.collections.immutable.ImmutableList
 
 /**
  * Home dashboard. Shows a fixed set of rails modeled after Stash's web UI
@@ -142,7 +143,7 @@ private fun RailError(message: String) {
 
 @Composable
 private fun RailScenes(
-    scenes: List<SceneSummary>,
+    scenes: ImmutableList<SceneSummary>,
     onSceneClick: (String) -> Unit,
     onPlayQueue: (List<String>, Int) -> Unit,
 ) {
