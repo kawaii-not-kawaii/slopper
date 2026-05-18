@@ -169,3 +169,29 @@ device.
   `.planning/REQUIREMENTS.md` Deferred section at commit `9c65e91`.
 - `COMPLY-02-NAV-EVENT`: PredictiveBackHandler deprecation migration deferred. Backlog seeded
   in `.planning/REQUIREMENTS.md` Deferred section at commit `9c65e91`.
+
+## Verify-Work Confirmation (Step 6)
+
+This step (`/gsd-verify-work 2`) re-affirms the UAT result above without re-running the
+test surface. The UAT was performed during step 5 (execute) because Plan 02.2 Task 4 was a
+`checkpoint:human-verify` task — the UAT and the implementation gate landed in the same
+step. Step 6 in the canonical spec-layer pipeline therefore acts as a re-attestation gate.
+
+- **Re-attested by:** theboy1263@gmail.com
+- **Re-attested on:** 2026-05-18
+- **Code state at re-attestation:** unchanged since last code-changing commit `06b5571`
+  (Plan 02.2 Tasks 1-3 closeout). Commits since then are docs-only (`9c65e91` REQUIREMENTS
+  backlog seed; `94b6109` COMPLY-07 UAT/SCREENSHOTS docs; `a75cca0`/`34ee62c` spec-layer
+  state; `a9e93f2` 02.2 summary; `4df8e62` VERIFICATION.md; this commit). No source or
+  manifest changes — verbal verdict from 2026-05-17 remains valid.
+- **Verdict carried forward:** PASS-WITH-NOTES (functional surface PASS; PNG pack unmet,
+  mitigated by accepted risk `COMPLY-07-NO-PNG`).
+- **Gaps carried forward unchanged:** `COMPLY-07-NO-PNG`, `COMPLY-07-3BTN`,
+  `COMPLY-02-NAV-EVENT`. None are blocking. All have backlog entries or accepted-risk
+  records.
+- **Verifier (step 5) corroboration:** `VERIFICATION.md` at `4df8e62` scored 17/18 SPEC
+  acceptance bullets met, confirming the UAT result row-by-row against codebase grep
+  invariants and on-disk build artifacts. The remaining unmet bullet is the PNG pack —
+  same item flagged here.
+
+**Step 6 gate:** PASS. Proceed to step 7 (`/gsd-extract-learnings 2`).
