@@ -56,9 +56,9 @@ Requirements for the modernization milestone. Each maps to one of the 4 roadmap 
 - [ ] **POLISH-05**: Seed test suites added — `core/common`, `core/model`, `core/domain` get baseline unit tests; one ViewModel per feature gets a state-machine test; one Compose smoke test per feature
 - [ ] **POLISH-06**: `:core:domain` exposes `PlayerSettings` / `UiSettings` interfaces so `feature/*` modules no longer import `:core:data` directly for prefs (within-module refactor only)
 - [ ] **POLISH-07**: `ConnectionResult` retired in favor of unified `AppResult`; `catch (e: Throwable)` blocks in repos narrowed and `CancellationException` rethrown
-- [ ] **POLISH-08**: CI cache keys composed correctly (Gradle wrapper + JDK + AGP + libs.versions.toml hash); GitHub Actions workflow refreshed
-- [ ] **POLISH-09**: Docs refreshed — `README.md`, `DEVICE_TESTING.md`, `build-logic/` conventions documented; `.planning/codebase/*` re-mapped at milestone end
-- [ ] **POLISH-10**: Repository hygiene — `local.properties` removed from VCS, `.gitignore` audited, `keystore.properties` workflow documented via the existing `keystore.properties.example`
+- [x] **POLISH-08**: CI cache keys composed correctly (Gradle wrapper + JDK + AGP + libs.versions.toml hash); GitHub Actions workflow refreshed
+- [x] **POLISH-09**: Docs refreshed — `README.md`, `DEVICE_TESTING.md`, `build-logic/` conventions documented; `.planning/codebase/*` re-mapped at milestone end
+- [x] **POLISH-10**: Repository hygiene — `local.properties` removed from VCS, `.gitignore` audited, `keystore.properties` workflow documented via the existing `keystore.properties.example`
 
 ## Deferred to Future Milestones
 
