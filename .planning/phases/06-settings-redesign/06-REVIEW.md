@@ -29,7 +29,12 @@ findings:
   warning: 5
   info: 3
   total: 13
-status: issues_found
+fixed:
+  critical: 5
+  warning: 4
+  skipped: 1
+status: partially_fixed
+fix_notes: "WR-02 skipped — companion constants not on domain interfaces; multi-file refactor needed"
 ---
 
 # Phase 6: Code Review Report
