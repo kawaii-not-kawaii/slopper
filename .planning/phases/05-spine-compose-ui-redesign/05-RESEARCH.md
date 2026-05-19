@@ -775,17 +775,13 @@ val bottomScrim = Brush.verticalGradient(
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **`ChapterStrip` safe-area inset**
-   - What we know: D-05 places ChapterStrip inside the bottom scrim Box, above TimelineBar, with `padding(horizontal = 18.dp)`
-   - What's unclear: PlayerControls (which wraps TimelineBar) is inside `safeDrawingPadding()`. ChapterStrip would be outside that Box. Does ChapterStrip need `Modifier.navigationBarsPadding()` or is the 160dp bottom scrim Box tall enough to absorb nav bar insets?
-   - Recommendation: Check the COMPLY-01 `safeDrawingPadding` placement at PlayerScreen line 293. If ChapterStrip is a sibling outside the safeDrawingPadding Box, it needs `Modifier.padding(bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding())`.
+   - **RESOLVED:** Plan 5.3 Task 2 adds `Modifier.navigationBarsPadding()` to the ChapterStrip call site (T-05-07 mitigation). ChapterStrip is a sibling of the `safeDrawingPadding()` Box, so it needs explicit nav bar padding. See Plan 5.3 Task 2 verify: `grep -n 'navigationBarsPadding' PlayerScreen.kt`.
 
 2. **MoreSheet Browse group content change**
-   - What we know: Current Browse group shows dynamically-filtered hidden nav items. Spine spec shows Tags/Markers/History as fixed items.
-   - What's unclear: Does this require a new `MoreSheet` parameter (e.g., `browseItems: List<MainNavItem>`) or a hardcoded list?
-   - Recommendation: Hardcode for v1 (Tags, Markers, History as fixed `MainNavItem` entries pointing to `Routes.browse("tags")` etc.). The dynamic overflow logic can be removed from MoreSheet for Spine.
+   - **RESOLVED:** Plan 5.1 Task 2 hardcodes Tags/Markers/History as fixed items in MoreSheet. The dynamic overflow logic is removed. No new parameter needed — fixed `MainNavItem` list for v1.
 
 ---
 
