@@ -37,9 +37,9 @@ Replace the single-scroll SettingsScreen with the v3.0 hub + drill-down architec
    - Each `HubRow` shows: 32dp icon container (SurfaceHigh bg), label (SpaceGrotesk 13.5sp W500), inline current-values summary (JetBrainsMono 11sp AccentPrimary), chevron
    - Acceptance: `grep -c 'HubRow\|HubGroup' feature/settings/src/main/java/.../SettingsScreen.kt` → ≥ 4; `./gradlew :feature:settings:assembleDebug` → BUILD SUCCESSFUL
 
-2. **Server status card (SETTINGS-02):** Top of the hub shows server name, green online dot, Stash version, scene count, and latency.
+2. **Server status card (SETTINGS-02):** Top of the hub shows server name, green online dot, Stash version, and scene count. (Latency omitted — `ServerInfo` has no latency field; deferred per D-04.)
    - Current: not shown in settings
-   - Target: `Surface` card (ShapeLarge, Border) with: left 40dp accent icon container, center `TitleMedium` endpoint name + inline `Success` dot, `MetaMono` sub "Stash vX.X.X · N scenes · Yms"; right chevron → navigates to settings/server detail page
+   - Target: `Surface` card (ShapeLarge, Border) with: left 40dp accent icon container, center `TitleMedium` endpoint name + inline `Success` dot, `MetaMono` sub "Stash vX.X.X · N scenes"; right chevron → navigates to settings/server detail page
    - Reads from `ConnectionRepository` / `EndpointStateHolder` — no new data calls; uses existing connected-server state already available in app
    - Acceptance: server card renders when connected; tapping navigates to settings/server
 
