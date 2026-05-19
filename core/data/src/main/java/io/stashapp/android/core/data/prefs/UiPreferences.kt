@@ -143,7 +143,7 @@ class UiPreferences
             private val KEY_ACTIVITY_TRACKING = booleanPreferencesKey("activity_tracking")
             private val KEY_AUTO_ROTATE = booleanPreferencesKey("auto_rotate_player")
 
-            val DefaultVisible = listOf("home", "scenes", "studios", "performers")
+            val DefaultVisible = listOf("home", "scenes", "browse", "settings")
             const val DEFAULT_IMAGE_CACHE_MB = 256
             const val DEFAULT_GRID_COLUMNS = "auto"
             const val DEFAULT_AMOLED = false
