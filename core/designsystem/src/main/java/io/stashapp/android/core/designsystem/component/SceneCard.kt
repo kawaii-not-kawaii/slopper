@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
@@ -67,7 +68,7 @@ fun SceneCard(
     Column(modifier = modifier) {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainer,
-            shape = RoundedCornerShape(10.dp),
+            shape = ShapeSmall,  // SPINE-04: 6dp per design spec (was 10dp ShapeMedium)
             modifier =
                 Modifier
                     .fillMaxWidth()
