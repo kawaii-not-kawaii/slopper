@@ -262,7 +262,7 @@ find feature -path '*/src/*Test/*ScreenSmokeTest.kt' | wc -l
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 4
-**Plans:** 3/3 plans complete
+**Plans:** 1/3 plans executed
 
 Plans:
 - [ ] TBD (run /gsd-plan-phase 5 to break down)
