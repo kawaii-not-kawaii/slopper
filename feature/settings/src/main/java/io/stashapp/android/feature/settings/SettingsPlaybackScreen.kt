@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.stashapp.android.core.data.prefs.PlayerPreferences
 import io.stashapp.android.core.designsystem.component.CSlider
 import io.stashapp.android.core.designsystem.component.DRow
 import io.stashapp.android.core.designsystem.component.DRowStacked
@@ -163,7 +164,7 @@ fun SettingsPlaybackScreen(
                     CSlider(
                         value = seekMs,
                         onValueChange = { viewModel.setPlayer { setSeekMsPerPx(it) } },
-                        valueRange = 50f..300f,
+                        valueRange = PlayerPreferences.SEEK_MS_PER_PX_MIN..PlayerPreferences.SEEK_MS_PER_PX_MAX,
                         valueLabel = "${seekMs.roundToInt()} ms/px",
                     )
                 }
