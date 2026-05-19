@@ -1,10 +1,10 @@
 # Spec-Layer State
 
 project: slopper
-current_phase: 2
-state: phase_2_active
+current_phase: 5
+state: phase_5_active
 brownfield: true
-last_updated: 2026-05-17
+last_updated: 2026-05-19
 
 tracker:
   enabled: true
@@ -886,3 +886,139 @@ command_manifest:
     notes:
       - "Phase 4 commits bundled into PR #6 (same branch strategy as Phases 2+3)"
       - "PR title: Phase 2+3+4 — COMPLY + PERF + POLISH (continuous branch)"
+
+---
+
+## Phase 5 — SPINE (Compose UI Redesign)
+ui: true
+phase_name: "SPINE — Compose UI Redesign"
+phase_dir: .planning/phases/05-spine-compose-ui-redesign
+state: phase_5_active
+assumptions_open: 0
+cc_concerns_cleared: false
+advisory_notes: []
+accepted_risks: []
+issue_number: 7
+issue_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/7
+command_manifest:
+  - step: 0
+    cmd: "/gsd-ui-phase 5"
+    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-UI-SPEC.md"
+    gate_file: "gates/ui-spec.md"
+    status: complete
+    gate_passed: true
+    tracker_synced: false
+    completed_at: 2026-05-17T09:48:00+09:00
+    commit: null
+    notes:
+      - "Lightweight scaffold from design_handoff_slopper_spine/README.md (558 lines, hi-fi)"
+      - "Formal gsd-ui-researcher + gsd-ui-checker pass deferred to Phase 5 entry"
+      - "5 open questions logged; Q6 (edge-to-edge) resolved by Phase 2 COMPLY-01"
+  - step: 1
+    cmd: "/gsd-spec-phase 5"
+    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-SPEC.md"
+    gate_file: "gates/spec.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 2
+    cmd: "/gsd-discuss-phase 5"
+    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-CONTEXT.md"
+    gate_file: "gates/discuss.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 3
+    cmd: "/gsd-plan-phase 5"
+    output_file_glob: ".planning/phases/05-spine-compose-ui-redesign/05*-PLAN.md"
+    gate_file: "gates/plan.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 4
+    cmd: "/gsd-review --phase 5 --all"
+    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-REVIEWS.md"
+    gate_file: "gates/review.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 5
+    cmd: "/gsd-execute-phase 5"
+    output_file: ".planning/phases/05-spine-compose-ui-redesign/VERIFICATION.md"
+    gate_file: "gates/execute.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 6
+    cmd: "/gsd-verify-work 5"
+    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-UAT.md"
+    gate_file: "gates/verify.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 7
+    cmd: "/gsd-extract-learnings 5"
+    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-LEARNINGS.md"
+    gate_file: "gates/learnings.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 8
+    cmd: "/gsd-secure-phase 5"
+    output_file_glob: ".planning/phases/05-spine-compose-ui-redesign/*SECURITY*"
+    gate_file: "gates/security.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 8.5
+    cmd: "/gsd-ui-review 5"
+    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-UI-REVIEW.md"
+    gate_file: "gates/ui-review.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 9
+    cmd: "/gsd-validate-phase 5"
+    output_file_glob: ".planning/phases/05-spine-compose-ui-redesign/*VALIDATION*"
+    gate_file: "gates/validation.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 10
+    cmd: "/gsd-docs-update 5"
+    output_marker: "docs_updated_at"
+    gate_file: "gates/docs.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 11
+    cmd: "/gsd-ship 5"
+    output_marker: "pr_merged_at"
+    gate_file: "gates/ship.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
