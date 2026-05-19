@@ -342,7 +342,7 @@ internal fun <T> ChipRow(
  * Shows an optional title above and an optional badge next to the title.
  */
 @Composable
-private fun DetailGroup(
+internal fun DetailGroup(
     title: String? = null,
     badge: String? = null,
     modifier: Modifier = Modifier,

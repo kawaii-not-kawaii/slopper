@@ -3,7 +3,6 @@ package io.stashapp.android.feature.settings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -132,7 +131,7 @@ fun SettingsCodecsScreen(
 
         // Group: Decoder
         item {
-            CodecsDetailGroup(
+            DetailGroup(
                 title = "Decoder",
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
             ) {
@@ -172,7 +171,7 @@ fun SettingsCodecsScreen(
 
         // Group: Buffer
         item {
-            CodecsDetailGroup(
+            DetailGroup(
                 title = "Buffer",
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
             ) {
@@ -202,7 +201,7 @@ fun SettingsCodecsScreen(
 
         // Group: Display & HDR
         item {
-            CodecsDetailGroup(
+            DetailGroup(
                 title = "Display & HDR",
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
             ) {
@@ -261,34 +260,3 @@ fun SettingsCodecsScreen(
     }
 }
 
-// Local DetailGroup for Codecs screen — same structure as in SettingsPlaybackScreen
-// but private to avoid duplicate private fun collision (will be deduplicated via internal when merged)
-@Composable
-private fun CodecsDetailGroup(
-    title: String? = null,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    Column(modifier = modifier) {
-        if (title != null) {
-            Text(
-                text = title.uppercase(),
-                style = MetaMono.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 1.sp,
-                ),
-                color = SpineColors.OnSurfaceMuted,
-                modifier = Modifier.padding(bottom = 8.dp, start = 2.dp),
-            )
-        }
-        Surface(
-            color = SpineColors.Surface,
-            shape = ShapeSmall,
-            border = BorderStroke(1.dp, SpineColors.Border),
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                content()
-            }
-        }
-    }
-}
