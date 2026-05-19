@@ -389,15 +389,12 @@ private fun AppNavHost(
             BrowseScreen(
                 onBack = { navController.popBackStack() },
                 onPerformerClick = { id ->
-                    android.util.Log.i("StashNav", "performer click id=$id → ${Routes.libraryWithPreset("performer:$id")}")
                     navController.navigate(Routes.libraryWithPreset("performer:$id"))
                 },
                 onStudioClick = { id ->
-                    android.util.Log.i("StashNav", "studio click id=$id → ${Routes.libraryWithPreset("studio:$id")}")
                     navController.navigate(Routes.libraryWithPreset("studio:$id"))
                 },
                 onTagClick = { id ->
-                    android.util.Log.i("StashNav", "tag click id=$id → ${Routes.libraryWithPreset("tag:$id")}")
                     navController.navigate(Routes.libraryWithPreset("tag:$id"))
                 },
             )
