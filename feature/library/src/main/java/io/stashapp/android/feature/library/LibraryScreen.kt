@@ -1,36 +1,36 @@
 package io.stashapp.android.feature.library
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,8 +39,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -49,6 +51,11 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import io.stashapp.android.core.designsystem.component.SceneCard
 import io.stashapp.android.core.designsystem.component.resolutionLabel
+import io.stashapp.android.core.designsystem.theme.MetaMono
+import io.stashapp.android.core.designsystem.theme.MonoSmall
+import io.stashapp.android.core.designsystem.theme.ShapeSmall
+import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
+import io.stashapp.android.core.designsystem.theme.SpineColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,22 +74,13 @@ fun LibraryScreen(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Scaffold(
-        topBar = {
-            LibraryTopBar(
-                searchExpanded = ui.searchExpanded,
-                searchText = ui.searchText,
-                filterActive = ui.query.filter.isActive,
-                onToggleSearch = { viewModel.setSearchExpanded(!ui.searchExpanded) },
-                onSearchChange = viewModel::setSearchText,
-                onClearSearch = { viewModel.setSearchText("") },
-                onOpenFilter = { showFilterSheet = true },
-                onSettings = onSettingsClick,
-            )
-        },
+        containerColor = MaterialTheme.colorScheme.background,
     ) { inner ->
         ScenesGrid(
             scenes = scenes,
             inner = inner,
+            filterActive = ui.query.filter.isActive,
+            onOpenFilter = { showFilterSheet = true },
             onSceneClick = onSceneClick,
             onPlayQueue = onPlayQueue,
         )
@@ -105,67 +103,68 @@ fun LibraryScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LibraryTopBar(
-    searchExpanded: Boolean,
-    searchText: String,
+private fun SpineSearchBar(
     filterActive: Boolean,
-    onToggleSearch: () -> Unit,
-    onSearchChange: (String) -> Unit,
-    onClearSearch: () -> Unit,
     onOpenFilter: () -> Unit,
-    onSettings: () -> Unit,
 ) {
-    TopAppBar(
-        title = {
-            if (searchExpanded) {
-                OutlinedTextField(
-                    value = searchText,
-                    onValueChange = onSearchChange,
-                    placeholder = { Text("Search scenes") },
-                    singleLine = true,
-                    trailingIcon = {
-                        if (searchText.isNotEmpty()) {
-                            IconButton(onClick = onClearSearch) {
-                                Icon(Icons.Filled.Clear, contentDescription = "Clear")
-                            }
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else {
-                Text("Library")
-            }
-        },
-        actions = {
-            IconButton(onClick = onToggleSearch) {
-                Icon(
-                    if (searchExpanded) Icons.Filled.Clear else Icons.Filled.Search,
-                    contentDescription = if (searchExpanded) "Close search" else "Search",
-                )
-            }
-            BadgedBox(badge = { if (filterActive) Badge() }) {
-                IconButton(onClick = onOpenFilter) {
-                    Icon(Icons.Filled.FilterList, contentDescription = "Filters")
-                }
-            }
-            IconButton(onClick = onSettings) {
-                Icon(Icons.Filled.Settings, contentDescription = "Settings")
-            }
-        },
-        colors =
-            TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-            ),
-    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        // Always-visible search field (decorative — real search in filter sheet)
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .background(SpineColors.Surface, ShapeSmall)
+                .border(1.dp, SpineColors.Border, ShapeSmall)
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .clickable { /* TODO: open search keyboard */ },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                Icons.Outlined.Search,
+                contentDescription = null,
+                tint = SpineColors.OnSurfaceMuted,
+                modifier = Modifier.size(14.dp),
+            )
+            Spacer(modifier = Modifier.padding(start = 8.dp))
+            Text(
+                "search · scene title, performer, tag…",
+                style = MonoSmall,
+                color = SpineColors.OnSurfaceMuted,
+                modifier = Modifier.weight(1f),
+            )
+            Text(
+                "⌘K",
+                style = MetaMono,
+                color = SpineColors.OnSurfaceMuted,
+                modifier = Modifier
+                    .background(SpineColors.SurfaceHigh, RoundedCornerShape(3.dp))
+                    .padding(horizontal = 4.dp, vertical = 2.dp),
+            )
+        }
+
+        // Filter icon
+        androidx.compose.material3.IconButton(onClick = onOpenFilter) {
+            Icon(
+                Icons.Filled.FilterList,
+                contentDescription = "Filters",
+                tint = if (filterActive) SpineColors.AccentPrimary else SpineColors.OnSurfaceVariant,
+            )
+        }
+    }
 }
 
 @Composable
 private fun ScenesGrid(
     scenes: androidx.paging.compose.LazyPagingItems<io.stashapp.android.core.model.SceneSummary>,
     inner: PaddingValues,
+    filterActive: Boolean,
+    onOpenFilter: () -> Unit,
     onSceneClick: (String, List<String>, Int) -> Unit,
     onPlayQueue: (List<String>, Int) -> Unit,
 ) {
@@ -175,13 +174,17 @@ private fun ScenesGrid(
     when {
         refresh is LoadState.Loading && scenes.itemCount == 0 -> {
             Box(
-                Modifier.fillMaxSize().padding(inner),
+                Modifier
+                    .fillMaxSize()
+                    .padding(inner),
                 contentAlignment = Alignment.Center,
             ) { CircularProgressIndicator() }
         }
         refresh is LoadState.Error && scenes.itemCount == 0 -> {
             Box(
-                Modifier.fillMaxSize().padding(inner),
+                Modifier
+                    .fillMaxSize()
+                    .padding(inner),
                 contentAlignment = Alignment.Center,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -195,9 +198,11 @@ private fun ScenesGrid(
                 }
             }
         }
-        scenes.itemCount == 0 -> {
+        scenes.itemCount == 0 && refresh !is LoadState.Loading -> {
             Box(
-                Modifier.fillMaxSize().padding(inner),
+                Modifier
+                    .fillMaxSize()
+                    .padding(inner),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
@@ -208,33 +213,95 @@ private fun ScenesGrid(
             }
         }
         else -> {
-            // Only recompute the id list when the paged count actually changes;
-            // otherwise we allocate a fresh List on every 250ms-ish recomposition
-            // as pages get appended.
-            val allIds =
-                remember(scenes.itemCount) {
-                    (0 until scenes.itemCount).mapNotNull { scenes.peek(it)?.id }
-                }
+            // Only recompute the id list when the paged count actually changes
+            val allIds = remember(scenes.itemCount) {
+                (0 until scenes.itemCount).mapNotNull { scenes.peek(it)?.id }
+            }
+
+            // resultCount / organizedCount: not yet in LibraryUiState — placeholder zeros
+            val resultCount = scenes.itemCount
+            val organizedCount = 0 // TODO: wire from LibraryUiState once field exists
 
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 180.dp),
-                contentPadding =
-                    PaddingValues(
-                        start = 12.dp,
-                        end = 12.dp,
-                        top = inner.calculateTopPadding() + 8.dp,
-                        bottom = inner.calculateBottomPadding() + 12.dp,
-                    ),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(
+                    start = 18.dp,
+                    end = 18.dp,
+                    top = inner.calculateTopPadding(),
+                    bottom = inner.calculateBottomPadding() + 100.dp,
+                ),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxSize(),
             ) {
+                // Spine search bar + filter chips as sticky header item
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column {
+                        SpineSearchBar(
+                            filterActive = filterActive,
+                            onOpenFilter = onOpenFilter,
+                        )
+
+                        // Filter chip row (active filters visual summary)
+                        if (filterActive) {
+                            LazyRow(
+                                contentPadding = PaddingValues(horizontal = 18.dp),
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                modifier = Modifier.padding(bottom = 4.dp),
+                            ) {
+                                item {
+                                    FilterChip(
+                                        selected = true,
+                                        onClick = onOpenFilter,
+                                        label = {
+                                            Text(
+                                                "Filters active",
+                                                style = TextStyle(
+                                                    fontFamily = SpaceGrotesk,
+                                                    fontSize = 11.5.sp,
+                                                    fontWeight = FontWeight.Medium,
+                                                ),
+                                            )
+                                        },
+                                        shape = ShapeSmall,
+                                        colors = FilterChipDefaults.filterChipColors(
+                                            selectedContainerColor = SpineColors.AccentPrimary.copy(alpha = 0.12f),
+                                            selectedLabelColor = SpineColors.AccentPrimary,
+                                        ),
+                                        border = FilterChipDefaults.filterChipBorder(
+                                            enabled = true,
+                                            selected = true,
+                                            selectedBorderColor = SpineColors.AccentPrimary.copy(alpha = 0.30f),
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+
+                        // Results count row
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp, vertical = 4.dp),
+                        ) {
+                            Text(
+                                "$resultCount results · $organizedCount organized",
+                                style = MetaMono,
+                                color = SpineColors.OnSurfaceMuted,
+                            )
+                            Spacer(Modifier.weight(1f))
+                            Text(
+                                "Grid · auto",
+                                style = MetaMono,
+                                color = SpineColors.OnSurfaceMuted,
+                            )
+                        }
+                    }
+                }
+
                 items(
                     count = scenes.itemCount,
                     key = scenes.itemKey { it.id },
-                    // Single content type — lets LazyVerticalGrid recycle
-                    // SceneCard slot holders across pages instead of rebuilding
-                    // them during scroll.
                     contentType = scenes.itemContentType { "scene" },
                 ) { index ->
                     val scene = scenes[index] ?: return@items
@@ -245,12 +312,11 @@ private fun ScenesGrid(
                         resolution = resolutionLabel(scene.width, scene.height),
                         rating100 = scene.rating100,
                         playCount = scene.playCount,
-                        resumeFraction =
-                            run {
-                                val dur = scene.durationSeconds
-                                val pos = scene.resumeTimeSeconds
-                                if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
-                            },
+                        resumeFraction = run {
+                            val dur = scene.durationSeconds
+                            val pos = scene.resumeTimeSeconds
+                            if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
+                        },
                         onClick = { onSceneClick(scene.id, allIds, index) },
                         onLongClick = { onPlayQueue(allIds, index) },
                         modifier = Modifier.fillMaxWidth(),
@@ -260,7 +326,9 @@ private fun ScenesGrid(
                 if (append is LoadState.Loading) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Box(
-                            Modifier.fillMaxWidth().height(64.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .height(64.dp),
                             contentAlignment = Alignment.Center,
                         ) { CircularProgressIndicator() }
                     }
