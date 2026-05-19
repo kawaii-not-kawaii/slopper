@@ -274,11 +274,11 @@ Plans:
 **Depends on:** Phase 5 (Spine tokens, SpineColors, typography)
 **Requirements:** SETTINGS-01..11
 
-**Plans:** 3 plans (Wave 1 + Wave 2 parallel)
+**Plans:** 2/3 plans executed
 
 Plans:
 - [x] 06.1-PLAN.md — Foundation: prefs + ViewModel + AccentColors + CSlider + DRow + sub-routes + hub landing (SETTINGS-01..05)
-- [ ] 06.2-PLAN.md — Detail pages: Playback, Codecs, Display, Library, Server, About (SETTINGS-06..10)
+- [x] 06.2-PLAN.md — Detail pages: Playback, Codecs, Display, Library, Server, About (SETTINGS-06..10)
 - [ ] 06.3-PLAN.md — Settings search overlay + smoke test updates (SETTINGS-11)
 
 ---

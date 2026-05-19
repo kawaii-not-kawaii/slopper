@@ -9,8 +9,8 @@ progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 17
-  completed_plans: 15
-  percent: 88
+  completed_plans: 16
+  percent: 94
 ---
 
 # Project State
@@ -26,7 +26,7 @@ progress:
 - **Research complete:** YES (`.planning/research/` — STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY)
 - **Current phase:** 06
 - **Plans created:** 3
-- **Plans executed:** 1 (06.1 — Settings Hub Foundation)
+- **Plans executed:** 2 (06.1 — Settings Hub Foundation, 06.2 — Settings Detail Pages)
 
 ## Roadmap Snapshot
 
@@ -47,6 +47,9 @@ progress:
 - **Phase 06 - 06.1:** Single SettingsViewModel extracted to standalone file; serverInfo/activeServer StateFlows added via connectionRepository.test() in init block
 - **Phase 06 - 06.1:** AccentColors/LocalAccentColors in Theme.kt with remember(accentName) memoization; StashTheme accepts accentName param; RootViewModel exposes accentPalette StateFlow
 - **Phase 06 - 06.1:** Flat composable() entries for 6 sub-routes in AppNavHost; isMainTabRoute exact-match check unchanged; SettingsDetailStubs.kt as temporary compilation bridge for Plan 6.2
+- **Phase 06 - 06.2:** DetailGroup promoted to internal for cross-screen sharing; all 6 detail screens share SpineSwitch/ChipRow/DetailGroup internal composables defined in SettingsPlaybackScreen.kt
+- **Phase 06 - 06.2:** SettingsAboutScreen reads version via PackageManager.getPackageInfo() — BuildConfig not enabled in feature:settings module; buildType derived from versionName suffix
+- **Phase 06 - 06.2:** SettingsDetailStubs.kt deleted after all 6 real screens implemented
 - **MediaSessionService (real background playback)** → OUT OF SCOPE this milestone; orphan `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permission to be removed in Phase 2
 - **`androidx.security:security-crypto` deprecation** → DEFER (pin 1.1.0, TODO in `ConnectionStore.kt`); revisit when stable replacement ships
 - **Apollo Kotlin** → STAY on 4.4.3 (Apollo 5 is its own milestone)
@@ -64,7 +67,7 @@ progress:
 
 ## Next Step
 
-Execute plan 06.2 (Settings detail pages) and plan 06.3 (Settings search overlay) — these are parallel-safe (wave 2).
+Execute plan 06.3 (Settings search overlay).
 
 ---
 *Last updated: 2026-05-19 after completing 06.1-PLAN.md (Settings Hub Foundation).*
