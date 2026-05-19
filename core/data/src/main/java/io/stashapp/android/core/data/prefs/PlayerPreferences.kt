@@ -74,6 +74,43 @@ class PlayerPreferences
 
         override suspend fun setDecoderPreference(value: String) = put(KEY_DECODER_PREF, value)
 
+        // ---- Player chrome (SETTINGS-06) -----------------------------------------
+
+        override val showChapterThumbnails: Flow<Boolean> = flow(KEY_SHOW_CHAPTER_THUMBNAILS, DEFAULT_SHOW_CHAPTER_THUMBNAILS)
+        override suspend fun setShowChapterThumbnails(v: Boolean) = put(KEY_SHOW_CHAPTER_THUMBNAILS, v)
+
+        override val lockControlsOnIdle: Flow<Boolean> = flow(KEY_LOCK_CONTROLS_ON_IDLE, DEFAULT_LOCK_CONTROLS_ON_IDLE)
+        override suspend fun setLockControlsOnIdle(v: Boolean) = put(KEY_LOCK_CONTROLS_ON_IDLE, v)
+
+        override val showCodecBadge: Flow<Boolean> = flow(KEY_SHOW_CODEC_BADGE, DEFAULT_SHOW_CODEC_BADGE)
+        override suspend fun setShowCodecBadge(v: Boolean) = put(KEY_SHOW_CODEC_BADGE, v)
+
+        override val showQueuePosition: Flow<Boolean> = flow(KEY_SHOW_QUEUE_POSITION, DEFAULT_SHOW_QUEUE_POSITION)
+        override suspend fun setShowQueuePosition(v: Boolean) = put(KEY_SHOW_QUEUE_POSITION, v)
+
+        override val hapticsOnSeek: Flow<Boolean> = flow(KEY_HAPTICS_ON_SEEK, DEFAULT_HAPTICS_ON_SEEK)
+        override suspend fun setHapticsOnSeek(v: Boolean) = put(KEY_HAPTICS_ON_SEEK, v)
+
+        // ---- Codecs / HDR (SETTINGS-07) ------------------------------------------
+
+        override val hdrPassthrough: Flow<Boolean> = flow(KEY_HDR_PASSTHROUGH, DEFAULT_HDR_PASSTHROUGH)
+        override suspend fun setHdrPassthrough(v: Boolean) = put(KEY_HDR_PASSTHROUGH, v)
+
+        override val matchRefreshRate: Flow<Boolean> = flow(KEY_MATCH_REFRESH_RATE, DEFAULT_MATCH_REFRESH_RATE)
+        override suspend fun setMatchRefreshRate(v: Boolean) = put(KEY_MATCH_REFRESH_RATE, v)
+
+        override val matchResolution: Flow<Boolean> = flow(KEY_MATCH_RESOLUTION, DEFAULT_MATCH_RESOLUTION)
+        override suspend fun setMatchResolution(v: Boolean) = put(KEY_MATCH_RESOLUTION, v)
+
+        override val fallbackOnDecoderError: Flow<Boolean> = flow(KEY_FALLBACK_ON_DECODER_ERROR, DEFAULT_FALLBACK_ON_DECODER_ERROR)
+        override suspend fun setFallbackOnDecoderError(v: Boolean) = put(KEY_FALLBACK_ON_DECODER_ERROR, v)
+
+        override val tunneling: Flow<Boolean> = flow(KEY_TUNNELING, DEFAULT_TUNNELING)
+        override suspend fun setTunneling(v: Boolean) = put(KEY_TUNNELING, v)
+
+        override val preBufferOnHover: Flow<Boolean> = flow(KEY_PRE_BUFFER_ON_HOVER, DEFAULT_PRE_BUFFER_ON_HOVER)
+        override suspend fun setPreBufferOnHover(v: Boolean) = put(KEY_PRE_BUFFER_ON_HOVER, v)
+
         // ---- Helpers (reduce boilerplate) ----------------------------------------
 
         private fun <T> flow(
@@ -107,6 +144,21 @@ class PlayerPreferences
             const val DEFAULT_ASPECT_RATIO: String = "fit" // fit | crop | stretch
             const val DEFAULT_DECODER_PREF: String = "auto" // auto | prefer_hw | prefer_sw
 
+            // Player chrome defaults
+            const val DEFAULT_SHOW_CHAPTER_THUMBNAILS: Boolean = false
+            const val DEFAULT_LOCK_CONTROLS_ON_IDLE: Boolean = false
+            const val DEFAULT_SHOW_CODEC_BADGE: Boolean = true
+            const val DEFAULT_SHOW_QUEUE_POSITION: Boolean = false
+            const val DEFAULT_HAPTICS_ON_SEEK: Boolean = false
+
+            // Codec / HDR defaults
+            const val DEFAULT_HDR_PASSTHROUGH: Boolean = false
+            const val DEFAULT_MATCH_REFRESH_RATE: Boolean = false
+            const val DEFAULT_MATCH_RESOLUTION: Boolean = false
+            const val DEFAULT_FALLBACK_ON_DECODER_ERROR: Boolean = true
+            const val DEFAULT_TUNNELING: Boolean = false
+            const val DEFAULT_PRE_BUFFER_ON_HOVER: Boolean = false
+
             // Keys
             private val KEY_SEEK_MS_PER_PX = floatPreferencesKey("seek_ms_per_px")
             private val KEY_DOUBLE_TAP_SEEK_SEC = intPreferencesKey("double_tap_seek_sec")
@@ -118,5 +170,20 @@ class PlayerPreferences
             private val KEY_BUFFER_PRESET = stringPreferencesKey("buffer_preset")
             private val KEY_ASPECT_RATIO = stringPreferencesKey("default_aspect_ratio")
             private val KEY_DECODER_PREF = stringPreferencesKey("decoder_preference")
+
+            // Player chrome keys
+            private val KEY_SHOW_CHAPTER_THUMBNAILS = booleanPreferencesKey("show_chapter_thumbnails")
+            private val KEY_LOCK_CONTROLS_ON_IDLE = booleanPreferencesKey("lock_controls_on_idle")
+            private val KEY_SHOW_CODEC_BADGE = booleanPreferencesKey("show_codec_badge")
+            private val KEY_SHOW_QUEUE_POSITION = booleanPreferencesKey("show_queue_position")
+            private val KEY_HAPTICS_ON_SEEK = booleanPreferencesKey("haptics_on_seek")
+
+            // Codec / HDR keys
+            private val KEY_HDR_PASSTHROUGH = booleanPreferencesKey("hdr_passthrough")
+            private val KEY_MATCH_REFRESH_RATE = booleanPreferencesKey("match_refresh_rate")
+            private val KEY_MATCH_RESOLUTION = booleanPreferencesKey("match_resolution")
+            private val KEY_FALLBACK_ON_DECODER_ERROR = booleanPreferencesKey("fallback_on_decoder_error")
+            private val KEY_TUNNELING = booleanPreferencesKey("tunneling")
+            private val KEY_PRE_BUFFER_ON_HOVER = booleanPreferencesKey("pre_buffer_on_hover")
         }
     }
