@@ -16,18 +16,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cast
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.ViewModule
 import androidx.compose.material.icons.outlined.Bookmarks
+import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Storefront
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -107,11 +111,31 @@ object MainNavItems {
             iconOutlined = Icons.Outlined.Label,
         )
 
-    /** All items available to the user. The first four are shown by default,
-     *  everything beyond lives in the More sheet. */
-    val All = listOf(Home, Scenes, Studios, Performers, Tags)
+    // Spine design: Browse tab = single entry point for performers/studios/tags
+    // route prefix "browse/" ensures it lights up for any browse/* route
+    val Browse =
+        MainNavItem(
+            id = "browse",
+            route = Routes.browse("performers"),
+            label = "Browse",
+            iconFilled = Icons.Filled.GridView,
+            iconOutlined = Icons.Outlined.GridView,
+        )
 
-    val DefaultVisibleIds = listOf(Home.id, Scenes.id, Studios.id, Performers.id)
+    val Settings =
+        MainNavItem(
+            id = "settings",
+            route = Routes.Settings,
+            label = "Settings",
+            iconFilled = Icons.Filled.Settings,
+            iconOutlined = Icons.Outlined.Settings,
+        )
+
+    /** All items available for customisation. */
+    val All = listOf(Home, Scenes, Studios, Performers, Tags, Browse, Settings)
+
+    /** Spine default: Home · Library · Browse · Settings */
+    val DefaultVisibleIds = listOf(Home.id, Scenes.id, Browse.id, Settings.id)
 }
 
 /**
@@ -149,7 +173,12 @@ fun MainBottomBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             visibleItems.forEach { item ->
-                val selected = currentRoute?.startsWith(item.route) == true
+                // Browse tab: active for any browse/* route, not just browse/performers
+                val selected = if (item.id == "browse") {
+                    currentRoute?.startsWith("browse/") == true
+                } else {
+                    currentRoute?.startsWith(item.route) == true
+                }
                 val tabBg = if (selected) {
                     Modifier.background(SpineColors.AccentPrimary, RoundedCornerShape(12.dp))
                 } else {
