@@ -60,7 +60,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.RepeatMode
 import kotlinx.collections.immutable.ImmutableList
@@ -177,7 +177,7 @@ internal fun PlayerControls(
                             Text(
                                 it,
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-                                color = StashColors.AccentSecondary,
+                                color = SpineColors.AccentCool,
                             )
                         }
                     }
@@ -185,7 +185,7 @@ internal fun PlayerControls(
                         Text(
                             it,
                             style = MaterialTheme.typography.labelSmall,
-                            color = StashColors.OnSurfaceVariant,
+                            color = SpineColors.OnSurfaceVariant,
                             maxLines = 1,
                         )
                     }
@@ -370,7 +370,7 @@ private fun UtilityIconButton(
         Icon(
             icon,
             contentDescription = contentDescription,
-            tint = if (active) StashColors.AccentPrimary else Color.White,
+            tint = if (active) SpineColors.AccentPrimary else Color.White,
             modifier = Modifier.size(iconSize),
         )
     }
@@ -379,13 +379,13 @@ private fun UtilityIconButton(
 @Composable
 private fun CodecBadge(label: String) {
     Surface(
-        color = StashColors.AccentSecondary.copy(alpha = 0.18f),
-        contentColor = StashColors.AccentSecondary,
+        color = SpineColors.AccentCool.copy(alpha = 0.18f),
+        contentColor = SpineColors.AccentCool,
         shape = TopChipShape,
         border =
             BorderStroke(
                 width = 1.dp,
-                color = StashColors.AccentSecondary.copy(alpha = 0.6f),
+                color = SpineColors.AccentCool.copy(alpha = 0.6f),
             ),
         modifier =
             Modifier
@@ -411,8 +411,8 @@ private fun SpeedPill(
 ) {
     val active = speed != 1f
     Surface(
-        color = if (active) StashColors.AccentPrimary else StashColors.SurfaceHigh.copy(alpha = 0.85f),
-        contentColor = if (active) StashColors.AccentOnPrimary else Color.White,
+        color = if (active) SpineColors.AccentPrimary else SpineColors.SurfaceTop.copy(alpha = 0.85f),
+        contentColor = if (active) SpineColors.AccentOnPrimary else Color.White,
         shape = TopChipShape,
         border =
             if (!active) {
@@ -450,7 +450,7 @@ private fun SpeedPill(
 @Composable
 private fun PipChip(onClick: () -> Unit) {
     Surface(
-        color = StashColors.SurfaceHigh.copy(alpha = 0.85f),
+        color = SpineColors.SurfaceTop.copy(alpha = 0.85f),
         contentColor = Color.White,
         shape = TopChipShape,
         border =

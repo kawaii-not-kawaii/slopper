@@ -38,7 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.domain.DateBucket
 import io.stashapp.android.core.domain.SceneDurationBucket
 import io.stashapp.android.core.domain.SceneFilter
@@ -521,7 +521,7 @@ private fun ToggleChip(
         label = { Text(display) },
         colors =
             FilterChipDefaults.filterChipColors(
-                selectedContainerColor = StashColors.AccentPrimary.copy(alpha = 0.25f),
+                selectedContainerColor = SpineColors.AccentPrimary.copy(alpha = 0.25f),
             ),
     )
 }

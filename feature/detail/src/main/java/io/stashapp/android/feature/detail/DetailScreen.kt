@@ -55,8 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import io.stashapp.android.core.designsystem.component.resolutionLabel
-import io.stashapp.android.core.designsystem.theme.LocalStashColors
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.PerformerRef
 import io.stashapp.android.core.model.SceneDetail
@@ -141,7 +140,6 @@ private fun SceneBody(
     onIncrementO: () -> Unit,
     onDecrementO: () -> Unit,
 ) {
-    val extra = LocalStashColors.current
     val s = scene.summary
 
     Column(
@@ -174,8 +172,8 @@ private fun SceneBody(
             )
             // Giant play button centered on hero
             Surface(
-                color = StashColors.AccentPrimary.copy(alpha = 0.92f),
-                contentColor = StashColors.AccentOnPrimary,
+                color = SpineColors.AccentPrimary.copy(alpha = 0.92f),
+                contentColor = SpineColors.AccentOnPrimary,
                 shape = CircleShape,
                 modifier =
                     Modifier
@@ -214,7 +212,7 @@ private fun SceneBody(
                         Text(
                             it,
                             style = MaterialTheme.typography.titleSmall,
-                            color = StashColors.AccentSecondary,
+                            color = SpineColors.AccentCool,
                         )
                     }
                     s.date?.let {
@@ -222,7 +220,7 @@ private fun SceneBody(
                         Text(
                             it,
                             style = MaterialTheme.typography.bodySmall,
-                            color = extra.onSurfaceMuted,
+                            color = SpineColors.OnSurfaceMuted,
                         )
                     }
                     s.rating100?.let { r ->
@@ -231,7 +229,7 @@ private fun SceneBody(
                             Icon(
                                 Icons.Filled.Star,
                                 contentDescription = null,
-                                tint = StashColors.Warning,
+                                tint = SpineColors.Warning,
                                 modifier = Modifier.size(14.dp),
                             )
                             Text(
@@ -364,7 +362,7 @@ private fun ActionRow(
                     Icon(
                         if (active) Icons.Filled.Star else Icons.Filled.StarBorder,
                         contentDescription = "$star stars",
-                        tint = if (active) StashColors.Warning else LocalStashColors.current.onSurfaceMuted,
+                        tint = if (active) SpineColors.Warning else SpineColors.OnSurfaceMuted,
                         modifier = Modifier.size(24.dp),
                     )
                 }
@@ -377,8 +375,8 @@ private fun ActionRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Surface(
-                color = if (organized) StashColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = if (organized) StashColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
+                color = if (organized) SpineColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = if (organized) SpineColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
                 shape = RoundedCornerShape(8.dp),
                 onClick = { onOrganizedToggle(!organized) },
             ) {
@@ -421,7 +419,7 @@ private fun ActionRow(
                     Text(
                         "● $oCounter",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = if (oCounter > 0) StashColors.AccentPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = if (oCounter > 0) SpineColors.AccentPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 4.dp),
                     )
                     IconButton(
@@ -457,7 +455,7 @@ private fun Section(
 
 @Composable
 private fun Dot() {
-    Text("·", color = LocalStashColors.current.onSurfaceMuted)
+    Text("·", color = SpineColors.OnSurfaceMuted)
 }
 
 @Composable
@@ -466,8 +464,8 @@ private fun Pill(
     accent: Boolean = false,
 ) {
     Surface(
-        color = if (accent) StashColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainerHigh,
-        contentColor = if (accent) StashColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
+        color = if (accent) SpineColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainerHigh,
+        contentColor = if (accent) SpineColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
         shape = RoundedCornerShape(6.dp),
     ) {
         Text(
@@ -527,7 +525,7 @@ private fun TagFlow(tags: List<TagRef>) {
         tags.forEach { t ->
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = StashColors.AccentSecondary,
+                contentColor = SpineColors.AccentCool,
                 shape = RoundedCornerShape(50),
             ) {
                 Text(
@@ -558,7 +556,7 @@ private fun MarkerRow(
             Icon(
                 Icons.Filled.Bookmark,
                 contentDescription = null,
-                tint = StashColors.AccentPrimary,
+                tint = SpineColors.AccentPrimary,
                 modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.size(10.dp))
@@ -572,14 +570,14 @@ private fun MarkerRow(
                     Text(
                         marker.primaryTagName,
                         style = MaterialTheme.typography.labelSmall,
-                        color = LocalStashColors.current.onSurfaceMuted,
+                        color = SpineColors.OnSurfaceMuted,
                     )
                 }
             }
             Text(
                 formatDuration(marker.seconds),
                 style = MaterialTheme.typography.labelMedium,
-                color = LocalStashColors.current.onSurfaceMuted,
+                color = SpineColors.OnSurfaceMuted,
             )
         }
     }

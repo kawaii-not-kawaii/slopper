@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.Marker
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.StateFlow
@@ -75,7 +75,7 @@ internal fun TimelineBar(
         Text(
             formatDuration(if (dragFraction != null) (dragFraction!! * durationMs).toLong() else positionMs),
             style = MaterialTheme.typography.labelSmall,
-            color = if (dragging) StashColors.AccentPrimary else StashColors.OnSurfaceVariant,
+            color = if (dragging) SpineColors.AccentPrimary else SpineColors.OnSurfaceVariant,
             modifier = Modifier.size(width = 44.dp, height = 14.dp),
         )
         Box(
@@ -115,7 +115,7 @@ internal fun TimelineBar(
                 val th = size.height
                 val corner = th / 2
                 drawRoundRect(
-                    color = StashColors.OnSurfaceFaint,
+                    color = SpineColors.OnSurfaceFaint,
                     size = Size(size.width, th),
                     cornerRadius =
                         androidx.compose.ui.geometry
@@ -132,7 +132,7 @@ internal fun TimelineBar(
                 }
                 if (displayFraction > 0f) {
                     drawRoundRect(
-                        color = StashColors.AccentPrimary,
+                        color = SpineColors.AccentPrimary,
                         size = Size(size.width * displayFraction, th),
                         cornerRadius =
                             androidx.compose.ui.geometry
@@ -150,13 +150,13 @@ internal fun TimelineBar(
                         val frac = (marker.seconds / (durationMs / 1000.0)).toFloat().coerceIn(0f, 1f)
                         val x = size.width * frac
                         drawCircle(
-                            color = StashColors.AccentPrimary.copy(alpha = 0.6f),
+                            color = SpineColors.AccentPrimary.copy(alpha = 0.6f),
                             radius = ringRadius,
                             center = Offset(x, centerY),
                             style = Stroke(width = 1.5f),
                         )
                         drawCircle(
-                            color = StashColors.OnSurface,
+                            color = SpineColors.OnSurface,
                             radius = dotRadius,
                             center = Offset(x, centerY),
                         )
@@ -169,7 +169,7 @@ internal fun TimelineBar(
                 Canvas(Modifier.fillMaxWidth().height(28.dp)) {
                     val r = with(density) { thumbR.toPx() }
                     drawCircle(
-                        color = StashColors.AccentPrimary,
+                        color = SpineColors.AccentPrimary,
                         radius = r,
                         center = Offset(size.width * displayFraction, size.height / 2f),
                     )
@@ -189,7 +189,7 @@ internal fun TimelineBar(
         Text(
             rightText,
             style = MaterialTheme.typography.labelSmall,
-            color = StashColors.OnSurfaceVariant,
+            color = SpineColors.OnSurfaceVariant,
             modifier =
                 Modifier
                     .size(width = 56.dp, height = 14.dp)
@@ -209,7 +209,7 @@ internal fun ScrubPreviewCard(
     val delta = if (deltaSeconds >= 0) "+${deltaSeconds}s" else "${deltaSeconds}s"
 
     Surface(
-        color = StashColors.SurfaceHigh,
+        color = SpineColors.SurfaceTop,
         contentColor = Color.White,
         shape = RoundedCornerShape(12.dp),
     ) {
@@ -226,7 +226,7 @@ internal fun ScrubPreviewCard(
                 Text(
                     "of $total",
                     style = MaterialTheme.typography.labelSmall,
-                    color = StashColors.OnSurfaceVariant,
+                    color = SpineColors.OnSurfaceVariant,
                 )
             }
             androidx.compose.foundation.layout
@@ -234,7 +234,7 @@ internal fun ScrubPreviewCard(
             Text(
                 delta,
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-                color = StashColors.AccentPrimary,
+                color = SpineColors.AccentPrimary,
             )
         }
     }
@@ -244,11 +244,11 @@ internal fun ScrubPreviewCard(
 internal fun BannerPill(text: String) {
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = StashColors.SurfaceHigh.copy(alpha = 0.92f),
+        color = SpineColors.SurfaceTop.copy(alpha = 0.92f),
         modifier =
             Modifier.drawBehind {
                 drawRect(
-                    color = StashColors.AccentPrimary,
+                    color = SpineColors.AccentPrimary,
                     topLeft = Offset.Zero,
                     size = Size(3.dp.toPx(), size.height),
                 )
@@ -257,7 +257,7 @@ internal fun BannerPill(text: String) {
         Text(
             text,
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
-            color = StashColors.AccentPrimary,
+            color = SpineColors.AccentPrimary,
             modifier = Modifier.padding(start = 16.dp, end = 12.dp, top = 6.dp, bottom = 6.dp),
         )
     }

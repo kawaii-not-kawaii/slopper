@@ -50,7 +50,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.stashapp.android.core.data.prefs.PlayerPreferences
 import io.stashapp.android.core.data.prefs.UiPreferences
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.domain.ConnectionRepository
 import io.stashapp.android.feature.player.CodecCapabilities
 import kotlinx.coroutines.launch
@@ -338,7 +338,7 @@ private fun SectionHeader(title: String) {
     Text(
         title,
         style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-        color = StashColors.AccentPrimary,
+        color = SpineColors.AccentPrimary,
         modifier = Modifier.padding(top = 12.dp, bottom = 4.dp),
     )
 }
@@ -346,7 +346,7 @@ private fun SectionHeader(title: String) {
 @Composable
 private fun SectionDivider() {
     HorizontalDivider(
-        color = StashColors.Divider,
+        color = SpineColors.Border,
         modifier = Modifier.padding(vertical = 8.dp),
     )
 }
@@ -368,13 +368,13 @@ private fun SwitchPref(
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.bodyMedium)
             subtitle?.let {
-                Text(it, style = MaterialTheme.typography.labelSmall, color = StashColors.OnSurfaceVariant)
+                Text(it, style = MaterialTheme.typography.labelSmall, color = SpineColors.OnSurfaceVariant)
             }
         }
         Switch(
             checked = checked,
             onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors(checkedTrackColor = StashColors.AccentPrimary),
+            colors = SwitchDefaults.colors(checkedTrackColor = SpineColors.AccentPrimary),
         )
     }
 }
@@ -391,7 +391,7 @@ private fun SliderPref(
     Column(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(title, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
-            Text(valueLabel, style = MaterialTheme.typography.labelMedium, color = StashColors.OnSurfaceVariant)
+            Text(valueLabel, style = MaterialTheme.typography.labelMedium, color = SpineColors.OnSurfaceVariant)
         }
         Slider(
             value = value,
@@ -417,8 +417,8 @@ private fun <T> ChipRowPref(
             options.forEach { (label, value) ->
                 val isSelected = compareBy(value)
                 Surface(
-                    color = if (isSelected) StashColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainerHigh,
-                    contentColor = if (isSelected) StashColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
+                    color = if (isSelected) SpineColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainerHigh,
+                    contentColor = if (isSelected) SpineColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.clickable { onSelect(value) },
                 ) {
@@ -439,7 +439,7 @@ private fun CodecStatusCard() {
     val present = CodecCapabilities.ffmpegExtensionPresent
     val (icon, tint, headline) =
         when {
-            usable -> Triple(Icons.Filled.CheckCircle, StashColors.AccentPrimary, "Full codec support")
+            usable -> Triple(Icons.Filled.CheckCircle, SpineColors.AccentPrimary, "Full codec support")
             present -> Triple(Icons.Filled.Warning, MaterialTheme.colorScheme.error, "FFmpeg detected but not loaded")
             else -> Triple(Icons.Filled.Warning, MaterialTheme.colorScheme.error, "Limited codec support")
         }
@@ -454,7 +454,7 @@ private fun CodecStatusCard() {
             Column {
                 Text(headline, style = MaterialTheme.typography.titleSmall)
                 Spacer(Modifier.size(4.dp))
-                Text(CodecCapabilities.statusLabel, style = MaterialTheme.typography.bodySmall, color = StashColors.OnSurfaceVariant)
+                Text(CodecCapabilities.statusLabel, style = MaterialTheme.typography.bodySmall, color = SpineColors.OnSurfaceVariant)
             }
         }
     }

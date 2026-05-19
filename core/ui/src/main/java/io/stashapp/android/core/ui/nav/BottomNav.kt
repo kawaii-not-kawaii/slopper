@@ -33,7 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 
 /**
  * A single selectable destination surfaced by the bottom navigation bar.
@@ -113,8 +113,8 @@ fun MainBottomBar(
     val visibleItems = visibleIds.mapNotNull { id -> MainNavItems.All.find { it.id == id } }
 
     NavigationBar(
-        containerColor = StashColors.SurfaceLow,
-        contentColor = StashColors.OnSurface,
+        containerColor = SpineColors.Surface,
+        contentColor = SpineColors.OnSurface,
         tonalElevation = 0.dp,
     ) {
         visibleItems.forEach { item ->
@@ -136,11 +136,11 @@ fun MainBottomBar(
                 label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
                 colors =
                     NavigationBarItemDefaults.colors(
-                        selectedIconColor = StashColors.AccentPrimary,
-                        selectedTextColor = StashColors.AccentPrimary,
-                        indicatorColor = StashColors.AccentPrimary.copy(alpha = 0.18f),
-                        unselectedIconColor = StashColors.OnSurfaceVariant,
-                        unselectedTextColor = StashColors.OnSurfaceVariant,
+                        selectedIconColor = SpineColors.AccentPrimary,
+                        selectedTextColor = SpineColors.AccentPrimary,
+                        indicatorColor = SpineColors.AccentPrimary.copy(alpha = 0.18f),
+                        unselectedIconColor = SpineColors.OnSurfaceVariant,
+                        unselectedTextColor = SpineColors.OnSurfaceVariant,
                     ),
             )
         }
@@ -152,8 +152,8 @@ fun MainBottomBar(
             label = { Text("More", style = MaterialTheme.typography.labelSmall) },
             colors =
                 NavigationBarItemDefaults.colors(
-                    unselectedIconColor = StashColors.OnSurfaceVariant,
-                    unselectedTextColor = StashColors.OnSurfaceVariant,
+                    unselectedIconColor = SpineColors.OnSurfaceVariant,
+                    unselectedTextColor = SpineColors.OnSurfaceVariant,
                 ),
         )
     }
@@ -179,14 +179,14 @@ fun MoreSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = StashColors.SurfaceLow,
+        containerColor = SpineColors.Surface,
         contentWindowInsets = { WindowInsets.navigationBars },
     ) {
         Column(Modifier.padding(bottom = 16.dp)) {
             Text(
                 "Browse",
                 style = MaterialTheme.typography.labelMedium,
-                color = StashColors.OnSurfaceMuted,
+                color = SpineColors.OnSurfaceMuted,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
             )
             hiddenItems.forEach { item ->
@@ -198,14 +198,14 @@ fun MoreSheet(
                             onNavigate(item.route)
                             onDismiss()
                         },
-                    colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
+                    colors = ListItemDefaults.colors(containerColor = SpineColors.Surface),
                 )
             }
-            HorizontalDivider(color = StashColors.Divider)
+            HorizontalDivider(color = SpineColors.Border)
             Text(
                 "App",
                 style = MaterialTheme.typography.labelMedium,
-                color = StashColors.OnSurfaceMuted,
+                color = SpineColors.OnSurfaceMuted,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
             )
             ListItem(
@@ -216,7 +216,7 @@ fun MoreSheet(
                         onOpenSettings()
                         onDismiss()
                     },
-                colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
+                colors = ListItemDefaults.colors(containerColor = SpineColors.Surface),
             )
             ListItem(
                 headlineContent = { Text("Customize nav bar") },
@@ -229,7 +229,7 @@ fun MoreSheet(
                         onCustomize()
                         onDismiss()
                     },
-                colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
+                colors = ListItemDefaults.colors(containerColor = SpineColors.Surface),
             )
         }
     }

@@ -50,7 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.model.RepeatMode
 import kotlinx.collections.immutable.toPersistentList
@@ -309,7 +309,7 @@ fun PlayerScreen(
                         Icon(
                             Icons.Filled.Lock,
                             contentDescription = "Unlock",
-                            tint = StashColors.AccentPrimary,
+                            tint = SpineColors.AccentPrimary,
                             modifier = Modifier.size(28.dp),
                         )
                     }

@@ -52,7 +52,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.PerformerBrowseItem
 import io.stashapp.android.core.model.StudioBrowseItem
 import io.stashapp.android.core.model.TagBrowseItem
@@ -173,7 +173,7 @@ private fun PerformersGrid(
                         Icon(
                             Icons.Filled.Favorite,
                             contentDescription = null,
-                            tint = StashColors.Error,
+                            tint = SpineColors.Error,
                             modifier =
                                 Modifier
                                     .align(Alignment.TopEnd)
@@ -259,7 +259,7 @@ private fun TagsGrid(
                 Text(
                     tag.name,
                     style = MaterialTheme.typography.titleSmall,
-                    color = StashColors.AccentSecondary,
+                    color = SpineColors.AccentCool,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )

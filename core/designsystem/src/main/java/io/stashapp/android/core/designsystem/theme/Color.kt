@@ -3,46 +3,44 @@ package io.stashapp.android.core.designsystem.theme
 import androidx.compose.ui.graphics.Color
 
 /**
- * Plex-inspired dark palette tailored for Stash.
+ * Spine design system color tokens.
  *
- * Design goals:
- *  - Deep, slightly-blue charcoal as the primary surface (not pure black — better
- *    for OLED burn-in avoidance and less harsh over long viewing sessions).
- *  - Warm amber accent that evokes classic film / projector vibe and reads as
- *    Stash-brand-adjacent without copying Plex orange.
- *  - High-contrast text with subtle layering via 3 elevation tiers.
+ * Design goals (v5 Spine direction):
+ *  - Near-black navy base (Bg) — softer than pure black for OLED readability.
+ *  - 4-tier surface stack: Bg → Surface → SurfaceHigh → SurfaceTop.
+ *  - Sage green accent (AccentPrimary) replaces warm amber — matches the
+ *    design handoff direction in design_handoff_slopper_spine/.
+ *  - Cool blue secondary (AccentCool) replaces teal.
+ *  - Border/BorderStrong for subtle rule lines instead of a full-opacity Divider.
  */
-object StashColors {
-    // Surfaces — graduated from deepest (scaffold) to highest (dialogs/modals)
-    val SurfaceBase = Color(0xFF0B0E13) // app background
-    val SurfaceLow = Color(0xFF121722) // cards, rails
-    val SurfaceMed = Color(0xFF1A2030) // elevated cards, sheets
-    val SurfaceHigh = Color(0xFF232B3D) // dialogs, menus
-    val SurfaceHighest = Color(0xFF2E3750)
+object SpineColors {
+    // Surfaces — 4-tier graduated elevation stack
+    val Bg           = Color(0xFF0A0D12)  // app scaffold / page background
+    val Surface      = Color(0xFF11151C)  // cards, rails, sheets
+    val SurfaceHigh  = Color(0xFF1A2030)  // elevated cards, menus
+    val SurfaceTop   = Color(0xFF232B3D)  // dialogs, toasts, top-layer chips
 
     // Text
-    val OnSurface = Color(0xFFE8EBF2)
-    val OnSurfaceVariant = Color(0xFFA8B0C0)
-    val OnSurfaceMuted = Color(0xFF6C7488)
-    val OnSurfaceFaint = Color(0xFF3F4656)
+    val OnSurface        = Color(0xFFEAEEF6)
+    val OnSurfaceVariant = Color(0xFF8C95A8)
+    val OnSurfaceMuted   = Color(0xFF525B6E)
+    val OnSurfaceFaint   = Color(0xFF2F3645)
 
-    // Brand / accent — warm amber-orange
-    val AccentPrimary = Color(0xFFF0A037)
-    val AccentPrimaryDim = Color(0xFFC68129)
-    val AccentOnPrimary = Color(0xFF1A0F00)
+    // Brand / accent — sage green
+    val AccentPrimary    = Color(0xFF9DC83C)
+    val AccentPrimaryDim = Color(0xFF6E9028)
+    val AccentOnPrimary  = Color(0xFF0B1402)
 
-    // Secondary — cool teal for interactive elements like progress + links
-    val AccentSecondary = Color(0xFF4FC8D9)
-    val AccentSecondaryDim = Color(0xFF338996)
+    // Secondary — cool blue
+    val AccentCool    = Color(0xFF7FB6FF)
+    val AccentCoolDim = Color(0xFF4A75B6)
 
     // Semantic
+    val Warning = Color(0xFFFFCC44)
+    val Error   = Color(0xFFFF5860)
     val Success = Color(0xFF5DBB63)
-    val Warning = Color(0xFFE8C547)
-    val Error = Color(0xFFE85757)
 
-    // Overlays & dividers
-    val Divider = Color(0x1FFFFFFF)
-    val ScrimStrong = Color(0xD9000000)
-    val ScrimMedium = Color(0x99000000)
-    val ScrimSoft = Color(0x66000000)
+    // Borders (alpha-based)
+    val Border       = Color(0xFFA0B4DC).copy(alpha = 0.10f)
+    val BorderStrong = Color(0xFFA0B4DC).copy(alpha = 0.22f)
 }

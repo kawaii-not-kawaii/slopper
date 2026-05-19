@@ -26,7 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 
 /**
  * A minimal customization sheet — tap to include an item in the bottom bar.
@@ -51,7 +51,7 @@ fun NavCustomizeSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = StashColors.SurfaceLow,
+        containerColor = SpineColors.Surface,
         contentWindowInsets = { WindowInsets.navigationBars },
     ) {
         Column(
@@ -61,12 +61,12 @@ fun NavCustomizeSheet(
             Text(
                 "Bottom bar items",
                 style = MaterialTheme.typography.titleSmall,
-                color = StashColors.OnSurface,
+                color = SpineColors.OnSurface,
             )
             Text(
                 "Pick up to $maxVisible — the rest live in the More menu.",
                 style = MaterialTheme.typography.labelSmall,
-                color = StashColors.OnSurfaceMuted,
+                color = SpineColors.OnSurfaceMuted,
             )
             Spacer(Modifier.size(8.dp))
 
@@ -88,21 +88,21 @@ fun NavCustomizeSheet(
                         },
                         colors =
                             CheckboxDefaults.colors(
-                                checkedColor = StashColors.AccentPrimary,
-                                checkmarkColor = StashColors.AccentOnPrimary,
+                                checkedColor = SpineColors.AccentPrimary,
+                                checkmarkColor = SpineColors.AccentOnPrimary,
                             ),
                     )
                     Icon(
                         item.iconOutlined,
                         contentDescription = null,
-                        tint = if (atCap) StashColors.OnSurfaceFaint else StashColors.OnSurface,
+                        tint = if (atCap) SpineColors.OnSurfaceFaint else SpineColors.OnSurface,
                         modifier = Modifier.size(20.dp),
                     )
                     Spacer(Modifier.size(12.dp))
                     Text(
                         item.label,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = if (atCap) StashColors.OnSurfaceFaint else StashColors.OnSurface,
+                        color = if (atCap) SpineColors.OnSurfaceFaint else SpineColors.OnSurface,
                     )
                 }
             }
@@ -120,7 +120,7 @@ fun NavCustomizeSheet(
                     onApply(ordered.ifEmpty { MainNavItems.DefaultVisibleIds })
                     onDismiss()
                 }) {
-                    Text("Apply", color = StashColors.AccentPrimary)
+                    Text("Apply", color = SpineColors.AccentPrimary)
                 }
             }
             Spacer(Modifier.size(8.dp))
