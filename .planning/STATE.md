@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: None active — Phase 1 (DEPS) pending
-status: unknown
-last_updated: "2026-05-19T02:29:32.897Z"
+current_phase: 06
+status: Executing Phase 06
+last_updated: "2026-05-19T06:15:00.000Z"
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 5
-  total_plans: 14
-  completed_plans: 14
-  percent: 100
+  total_plans: 17
+  completed_plans: 15
+  percent: 88
 ---
 
 # Project State
@@ -24,9 +24,9 @@ progress:
 - **Project initialized:** YES (`PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md` all written)
 - **Codebase mapped:** YES (`.planning/codebase/` — 7 docs, 1483 lines)
 - **Research complete:** YES (`.planning/research/` — STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY)
-- **Current phase:** None active — Phase 1 (DEPS) pending
-- **Plans created:** 0
-- **Plans executed:** 0
+- **Current phase:** 06
+- **Plans created:** 3
+- **Plans executed:** 1 (06.1 — Settings Hub Foundation)
 
 ## Roadmap Snapshot
 
@@ -44,6 +44,9 @@ progress:
 
 ## Key Locked Decisions
 
+- **Phase 06 - 06.1:** Single SettingsViewModel extracted to standalone file; serverInfo/activeServer StateFlows added via connectionRepository.test() in init block
+- **Phase 06 - 06.1:** AccentColors/LocalAccentColors in Theme.kt with remember(accentName) memoization; StashTheme accepts accentName param; RootViewModel exposes accentPalette StateFlow
+- **Phase 06 - 06.1:** Flat composable() entries for 6 sub-routes in AppNavHost; isMainTabRoute exact-match check unchanged; SettingsDetailStubs.kt as temporary compilation bridge for Plan 6.2
 - **MediaSessionService (real background playback)** → OUT OF SCOPE this milestone; orphan `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permission to be removed in Phase 2
 - **`androidx.security:security-crypto` deprecation** → DEFER (pin 1.1.0, TODO in `ConnectionStore.kt`); revisit when stable replacement ships
 - **Apollo Kotlin** → STAY on 4.4.3 (Apollo 5 is its own milestone)
@@ -61,7 +64,7 @@ progress:
 
 ## Next Step
 
-Run `/gsd-plan-phase 1` to create executable plans for the DEPS phase.
+Execute plan 06.2 (Settings detail pages) and plan 06.3 (Settings search overlay) — these are parallel-safe (wave 2).
 
 ---
-*Last updated: 2026-05-16 after `/gsd-new-project`.*
+*Last updated: 2026-05-19 after completing 06.1-PLAN.md (Settings Hub Foundation).*
