@@ -30,41 +30,42 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class StashBaselineProfileGenerator {
-
     @get:Rule
     val rule = BaselineProfileRule()
 
     @Test
-    fun generate() = rule.collect(packageName = TARGET_PACKAGE) {
-        pressHome()
-        startActivityAndWait()
+    fun generate() =
+        rule.collect(packageName = TARGET_PACKAGE) {
+            pressHome()
+            startActivityAndWait()
 
-        // Wait for first draw — content description or class probe is more
-        // reliable than a specific string since strings may change.
-        device.wait(Until.hasObject(By.pkg(TARGET_PACKAGE).depth(0)), 5_000)
+            // Wait for first draw — content description or class probe is more
+            // reliable than a specific string since strings may change.
+            device.wait(Until.hasObject(By.pkg(TARGET_PACKAGE).depth(0)), 5_000)
 
-        // If the library / home grid is present, scroll through a few rows so
-        // LazyVerticalGrid + SceneCard composition + image loading get
-        // compiled into the profile.
-        val grid = device.wait(
-            Until.findObject(By.scrollable(true)),
-            3_000,
-        )
-        grid?.let {
-            repeat(3) {
-                it.scroll(androidx.test.uiautomator.Direction.DOWN, 0.8f)
-                device.waitForIdle()
+            // If the library / home grid is present, scroll through a few rows so
+            // LazyVerticalGrid + SceneCard composition + image loading get
+            // compiled into the profile.
+            val grid =
+                device.wait(
+                    Until.findObject(By.scrollable(true)),
+                    3_000,
+                )
+            grid?.let {
+                repeat(3) {
+                    it.scroll(androidx.test.uiautomator.Direction.DOWN, 0.8f)
+                    device.waitForIdle()
+                }
             }
-        }
 
-        // Tap the first scene to open detail, then back out — captures the
-        // detail screen + back-nav composition.
-        val firstCard = device.findObjects(By.clickable(true)).firstOrNull()
-        firstCard?.click()
-        device.waitForIdle()
-        device.pressBack()
-        device.waitForIdle()
-    }
+            // Tap the first scene to open detail, then back out — captures the
+            // detail screen + back-nav composition.
+            val firstCard = device.findObjects(By.clickable(true)).firstOrNull()
+            firstCard?.click()
+            device.waitForIdle()
+            device.pressBack()
+            device.waitForIdle()
+        }
 
     private companion object {
         // Match whichever applicationId variant is installed — debug suffix

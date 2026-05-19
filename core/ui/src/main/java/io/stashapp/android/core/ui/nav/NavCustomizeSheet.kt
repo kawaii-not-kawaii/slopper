@@ -71,9 +71,10 @@ fun NavCustomizeSheet(
                 val isSelected = item.id in selected
                 val atCap = selected.size >= maxVisible && !isSelected
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Checkbox(
@@ -82,10 +83,11 @@ fun NavCustomizeSheet(
                         onCheckedChange = { checked ->
                             selected = if (checked) selected + item.id else selected - item.id
                         },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = StashColors.AccentPrimary,
-                            checkmarkColor = StashColors.AccentOnPrimary,
-                        ),
+                        colors =
+                            CheckboxDefaults.colors(
+                                checkedColor = StashColors.AccentPrimary,
+                                checkmarkColor = StashColors.AccentOnPrimary,
+                            ),
                     )
                     Icon(
                         item.iconOutlined,

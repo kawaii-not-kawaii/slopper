@@ -14,14 +14,16 @@ object Routes {
     // defaultValue set on the composable's navArgument.
     const val LibraryPattern = "library?preset={preset}"
     const val Library = "library"
-    fun libraryWithPreset(preset: String?): String =
-        if (preset.isNullOrBlank()) Library else "library?preset=$preset"
+
+    fun libraryWithPreset(preset: String?): String = if (preset.isNullOrBlank()) Library else "library?preset=$preset"
 
     const val DetailPattern = "scene/{sceneId}"
+
     fun sceneDetail(sceneId: String) = "scene/$sceneId"
 
     // browse/performers | browse/studios | browse/tags
     const val BrowsePattern = "browse/{kind}"
+
     fun browse(kind: String) = "browse/$kind"
 
     // player/{sceneId}?queueIds=1,2,3&index=0&startMs=0

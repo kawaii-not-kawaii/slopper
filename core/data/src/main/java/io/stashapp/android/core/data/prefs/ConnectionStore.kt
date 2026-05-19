@@ -17,53 +17,60 @@ import javax.inject.Singleton
  * never stored in plaintext on disk.
  */
 @Singleton
-class ConnectionStore @Inject constructor(
-    @ApplicationContext context: Context,
-) {
-    private val prefs = EncryptedSharedPreferences.create(
-        context,
-        FILE_NAME,
-        MasterKey.Builder(context)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build(),
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
-    )
+class ConnectionStore
+    @Inject
+    constructor(
+        @ApplicationContext context: Context,
+    ) {
+        private val prefs =
+            EncryptedSharedPreferences.create(
+                context,
+                FILE_NAME,
+                MasterKey
+                    .Builder(context)
+                    .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                    .build(),
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
+            )
 
-    fun currentServer(): StashServer? {
-        val url = prefs.getString(KEY_URL, null)?.takeIf { it.isNotBlank() } ?: return null
-        return StashServer(
-            baseUrl = url,
-            apiKey = prefs.getString(KEY_API_KEY, null)?.takeIf { it.isNotBlank() },
-            displayName = prefs.getString(KEY_NAME, null) ?: url,
-        )
-    }
-
-    fun save(server: StashServer) {
-        prefs.edit()
-            .putString(KEY_URL, server.baseUrl)
-            .putString(KEY_API_KEY, server.apiKey)
-            .putString(KEY_NAME, server.displayName)
-            .apply()
-    }
-
-    fun clear() {
-        prefs.edit().clear().apply()
-    }
-
-    fun observe(): Flow<StashServer?> = callbackFlow {
-        trySend(currentServer())
-        val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-            trySend(currentServer())
+        fun currentServer(): StashServer? {
+            val url = prefs.getString(KEY_URL, null)?.takeIf { it.isNotBlank() } ?: return null
+            return StashServer(
+                baseUrl = url,
+                apiKey = prefs.getString(KEY_API_KEY, null)?.takeIf { it.isNotBlank() },
+                displayName = prefs.getString(KEY_NAME, null) ?: url,
+            )
         }
-        prefs.registerOnSharedPreferenceChangeListener(listener)
-        awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
-    }
 
-    private companion object {
-        const val FILE_NAME = "stash_connection"
-        const val KEY_URL = "url"
-        const val KEY_API_KEY = "api_key"
-        const val KEY_NAME = "name"
+        fun save(server: StashServer) {
+            prefs
+                .edit()
+                .putString(KEY_URL, server.baseUrl)
+                .putString(KEY_API_KEY, server.apiKey)
+                .putString(KEY_NAME, server.displayName)
+                .apply()
+        }
+
+        fun clear() {
+            prefs.edit().clear().apply()
+        }
+
+        fun observe(): Flow<StashServer?> =
+            callbackFlow {
+                trySend(currentServer())
+                val listener =
+                    android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+                        trySend(currentServer())
+                    }
+                prefs.registerOnSharedPreferenceChangeListener(listener)
+                awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
+            }
+
+        private companion object {
+            const val FILE_NAME = "stash_connection"
+            const val KEY_URL = "url"
+            const val KEY_API_KEY = "api_key"
+            const val KEY_NAME = "name"
+        }
     }
-}

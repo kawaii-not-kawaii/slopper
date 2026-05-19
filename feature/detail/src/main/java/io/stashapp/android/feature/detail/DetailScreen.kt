@@ -1,7 +1,6 @@
 package io.stashapp.android.feature.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -90,38 +90,42 @@ fun DetailScreen(
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                ),
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                    ),
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
     ) { inner ->
         when {
-            state.loading -> Box(
-                Modifier.fillMaxSize().padding(inner),
-                contentAlignment = Alignment.Center,
-            ) { CircularProgressIndicator() }
+            state.loading ->
+                Box(
+                    Modifier.fillMaxSize().padding(inner),
+                    contentAlignment = Alignment.Center,
+                ) { CircularProgressIndicator() }
 
-            state.error != null -> Box(
-                Modifier.fillMaxSize().padding(inner).padding(24.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    "Can't load scene: ${state.error}",
-                    color = MaterialTheme.colorScheme.error,
+            state.error != null ->
+                Box(
+                    Modifier.fillMaxSize().padding(inner).padding(24.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        "Can't load scene: ${state.error}",
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+
+            state.scene != null ->
+                SceneBody(
+                    scene = state.scene!!,
+                    contentPadding = inner,
+                    onPlay = onPlay,
+                    onRatingChange = viewModel::setRating,
+                    onOrganizedToggle = viewModel::setOrganized,
+                    onIncrementO = viewModel::incrementO,
+                    onDecrementO = viewModel::decrementO,
                 )
-            }
-
-            state.scene != null -> SceneBody(
-                scene = state.scene!!,
-                contentPadding = inner,
-                onPlay = onPlay,
-                onRatingChange = viewModel::setRating,
-                onOrganizedToggle = viewModel::setOrganized,
-                onIncrementO = viewModel::incrementO,
-                onDecrementO = viewModel::decrementO,
-            )
         }
     }
 }
@@ -173,9 +177,10 @@ private fun SceneBody(
                 color = StashColors.AccentPrimary.copy(alpha = 0.92f),
                 contentColor = StashColors.AccentOnPrimary,
                 shape = CircleShape,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(72.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.Center)
+                        .size(72.dp),
                 onClick = { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
             ) {
                 Box(contentAlignment = Alignment.Center) {
@@ -262,7 +267,8 @@ private fun SceneBody(
                 Icon(Icons.Filled.PlayArrow, contentDescription = null)
                 Spacer(Modifier.size(8.dp))
                 Text(
-                    s.resumeTimeSeconds?.takeIf { it > 2 }
+                    s.resumeTimeSeconds
+                        ?.takeIf { it > 2 }
                         ?.let { "Resume from ${formatDuration(it)}" }
                         ?: "Play",
                 )
@@ -340,14 +346,17 @@ private fun ActionRow(
             )
             Spacer(Modifier.size(8.dp))
             (1..5).forEach { star ->
-                val threshold = star * 20        // 20/40/60/80/100
+                val threshold = star * 20 // 20/40/60/80/100
                 val active = (rating100 ?: 0) >= threshold
                 IconButton(
                     onClick = {
                         val current = rating100 ?: 0
                         onRatingChange(
-                            if (current == threshold) (threshold - 20).takeIf { it > 0 }
-                            else threshold,
+                            if (current == threshold) {
+                                (threshold - 20).takeIf { it > 0 }
+                            } else {
+                                threshold
+                            },
                         )
                     },
                     modifier = Modifier.size(32.dp),
@@ -432,7 +441,10 @@ private fun ActionRow(
 }
 
 @Composable
-private fun Section(title: String, content: @Composable () -> Unit) {
+private fun Section(
+    title: String,
+    content: @Composable () -> Unit,
+) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             title,
@@ -449,7 +461,10 @@ private fun Dot() {
 }
 
 @Composable
-private fun Pill(text: String, accent: Boolean = false) {
+private fun Pill(
+    text: String,
+    accent: Boolean = false,
+) {
     Surface(
         color = if (accent) StashColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = if (accent) StashColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
@@ -526,7 +541,10 @@ private fun TagFlow(tags: List<TagRef>) {
 }
 
 @Composable
-private fun MarkerRow(marker: Marker, onClick: () -> Unit) {
+private fun MarkerRow(
+    marker: Marker,
+    onClick: () -> Unit,
+) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainer,
         shape = RoundedCornerShape(8.dp),

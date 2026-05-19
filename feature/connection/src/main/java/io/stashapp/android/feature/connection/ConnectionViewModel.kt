@@ -25,60 +25,69 @@ data class ConnectionUiState(
 )
 
 @HiltViewModel
-class ConnectionViewModel @Inject constructor(
-    private val connectionRepository: ConnectionRepository,
-) : ViewModel() {
+class ConnectionViewModel
+    @Inject
+    constructor(
+        private val connectionRepository: ConnectionRepository,
+    ) : ViewModel() {
+        private val _state = MutableStateFlow(ConnectionUiState())
+        val state: StateFlow<ConnectionUiState> = _state.asStateFlow()
 
-    private val _state = MutableStateFlow(ConnectionUiState())
-    val state: StateFlow<ConnectionUiState> = _state.asStateFlow()
+        fun setUrl(value: String) = _state.update { it.copy(baseUrl = value, error = null) }
 
-    fun setUrl(value: String) = _state.update { it.copy(baseUrl = value, error = null) }
-    fun setApiKey(value: String) = _state.update { it.copy(apiKey = value, error = null) }
-    fun setName(value: String) = _state.update { it.copy(displayName = value) }
+        fun setApiKey(value: String) = _state.update { it.copy(apiKey = value, error = null) }
 
-    fun test() {
-        val s = _state.value
-        if (s.testing) return
-        _state.update { it.copy(testing = true, error = null, serverInfo = null) }
+        fun setName(value: String) = _state.update { it.copy(displayName = value) }
 
-        viewModelScope.launch {
-            val server = StashServer(
-                baseUrl = s.baseUrl,
-                apiKey = s.apiKey.ifBlank { null },
-                displayName = s.displayName.ifBlank { s.baseUrl },
-            )
-            when (val result = connectionRepository.test(server)) {
-                is ConnectionResult.Success -> _state.update {
-                    it.copy(testing = false, serverInfo = result.info, error = null)
-                }
-                is ConnectionResult.AuthFailed -> _state.update {
-                    it.copy(testing = false, error = result.message)
-                }
-                is ConnectionResult.InvalidUrl -> _state.update {
-                    it.copy(testing = false, error = result.reason)
-                }
-                is ConnectionResult.NetworkError -> _state.update {
-                    it.copy(testing = false, error = "Can't reach server: ${result.message}")
-                }
-                is ConnectionResult.ServerError -> _state.update {
-                    it.copy(testing = false, error = "Server error: ${result.message}")
+        fun test() {
+            val s = _state.value
+            if (s.testing) return
+            _state.update { it.copy(testing = true, error = null, serverInfo = null) }
+
+            viewModelScope.launch {
+                val server =
+                    StashServer(
+                        baseUrl = s.baseUrl,
+                        apiKey = s.apiKey.ifBlank { null },
+                        displayName = s.displayName.ifBlank { s.baseUrl },
+                    )
+                when (val result = connectionRepository.test(server)) {
+                    is ConnectionResult.Success ->
+                        _state.update {
+                            it.copy(testing = false, serverInfo = result.info, error = null)
+                        }
+                    is ConnectionResult.AuthFailed ->
+                        _state.update {
+                            it.copy(testing = false, error = result.message)
+                        }
+                    is ConnectionResult.InvalidUrl ->
+                        _state.update {
+                            it.copy(testing = false, error = result.reason)
+                        }
+                    is ConnectionResult.NetworkError ->
+                        _state.update {
+                            it.copy(testing = false, error = "Can't reach server: ${result.message}")
+                        }
+                    is ConnectionResult.ServerError ->
+                        _state.update {
+                            it.copy(testing = false, error = "Server error: ${result.message}")
+                        }
                 }
             }
         }
-    }
 
-    fun connect(onDone: () -> Unit) {
-        val s = _state.value
-        viewModelScope.launch {
-            connectionRepository.setActive(
-                StashServer(
-                    baseUrl = s.baseUrl,
-                    apiKey = s.apiKey.ifBlank { null },
-                    displayName = s.displayName.ifBlank { s.baseUrl },
-                ),
-            )
-            _state.update { it.copy(connected = true) }
-            onDone()
+        fun connect(onDone: () -> Unit) {
+            val s = _state.value
+            viewModelScope.launch {
+                connectionRepository.setActive(
+                    StashServer(
+                        baseUrl = s.baseUrl,
+                        apiKey = s.apiKey.ifBlank { null },
+                        displayName = s.displayName.ifBlank { s.baseUrl },
+                    ),
+                )
+                _state.update { it.copy(connected = true) }
+                onDone()
+            }
         }
     }
-}

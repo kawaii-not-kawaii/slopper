@@ -19,9 +19,7 @@ import javax.inject.Singleton
 abstract class DataModule {
     @Binds
     @Singleton
-    abstract fun bindConnectionRepository(
-        impl: DefaultConnectionRepository,
-    ): ConnectionRepository
+    abstract fun bindConnectionRepository(impl: DefaultConnectionRepository): ConnectionRepository
 
     /**
      * Endpoint state is owned by [EndpointStateHolder] — kept separate from the
@@ -30,19 +28,13 @@ abstract class DataModule {
      */
     @Binds
     @Singleton
-    abstract fun bindEndpointProvider(
-        impl: EndpointStateHolder,
-    ): StashEndpointProvider
+    abstract fun bindEndpointProvider(impl: EndpointStateHolder): StashEndpointProvider
 
     @Binds
     @Singleton
-    abstract fun bindSceneRepository(
-        impl: DefaultSceneRepository,
-    ): SceneRepository
+    abstract fun bindSceneRepository(impl: DefaultSceneRepository): SceneRepository
 
     @Binds
     @Singleton
-    abstract fun bindBrowseRepository(
-        impl: DefaultBrowseRepository,
-    ): BrowseRepository
+    abstract fun bindBrowseRepository(impl: DefaultBrowseRepository): BrowseRepository
 }

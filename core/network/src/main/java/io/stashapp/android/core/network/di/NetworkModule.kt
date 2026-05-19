@@ -22,14 +22,17 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-
     @Provides
     @Singleton
-    fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+    fun provideOkHttpClient(
+        @ApplicationContext context: Context,
+    ): OkHttpClient {
+        val builder =
+            OkHttpClient
+                .Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
         // Log request method + URL only in debug builds so release builds don't
         // leak URL query strings (scene IDs, search terms) into logcat.
         if ((context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
@@ -47,15 +50,15 @@ object NetworkModule {
     fun provideApolloClient(
         okHttpClient: OkHttpClient,
         endpointProvider: StashEndpointProvider,
-    ): ApolloClient {
-        return ApolloClient.Builder()
+    ): ApolloClient =
+        ApolloClient
+            .Builder()
             // Placeholder URL — per-request URL is overridden by the interceptor below
             // to support switching endpoints at runtime without rebuilding the client.
             .serverUrl("http://localhost/graphql")
             .okHttpClient(okHttpClient)
             .addHttpInterceptor(StashAuthInterceptor(endpointProvider))
             .build()
-    }
 }
 
 /**
@@ -69,8 +72,9 @@ private class StashAuthInterceptor(
         request: HttpRequest,
         chain: HttpInterceptorChain,
     ): HttpResponse {
-        val endpoint = endpointProvider.current()
-            ?: error("No Stash endpoint configured. Connect to a server first.")
+        val endpoint =
+            endpointProvider.current()
+                ?: error("No Stash endpoint configured. Connect to a server first.")
 
         // Apollo 4 Builder sets URL at construction via newBuilder(method, url).
         val builder = request.newBuilder(request.method, endpoint.graphqlUrl)

@@ -17,16 +17,19 @@ class PlayerQueue private constructor(
 ) {
     private val activeOrder: List<String> get() = if (shuffled) shuffledOrder else originalOrder
 
-    fun snapshot() = QueueState(
-        items = activeOrder,
-        currentIndex = currentIndex,
-        shuffled = shuffled,
-        repeatMode = repeatMode,
-    )
+    fun snapshot() =
+        QueueState(
+            items = activeOrder,
+            currentIndex = currentIndex,
+            shuffled = shuffled,
+            repeatMode = repeatMode,
+        )
 
     fun currentId(): String? = activeOrder.getOrNull(currentIndex)
 
-    fun setRepeat(mode: RepeatMode) { repeatMode = mode }
+    fun setRepeat(mode: RepeatMode) {
+        repeatMode = mode
+    }
 
     fun setShuffled(enabled: Boolean) {
         if (enabled == shuffled) return
@@ -50,7 +53,9 @@ class PlayerQueue private constructor(
             return if (repeatMode == RepeatMode.ALL) {
                 currentIndex = 0
                 activeOrder.firstOrNull()
-            } else null
+            } else {
+                null
+            }
         }
         currentIndex = nextIdx
         return activeOrder[nextIdx]
@@ -62,7 +67,9 @@ class PlayerQueue private constructor(
             return if (repeatMode == RepeatMode.ALL) {
                 currentIndex = activeOrder.lastIndex
                 activeOrder.lastOrNull()
-            } else null
+            } else {
+                null
+            }
         }
         currentIndex = prevIdx
         return activeOrder[prevIdx]
@@ -77,7 +84,10 @@ class PlayerQueue private constructor(
     }
 
     companion object {
-        fun from(ids: List<String>, startIndex: Int): PlayerQueue {
+        fun from(
+            ids: List<String>,
+            startIndex: Int,
+        ): PlayerQueue {
             require(ids.isNotEmpty()) { "Queue cannot be empty" }
             val safeIdx = startIndex.coerceIn(0, ids.lastIndex)
             return PlayerQueue(

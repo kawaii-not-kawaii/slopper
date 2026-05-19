@@ -18,26 +18,29 @@ import javax.inject.Singleton
  * Only the repository should mutate this; everyone else reads.
  */
 @Singleton
-class EndpointStateHolder @Inject constructor(
-    private val store: ConnectionStore,
-) : StashEndpointProvider {
+class EndpointStateHolder
+    @Inject
+    constructor(
+        private val store: ConnectionStore,
+    ) : StashEndpointProvider {
+        private val state =
+            MutableStateFlow(
+                store.currentServer()?.let { StashEndpoint(it.baseUrl, it.apiKey) },
+            )
 
-    private val state = MutableStateFlow(
-        store.currentServer()?.let { StashEndpoint(it.baseUrl, it.apiKey) },
-    )
+        val stateFlow = state.asStateFlow()
 
-    val stateFlow = state.asStateFlow()
+        override fun current(): StashEndpoint? = state.value
 
-    override fun current(): StashEndpoint? = state.value
+        override fun observe(): Flow<StashEndpoint?> = state.asStateFlow()
 
-    override fun observe(): Flow<StashEndpoint?> = state.asStateFlow()
+        /** Called by the repository to point at a different server. */
+        internal fun set(endpoint: StashEndpoint?) {
+            state.value = endpoint
+        }
 
-    /** Called by the repository to point at a different server. */
-    internal fun set(endpoint: StashEndpoint?) {
-        state.value = endpoint
+        fun serverFlow() =
+            store.observe().map {
+                it?.let { s -> StashEndpoint(s.baseUrl, s.apiKey) }
+            }
     }
-
-    fun serverFlow() = store.observe().map {
-        it?.let { s -> StashEndpoint(s.baseUrl, s.apiKey) }
-    }
-}

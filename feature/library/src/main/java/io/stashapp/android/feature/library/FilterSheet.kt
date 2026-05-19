@@ -1,7 +1,6 @@
 package io.stashapp.android.feature.library
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -74,10 +73,11 @@ fun FilterSheet(
         sheetState = sheetState,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp, vertical = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
             SectionTitle("Sort by")
@@ -218,7 +218,10 @@ private fun SectionTitle(text: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SortDropdown(current: SceneSort, onChange: (SceneSort) -> Unit) {
+private fun SortDropdown(
+    current: SceneSort,
+    onChange: (SceneSort) -> Unit,
+) {
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -229,9 +232,10 @@ private fun SortDropdown(current: SceneSort, onChange: (SceneSort) -> Unit) {
             onValueChange = {},
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true),
         )
         ExposedDropdownMenu(
             expanded = expanded,
@@ -240,7 +244,10 @@ private fun SortDropdown(current: SceneSort, onChange: (SceneSort) -> Unit) {
             SceneSort.entries.forEach { opt ->
                 DropdownMenuItem(
                     text = { Text(opt.label) },
-                    onClick = { onChange(opt); expanded = false },
+                    onClick = {
+                        onChange(opt)
+                        expanded = false
+                    },
                 )
             }
         }
@@ -262,8 +269,9 @@ private fun DurationSection(
     onChange: (SceneFilter) -> Unit,
 ) {
     val activeBucket = currentDurationBucket(filter)
-    val hasBoundsWithoutPreset = (filter.minDurationSeconds != null || filter.maxDurationSeconds != null) &&
-        activeBucket == null
+    val hasBoundsWithoutPreset =
+        (filter.minDurationSeconds != null || filter.maxDurationSeconds != null) &&
+            activeBucket == null
     var customMode by remember(hasBoundsWithoutPreset) { mutableStateOf(hasBoundsWithoutPreset) }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -350,9 +358,10 @@ private fun DurationCustomRange(
             },
             label = { Text("Min (min)") },
             singleLine = true,
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
-            ),
+            keyboardOptions =
+                androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+                ),
             modifier = Modifier.weight(1f),
         )
         Text("–", style = MaterialTheme.typography.titleMedium)
@@ -368,9 +377,10 @@ private fun DurationCustomRange(
             },
             label = { Text("Max (min)") },
             singleLine = true,
-            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
-            ),
+            keyboardOptions =
+                androidx.compose.foundation.text.KeyboardOptions(
+                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+                ),
             modifier = Modifier.weight(1f),
         )
     }
@@ -378,7 +388,10 @@ private fun DurationCustomRange(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DateChips(activeBucket: DateBucket?, onChange: (DateBucket?) -> Unit) {
+private fun DateChips(
+    activeBucket: DateBucket?,
+    onChange: (DateBucket?) -> Unit,
+) {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         FilterChip(selected = activeBucket == null, onClick = { onChange(null) }, label = { Text("Any") })
         DateBucket.entries.forEach { b ->
@@ -393,7 +406,10 @@ private fun DateChips(activeBucket: DateBucket?, onChange: (DateBucket?) -> Unit
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ResolutionChips(current: SceneResolution?, onChange: (SceneResolution?) -> Unit) {
+private fun ResolutionChips(
+    current: SceneResolution?,
+    onChange: (SceneResolution?) -> Unit,
+) {
     FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
         FilterChip(selected = current == null, onClick = { onChange(null) }, label = { Text("Any") })
         SceneResolution.entries.forEach { r ->
@@ -476,27 +492,34 @@ private fun IntMinSlider(
 }
 
 @Composable
-private fun ToggleChip(label: String, state: Boolean?, onChange: (Boolean?) -> Unit) {
-    val display = when (state) {
-        true -> "$label: yes"
-        false -> "$label: no"
-        null -> label
-    }
+private fun ToggleChip(
+    label: String,
+    state: Boolean?,
+    onChange: (Boolean?) -> Unit,
+) {
+    val display =
+        when (state) {
+            true -> "$label: yes"
+            false -> "$label: no"
+            null -> label
+        }
     FilterChip(
         selected = state != null,
         onClick = {
             // Tri-state: null → true → false → null
-            val next = when (state) {
-                null -> true
-                true -> false
-                false -> null
-            }
+            val next =
+                when (state) {
+                    null -> true
+                    true -> false
+                    false -> null
+                }
             onChange(next)
         },
         label = { Text(display) },
-        colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = StashColors.AccentPrimary.copy(alpha = 0.25f),
-        ),
+        colors =
+            FilterChipDefaults.filterChipColors(
+                selectedContainerColor = StashColors.AccentPrimary.copy(alpha = 0.25f),
+            ),
     )
 }
 

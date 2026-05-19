@@ -7,42 +7,35 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-private val StashDarkColorScheme = darkColorScheme(
-    primary = StashColors.AccentPrimary,
-    onPrimary = StashColors.AccentOnPrimary,
-    primaryContainer = StashColors.AccentPrimaryDim,
-    onPrimaryContainer = StashColors.AccentOnPrimary,
-
-    secondary = StashColors.AccentSecondary,
-    onSecondary = Color.Black,
-    secondaryContainer = StashColors.AccentSecondaryDim,
-    onSecondaryContainer = Color.White,
-
-    tertiary = StashColors.AccentSecondary,
-    onTertiary = Color.Black,
-
-    background = StashColors.SurfaceBase,
-    onBackground = StashColors.OnSurface,
-
-    surface = StashColors.SurfaceBase,
-    onSurface = StashColors.OnSurface,
-    surfaceVariant = StashColors.SurfaceLow,
-    onSurfaceVariant = StashColors.OnSurfaceVariant,
-
-    surfaceContainerLowest = StashColors.SurfaceBase,
-    surfaceContainerLow = StashColors.SurfaceLow,
-    surfaceContainer = StashColors.SurfaceLow,
-    surfaceContainerHigh = StashColors.SurfaceMed,
-    surfaceContainerHighest = StashColors.SurfaceHigh,
-
-    error = StashColors.Error,
-    onError = Color.White,
-
-    outline = StashColors.OnSurfaceFaint,
-    outlineVariant = StashColors.Divider,
-
-    scrim = Color.Black,
-)
+private val StashDarkColorScheme =
+    darkColorScheme(
+        primary = StashColors.AccentPrimary,
+        onPrimary = StashColors.AccentOnPrimary,
+        primaryContainer = StashColors.AccentPrimaryDim,
+        onPrimaryContainer = StashColors.AccentOnPrimary,
+        secondary = StashColors.AccentSecondary,
+        onSecondary = Color.Black,
+        secondaryContainer = StashColors.AccentSecondaryDim,
+        onSecondaryContainer = Color.White,
+        tertiary = StashColors.AccentSecondary,
+        onTertiary = Color.Black,
+        background = StashColors.SurfaceBase,
+        onBackground = StashColors.OnSurface,
+        surface = StashColors.SurfaceBase,
+        onSurface = StashColors.OnSurface,
+        surfaceVariant = StashColors.SurfaceLow,
+        onSurfaceVariant = StashColors.OnSurfaceVariant,
+        surfaceContainerLowest = StashColors.SurfaceBase,
+        surfaceContainerLow = StashColors.SurfaceLow,
+        surfaceContainer = StashColors.SurfaceLow,
+        surfaceContainerHigh = StashColors.SurfaceMed,
+        surfaceContainerHighest = StashColors.SurfaceHigh,
+        error = StashColors.Error,
+        onError = Color.White,
+        outline = StashColors.OnSurfaceFaint,
+        outlineVariant = StashColors.Divider,
+        scrim = Color.Black,
+    )
 
 /**
  * Stash extra semantic colors not covered by Material 3.

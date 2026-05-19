@@ -41,9 +41,10 @@ data class SceneSummary(
      * resort is the raw scene id.
      */
     val displayTitle: String
-        get() = title.takeIf { it.isNotBlank() }
-            ?: basename?.substringBeforeLast('.')?.takeIf { it.isNotBlank() }
-            ?: "Scene $id"
+        get() =
+            title.takeIf { it.isNotBlank() }
+                ?: basename?.substringBeforeLast('.')?.takeIf { it.isNotBlank() }
+                ?: "Scene $id"
 }
 
 data class StudioRef(

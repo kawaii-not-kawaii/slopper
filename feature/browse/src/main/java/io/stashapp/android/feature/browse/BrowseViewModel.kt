@@ -29,43 +29,51 @@ data class BrowseUiState(
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class BrowseViewModel @Inject constructor(
-    savedState: SavedStateHandle,
-    private val browseRepository: BrowseRepository,
-) : ViewModel() {
+class BrowseViewModel
+    @Inject
+    constructor(
+        savedState: SavedStateHandle,
+        private val browseRepository: BrowseRepository,
+    ) : ViewModel() {
+        private val kind: BrowseKind =
+            when (savedState.get<String>("kind")?.lowercase()) {
+                "studios" -> BrowseKind.Studios
+                "tags" -> BrowseKind.Tags
+                else -> BrowseKind.Performers
+            }
 
-    private val kind: BrowseKind = when (savedState.get<String>("kind")?.lowercase()) {
-        "studios" -> BrowseKind.Studios
-        "tags" -> BrowseKind.Tags
-        else -> BrowseKind.Performers
+        private val _ui = MutableStateFlow(BrowseUiState(kind = kind))
+        val ui: StateFlow<BrowseUiState> = _ui.asStateFlow()
+
+        private data class Q(
+            val search: String?,
+            val sort: EntitySort,
+        )
+
+        private val queryFlow = MutableStateFlow(Q(null, EntitySort.Name))
+
+        val performers: Flow<PagingData<PerformerBrowseItem>> =
+            queryFlow
+                .flatMapLatest { browseRepository.performers(it.search, it.sort) }
+                .cachedIn(viewModelScope)
+
+        val studios: Flow<PagingData<StudioBrowseItem>> =
+            queryFlow
+                .flatMapLatest { browseRepository.studios(it.search, it.sort) }
+                .cachedIn(viewModelScope)
+
+        val tags: Flow<PagingData<TagBrowseItem>> =
+            queryFlow
+                .flatMapLatest { browseRepository.tags(it.search, it.sort) }
+                .cachedIn(viewModelScope)
+
+        fun setSearch(text: String) {
+            _ui.value = _ui.value.copy(search = text)
+            queryFlow.value = queryFlow.value.copy(search = text.ifBlank { null })
+        }
+
+        fun setSort(sort: EntitySort) {
+            _ui.value = _ui.value.copy(sort = sort)
+            queryFlow.value = queryFlow.value.copy(sort = sort)
+        }
     }
-
-    private val _ui = MutableStateFlow(BrowseUiState(kind = kind))
-    val ui: StateFlow<BrowseUiState> = _ui.asStateFlow()
-
-    private data class Q(val search: String?, val sort: EntitySort)
-
-    private val queryFlow = MutableStateFlow(Q(null, EntitySort.Name))
-
-    val performers: Flow<PagingData<PerformerBrowseItem>> = queryFlow
-        .flatMapLatest { browseRepository.performers(it.search, it.sort) }
-        .cachedIn(viewModelScope)
-
-    val studios: Flow<PagingData<StudioBrowseItem>> = queryFlow
-        .flatMapLatest { browseRepository.studios(it.search, it.sort) }
-        .cachedIn(viewModelScope)
-
-    val tags: Flow<PagingData<TagBrowseItem>> = queryFlow
-        .flatMapLatest { browseRepository.tags(it.search, it.sort) }
-        .cachedIn(viewModelScope)
-
-    fun setSearch(text: String) {
-        _ui.value = _ui.value.copy(search = text)
-        queryFlow.value = queryFlow.value.copy(search = text.ifBlank { null })
-    }
-
-    fun setSort(sort: EntitySort) {
-        _ui.value = _ui.value.copy(sort = sort)
-        queryFlow.value = queryFlow.value.copy(sort = sort)
-    }
-}

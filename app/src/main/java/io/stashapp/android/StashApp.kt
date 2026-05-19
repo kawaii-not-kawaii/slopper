@@ -8,11 +8,11 @@ import io.stashapp.android.core.ui.image.StashImageLoaderFactory
 import javax.inject.Inject
 
 @HiltAndroidApp
-class StashApp : Application(), SingletonImageLoader.Factory {
-
+class StashApp :
+    Application(),
+    SingletonImageLoader.Factory {
     @Inject
     lateinit var imageLoaderFactory: StashImageLoaderFactory
 
-    override fun newImageLoader(context: coil3.PlatformContext): ImageLoader =
-        imageLoaderFactory.newImageLoader(context)
+    override fun newImageLoader(context: coil3.PlatformContext): ImageLoader = imageLoaderFactory.newImageLoader(context)
 }

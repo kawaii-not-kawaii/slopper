@@ -155,9 +155,10 @@ private fun LibraryTopBar(
                 Icon(Icons.Filled.Settings, contentDescription = "Settings")
             }
         },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-        ),
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
     )
 }
 
@@ -210,18 +211,20 @@ private fun ScenesGrid(
             // Only recompute the id list when the paged count actually changes;
             // otherwise we allocate a fresh List on every 250ms-ish recomposition
             // as pages get appended.
-            val allIds = remember(scenes.itemCount) {
-                (0 until scenes.itemCount).mapNotNull { scenes.peek(it)?.id }
-            }
+            val allIds =
+                remember(scenes.itemCount) {
+                    (0 until scenes.itemCount).mapNotNull { scenes.peek(it)?.id }
+                }
 
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 180.dp),
-                contentPadding = PaddingValues(
-                    start = 12.dp,
-                    end = 12.dp,
-                    top = inner.calculateTopPadding() + 8.dp,
-                    bottom = inner.calculateBottomPadding() + 12.dp,
-                ),
+                contentPadding =
+                    PaddingValues(
+                        start = 12.dp,
+                        end = 12.dp,
+                        top = inner.calculateTopPadding() + 8.dp,
+                        bottom = inner.calculateBottomPadding() + 12.dp,
+                    ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize(),
@@ -242,11 +245,12 @@ private fun ScenesGrid(
                         resolution = resolutionLabel(scene.width, scene.height),
                         rating100 = scene.rating100,
                         playCount = scene.playCount,
-                        resumeFraction = run {
-                            val dur = scene.durationSeconds
-                            val pos = scene.resumeTimeSeconds
-                            if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
-                        },
+                        resumeFraction =
+                            run {
+                                val dur = scene.durationSeconds
+                                val pos = scene.resumeTimeSeconds
+                                if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
+                            },
                         onClick = { onSceneClick(scene.id, allIds, index) },
                         onLongClick = { onPlayQueue(allIds, index) },
                         modifier = Modifier.fillMaxWidth(),

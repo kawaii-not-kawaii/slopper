@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -69,13 +68,14 @@ fun SceneCard(
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainer,
             shape = RoundedCornerShape(10.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(16f / 9f)
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick,
-                ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f)
+                    .combinedClickable(
+                        onClick = onClick,
+                        onLongClick = onLongClick,
+                    ),
         ) {
             Box {
                 AsyncImage(
@@ -90,21 +90,23 @@ fun SceneCard(
 
                 // Bottom gradient scrim for legibility of overlaid chips
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(
-                            Brush.verticalGradient(
-                                0.55f to Color.Transparent,
-                                1f to extra.scrimStrong,
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    0.55f to Color.Transparent,
+                                    1f to extra.scrimStrong,
+                                ),
                             ),
-                        ),
                 )
 
                 // Press overlay with play icon
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(overlayAlpha),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(overlayAlpha),
                     contentAlignment = Alignment.Center,
                 ) {
                     if (pressed) {
@@ -121,17 +123,19 @@ fun SceneCard(
                 rating100?.let { rating ->
                     RatingPill(
                         rating100 = rating,
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(6.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(6.dp),
                     )
                 }
 
                 // Bottom-left: duration + resolution
                 Row(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(6.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(6.dp),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     durationSeconds?.takeIf { it > 0 }?.let {
@@ -143,9 +147,10 @@ fun SceneCard(
                 // Bottom-right: play count
                 if (playCount > 0) {
                     Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(6.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(6.dp),
                     ) {
                         Chip(text = "▶ $playCount", accent = true)
                     }
@@ -154,16 +159,18 @@ fun SceneCard(
                 // Resume progress bar along bottom edge
                 resumeFraction?.takeIf { it > 0f }?.let { frac ->
                     Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .fillMaxWidth()
-                            .size(width = 0.dp, height = 3.dp)
-                            .background(Color(0x33FFFFFF)),
+                        modifier =
+                            Modifier
+                                .align(Alignment.BottomStart)
+                                .fillMaxWidth()
+                                .size(width = 0.dp, height = 3.dp)
+                                .background(Color(0x33FFFFFF)),
                     ) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(StashColors.AccentPrimary),
+                            modifier =
+                                Modifier
+                                    .fillMaxSize()
+                                    .background(StashColors.AccentPrimary),
                         )
                     }
                 }
@@ -183,7 +190,10 @@ fun SceneCard(
 }
 
 @Composable
-private fun Chip(text: String, accent: Boolean = false) {
+private fun Chip(
+    text: String,
+    accent: Boolean = false,
+) {
     Surface(
         color = if (accent) StashColors.AccentPrimary else StashColors.ScrimMedium,
         contentColor = if (accent) StashColors.AccentOnPrimary else Color.White,
@@ -198,7 +208,10 @@ private fun Chip(text: String, accent: Boolean = false) {
 }
 
 @Composable
-private fun RatingPill(rating100: Int, modifier: Modifier = Modifier) {
+private fun RatingPill(
+    rating100: Int,
+    modifier: Modifier = Modifier,
+) {
     Surface(
         color = StashColors.ScrimMedium,
         contentColor = Color.White,
@@ -232,7 +245,10 @@ private fun formatDuration(seconds: Double): String {
     return if (h > 0) "%d:%02d:%02d".format(h, m, sec) else "%d:%02d".format(m, sec)
 }
 
-fun resolutionLabel(width: Int?, height: Int?): String? {
+fun resolutionLabel(
+    width: Int?,
+    height: Int?,
+): String? {
     if (width == null || height == null) return null
     val shortest = minOf(width, height)
     return when {

@@ -36,25 +36,28 @@ internal fun SceneCard.toSummary(endpoint: StashEndpoint): SceneSummary {
         interactive = interactive,
         screenshotUrl = endpoint.resolve(paths.screenshot),
         previewUrl = endpoint.resolve(paths.preview),
-        streamUrl = endpoint.resolve(paths.stream)
-            ?: error("Scene $id missing stream URL"),
+        streamUrl =
+            endpoint.resolve(paths.stream)
+                ?: error("Scene $id missing stream URL"),
         spriteUrl = endpoint.resolve(paths.sprite),
         vttUrl = endpoint.resolve(paths.vtt),
-        studio = studio?.let {
-            StudioRef(
-                id = it.id,
-                name = it.name,
-                imageUrl = endpoint.resolve(it.image_path),
-            )
-        },
-        performers = performers.map { p ->
-            PerformerRef(
-                id = p.id,
-                name = p.name,
-                imageUrl = endpoint.resolve(p.image_path),
-                gender = p.gender?.rawValue,
-            )
-        },
+        studio =
+            studio?.let {
+                StudioRef(
+                    id = it.id,
+                    name = it.name,
+                    imageUrl = endpoint.resolve(it.image_path),
+                )
+            },
+        performers =
+            performers.map { p ->
+                PerformerRef(
+                    id = p.id,
+                    name = p.name,
+                    imageUrl = endpoint.resolve(p.image_path),
+                    gender = p.gender?.rawValue,
+                )
+            },
         tags = tags.map { TagRef(id = it.id, name = it.name) },
     )
 }
@@ -64,20 +67,22 @@ internal fun FindSceneQuery.FindScene.toDetail(endpoint: StashEndpoint): SceneDe
     return SceneDetail(
         summary = summary,
         captions = captions.orEmpty().map { Caption(it.language_code, it.caption_type) },
-        markers = scene_markers.map { m ->
-            Marker(
-                id = m.id,
-                title = m.title,
-                seconds = m.seconds,
-                primaryTagName = m.primary_tag.name,
-            )
-        },
-        streams = sceneStreams.map { s ->
-            SceneStream(
-                url = s.url,
-                mimeType = s.mime_type,
-                label = s.label,
-            )
-        },
+        markers =
+            scene_markers.map { m ->
+                Marker(
+                    id = m.id,
+                    title = m.title,
+                    seconds = m.seconds,
+                    primaryTagName = m.primary_tag.name,
+                )
+            },
+        streams =
+            sceneStreams.map { s ->
+                SceneStream(
+                    url = s.url,
+                    mimeType = s.mime_type,
+                    label = s.label,
+                )
+            },
     )
 }

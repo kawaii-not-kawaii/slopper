@@ -50,21 +50,28 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val connectionRepository: ConnectionRepository,
-    val playerPrefs: PlayerPreferences,
-    val uiPrefs: UiPreferences,
-) : ViewModel() {
-    fun disconnect(onDone: () -> Unit) {
-        viewModelScope.launch { connectionRepository.disconnect(); onDone() }
+class SettingsViewModel
+    @Inject
+    constructor(
+        private val connectionRepository: ConnectionRepository,
+        val playerPrefs: PlayerPreferences,
+        val uiPrefs: UiPreferences,
+    ) : ViewModel() {
+        fun disconnect(onDone: () -> Unit) {
+            viewModelScope.launch {
+                connectionRepository.disconnect()
+                onDone()
+            }
+        }
+
+        fun <T> setPlayer(setter: suspend PlayerPreferences.() -> Unit) {
+            viewModelScope.launch { playerPrefs.setter() }
+        }
+
+        fun <T> setUi(setter: suspend UiPreferences.() -> Unit) {
+            viewModelScope.launch { uiPrefs.setter() }
+        }
     }
-    fun <T> setPlayer(setter: suspend PlayerPreferences.() -> Unit) {
-        viewModelScope.launch { playerPrefs.setter() }
-    }
-    fun <T> setUi(setter: suspend UiPreferences.() -> Unit) {
-        viewModelScope.launch { uiPrefs.setter() }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +92,9 @@ fun SettingsScreen(
     val defaultSpeed by pp.defaultPlaybackSpeed.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_SPEED)
     val autoPlayNext by pp.autoPlayNext.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_AUTO_PLAY_NEXT)
     val resumeThreshold by pp.resumeThresholdSeconds.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_RESUME_THRESHOLD)
-    val completionThreshold by pp.completionThresholdPercent.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_COMPLETION_THRESHOLD)
+    val completionThreshold by pp.completionThresholdPercent.collectAsStateWithLifecycle(
+        initialValue = PlayerPreferences.DEFAULT_COMPLETION_THRESHOLD,
+    )
     val skipIntro by pp.skipIntroSeconds.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_SKIP_INTRO)
     val bufferPreset by pp.videoBufferPreset.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_BUFFER_PRESET)
     val aspectRatio by pp.defaultAspectRatio.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_ASPECT_RATIO)
@@ -118,16 +127,23 @@ fun SettingsScreen(
             // ── PLAYER ──────────────────────────────────────────────────
             SectionHeader("Player")
 
-            SliderPref("Scrub sensitivity", "${seekMsPerPx.toInt()} ms/px",
-                seekMsPerPx, PlayerPreferences.SEEK_MS_PER_PX_MIN..PlayerPreferences.SEEK_MS_PER_PX_MAX
+            SliderPref(
+                "Scrub sensitivity",
+                "${seekMsPerPx.toInt()} ms/px",
+                seekMsPerPx,
+                PlayerPreferences.SEEK_MS_PER_PX_MIN..PlayerPreferences.SEEK_MS_PER_PX_MAX,
             ) { scope.launch { pp.setSeekMsPerPx(it) } }
 
-            SliderPref("Double-tap seek", "${doubleTapSec}s",
-                doubleTapSec.toFloat(), PlayerPreferences.DOUBLE_TAP_SEEK_MIN.toFloat()..PlayerPreferences.DOUBLE_TAP_SEEK_MAX.toFloat(),
+            SliderPref(
+                "Double-tap seek",
+                "${doubleTapSec}s",
+                doubleTapSec.toFloat(),
+                PlayerPreferences.DOUBLE_TAP_SEEK_MIN.toFloat()..PlayerPreferences.DOUBLE_TAP_SEEK_MAX.toFloat(),
                 steps = PlayerPreferences.DOUBLE_TAP_SEEK_MAX - PlayerPreferences.DOUBLE_TAP_SEEK_MIN - 1,
             ) { scope.launch { pp.setDoubleTapSeekSeconds(it.toInt()) } }
 
-            ChipRowPref("Default speed",
+            ChipRowPref(
+                "Default speed",
                 options = listOf("0.5x" to 0.5f, "0.75x" to 0.75f, "1x" to 1.0f, "1.25x" to 1.25f, "1.5x" to 1.5f, "2x" to 2.0f),
                 selected = defaultSpeed,
                 compareBy = { kotlin.math.abs(it - defaultSpeed) < 0.01f },
@@ -137,31 +153,49 @@ fun SettingsScreen(
                 scope.launch { pp.setAutoPlayNext(it) }
             }
 
-            SliderPref("Resume threshold", "${resumeThreshold}s",
-                resumeThreshold.toFloat(), 0f..30f, steps = 29,
+            SliderPref(
+                "Resume threshold",
+                "${resumeThreshold}s",
+                resumeThreshold.toFloat(),
+                0f..30f,
+                steps = 29,
             ) { scope.launch { pp.setResumeThresholdSeconds(it.toInt()) } }
 
-            SliderPref("Completion threshold", "${completionThreshold}%",
-                completionThreshold.toFloat(), 50f..100f, steps = 49,
+            SliderPref(
+                "Completion threshold",
+                "$completionThreshold%",
+                completionThreshold.toFloat(),
+                50f..100f,
+                steps = 49,
             ) { scope.launch { pp.setCompletionThresholdPercent(it.toInt()) } }
 
-            SliderPref("Skip intro", if (skipIntro == 0) "Off" else "${skipIntro}s",
-                skipIntro.toFloat(), 0f..120f, steps = 23,
+            SliderPref(
+                "Skip intro",
+                if (skipIntro == 0) "Off" else "${skipIntro}s",
+                skipIntro.toFloat(),
+                0f..120f,
+                steps = 23,
             ) { scope.launch { pp.setSkipIntroSeconds(it.toInt()) } }
 
-            ChipRowPref("Video buffer",
+            ChipRowPref(
+                "Video buffer",
                 options = listOf("Small (15s)" to "small", "Medium (50s)" to "medium", "Large (2min)" to "large"),
-                selected = bufferPreset, compareBy = { it == bufferPreset },
+                selected = bufferPreset,
+                compareBy = { it == bufferPreset },
             ) { scope.launch { pp.setVideoBufferPreset(it) } }
 
-            ChipRowPref("Default aspect ratio",
+            ChipRowPref(
+                "Default aspect ratio",
                 options = listOf("Fit" to "fit", "Crop" to "crop", "Stretch" to "stretch"),
-                selected = aspectRatio, compareBy = { it == aspectRatio },
+                selected = aspectRatio,
+                compareBy = { it == aspectRatio },
             ) { scope.launch { pp.setDefaultAspectRatio(it) } }
 
-            ChipRowPref("Decoder preference",
+            ChipRowPref(
+                "Decoder preference",
                 options = listOf("Auto" to "auto", "Prefer HW" to "prefer_hw", "Prefer SW" to "prefer_sw"),
-                selected = decoderPref, compareBy = { it == decoderPref },
+                selected = decoderPref,
+                compareBy = { it == decoderPref },
             ) { scope.launch { pp.setDecoderPreference(it) } }
 
             CodecStatusCard()
@@ -171,8 +205,12 @@ fun SettingsScreen(
             // ── CACHE ───────────────────────────────────────────────────
             SectionHeader("Cache")
 
-            SliderPref("Image cache size", "${imageCacheMb} MB",
-                imageCacheMb.toFloat(), 64f..512f, steps = 7,
+            SliderPref(
+                "Image cache size",
+                "$imageCacheMb MB",
+                imageCacheMb.toFloat(),
+                64f..512f,
+                steps = 7,
             ) { scope.launch { up.setImageCacheSizeMb(it.toInt()) } }
 
             OutlinedButton(
@@ -192,9 +230,11 @@ fun SettingsScreen(
             // ── DISPLAY ─────────────────────────────────────────────────
             SectionHeader("Display")
 
-            ChipRowPref("Grid columns",
+            ChipRowPref(
+                "Grid columns",
                 options = listOf("Auto" to "auto", "2" to "2", "3" to "3", "4" to "4"),
-                selected = gridColumns, compareBy = { it == gridColumns },
+                selected = gridColumns,
+                compareBy = { it == gridColumns },
             ) { scope.launch { up.setGridColumns(it) } }
 
             SwitchPref("AMOLED black mode", "Pure black backgrounds for OLED screens", amoled) {
@@ -345,53 +385,15 @@ private fun <T> ChipRowPref(
 }
 
 @Composable
-private fun PlayerGestureSettings(viewModel: SettingsViewModel) {
-    val seekMsPerPx by viewModel.playerPreferences.seekMsPerPx
-        .collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_SEEK_MS_PER_PX)
-    val doubleTapSec by viewModel.playerPreferences.doubleTapSeekSeconds
-        .collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_DOUBLE_TAP_SEEK_SEC)
-
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Player gestures", style = MaterialTheme.typography.titleSmall)
-            Text(
-                "Scrub sensitivity: ${seekMsPerPx.toInt()} ms/px",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Slider(
-                value = seekMsPerPx,
-                onValueChange = viewModel::setSeekMsPerPx,
-                valueRange = PlayerPreferences.SEEK_MS_PER_PX_MIN..PlayerPreferences.SEEK_MS_PER_PX_MAX,
-            )
-            Text(
-                "Double-tap seek: ${doubleTapSec}s",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Slider(
-                value = doubleTapSec.toFloat(),
-                onValueChange = { viewModel.setDoubleTapSeekSeconds(it.toInt()) },
-                valueRange = PlayerPreferences.DOUBLE_TAP_SEEK_MIN.toFloat()..PlayerPreferences.DOUBLE_TAP_SEEK_MAX.toFloat(),
-                steps = PlayerPreferences.DOUBLE_TAP_SEEK_MAX - PlayerPreferences.DOUBLE_TAP_SEEK_MIN - 1,
-            )
-        }
-    }
-}
-
-@Composable
 private fun CodecStatusCard() {
     val usable = CodecCapabilities.ffmpegExtensionUsable
     val present = CodecCapabilities.ffmpegExtensionPresent
-    val (icon, tint, headline) = when {
-        usable -> Triple(Icons.Filled.CheckCircle, StashColors.AccentPrimary, "Full codec support")
-        present -> Triple(Icons.Filled.Warning, MaterialTheme.colorScheme.error, "FFmpeg detected but not loaded")
-        else -> Triple(Icons.Filled.Warning, MaterialTheme.colorScheme.error, "Limited codec support")
-    }
+    val (icon, tint, headline) =
+        when {
+            usable -> Triple(Icons.Filled.CheckCircle, StashColors.AccentPrimary, "Full codec support")
+            present -> Triple(Icons.Filled.Warning, MaterialTheme.colorScheme.error, "FFmpeg detected but not loaded")
+            else -> Triple(Icons.Filled.Warning, MaterialTheme.colorScheme.error, "Limited codec support")
+        }
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,

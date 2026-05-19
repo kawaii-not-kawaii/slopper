@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:SettingsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsScreen( onBack: () -&gt; Unit, onDisconnected: () -&gt; Unit, onBrowsePerformers: () -&gt; Unit = {}, onBrowseStudios: () -&gt; Unit = {}, onBrowseTags: () -&gt; Unit = {}, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
+    <ID>MatchingDeclarationName:SettingsScreen.kt$SettingsViewModel : ViewModel</ID>
+    <ID>UnusedParameter:SettingsScreen.kt$onBrowsePerformers: () -&gt; Unit = {}</ID>
+    <ID>UnusedParameter:SettingsScreen.kt$onBrowseStudios: () -&gt; Unit = {}</ID>
+    <ID>UnusedParameter:SettingsScreen.kt$onBrowseTags: () -&gt; Unit = {}</ID>
+    <ID>UnusedParameter:SettingsScreen.kt$selected: T</ID>
+  </CurrentIssues>
+</SmellBaseline>

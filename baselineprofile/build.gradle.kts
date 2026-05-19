@@ -17,7 +17,7 @@ android {
     }
 
     defaultConfig {
-        minSdk = 28                 // baseline profiles are no-op below P
+        minSdk = 28 // baseline profiles are no-op below P
         targetSdk = 35
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

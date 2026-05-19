@@ -1,33 +1,38 @@
 [versions]
 # Plugins
 agp = "8.7.3"
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.29"
-hilt = "2.53.1"
-apollo = "4.1.0"
-ktlint = "12.1.1"
-detekt = "1.23.7"
+kotlin = "2.2.20"
+ksp = "2.2.20-2.0.4"
+hilt = "2.56.2"
+apollo = "4.4.3"
+ktlint = "13.1.0"
+detekt = "1.23.8"
 dependencyCheck = "11.1.1"
 
 # AndroidX / Compose
 coreKtx = "1.15.0"
 lifecycle = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.12.01"
+composeBom = "2026.05.00"
 navigationCompose = "2.8.5"
 hiltNavigationCompose = "1.2.0"
 paging = "3.3.5"
 pagingCompose = "3.3.5"
 datastore = "1.1.1"
 securityCrypto = "1.1.0"
-room = "2.6.1"
 
 # Media3 — kept in sync with nextlib for the FFmpeg extension.
-# Stay on 1.9.x until we bump AGP / compileSdk (1.10 requires compileSdk 36).
+# CASE B (forced 2026-05-16, Phase 1 DEPS, Option A unblock from 01.1-SUMMARY.md):
+# Media3 1.10.0 is deferred along with AGP 9 + compileSdk 36 (DEPS-17 in REQUIREMENTS.md).
+# Revisit once Hilt publishes AGP-9 support and the AGP-9 transition phase ships.
 media3 = "1.9.1"
 nextlibMedia3Ext = "1.9.1-0.11.0"
 
 # Networking
+# Apollo 4.4.3 + OkHttp 4.12.0 are explicitly held — Apollo 5 (May 2026) split
+# apollo-normalized-cache-sqlite to a separate repo and promoted warnings to
+# errors; OkHttp 5 shares the client transitively with Apollo + Media3 + Coil.
+# Both are deferred to NET-01 milestone (see .planning/REQUIREMENTS.md).
 okhttp = "4.12.0"
 
 # Image loading
@@ -36,6 +41,7 @@ coil = "3.0.4"
 # Serialization
 kotlinxSerialization = "1.7.3"
 kotlinxCoroutines = "1.9.0"
+kotlinxCollectionsImmutable = "0.4.0"   # stable; 0.5.0-beta01 excluded by stable-only policy
 
 # Test
 junit = "4.13.2"
@@ -75,12 +81,6 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 
-# Room
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
-androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
-androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-
 # Hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
@@ -112,6 +112,7 @@ coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version
 # Kotlinx
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 
 # Test
 junit = { module = "junit:junit", version.ref = "junit" }
