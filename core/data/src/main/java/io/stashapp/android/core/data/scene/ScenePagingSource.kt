@@ -10,6 +10,7 @@ import io.stashapp.android.core.network.StashEndpointProvider
 import io.stashapp.android.graphql.FindScenesQuery
 import io.stashapp.android.graphql.type.FindFilterType
 import io.stashapp.android.graphql.type.SortDirectionEnum
+import kotlinx.coroutines.CancellationException
 
 class ScenePagingSource(
     private val apollo: ApolloClient,
@@ -62,7 +63,9 @@ class ScenePagingSource(
                 prevKey = if (page <= 1) null else page - 1,
                 nextKey = if (page >= totalPages) null else page + 1,
             )
-        } catch (e: Throwable) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
             LoadResult.Error(e)
         }
     }

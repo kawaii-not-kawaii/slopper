@@ -292,7 +292,20 @@ in the app.
 
 ---
 
-## 10. What is intentionally NOT configurable
+## 10. Platform-system preferences (not app-controlled)
+
+These behaviors are delegated to the Android OS and are not represented in the
+DataStore stores above:
+
+- **Per-app display language** — Android 13+ (API 33+). The system language
+  picker is accessed via **Settings → Language row in Slopper's Settings
+  screen**, which fires `Intent(Settings.ACTION_APP_LOCALE_SETTINGS)`.
+  The selected language is stored by the system (not Slopper) and surfaced via
+  the `LocaleManager` API. `app/build.gradle.kts` enables
+  `androidResources { generateLocaleConfig = true }` so the system knows which
+  locales the app supports.
+
+## 11. What is intentionally NOT configurable
 
 To match the project's "no surveillance, no remote control" posture:
 

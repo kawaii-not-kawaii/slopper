@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        COMPLY-06 (per D-06): per-app language picker (API 33+).
+
+        DEVIATION from CONTEXT.md Claude's Discretion (which proposed locating
+        these strings in app/src/main/res/values/strings.xml). The feature/settings
+        module does NOT have a dependency on :app (the dependency direction is
+        app → feature, never the reverse), so `import io.stashapp.android.R`
+        from feature/settings produces an unresolved-reference compile error.
+        Strings are therefore co-located with the LanguageRow composable that
+        consumes them — the feature module owns its own R class and resolves
+        these via io.stashapp.android.feature.settings.R.string.*.
+
+        The strings ARE ALSO retained in app/src/main/res/values/strings.xml
+        per the original CONTEXT.md lock — AGP merges resources at the app
+        level so both copies coexist without conflict (string-resource merging
+        prefers the app-level copy at runtime). REVIEWS SHOULD FIX #5 audit
+        confirmed feature/ has zero pre-existing app-R-imports — this deviation
+        is the structurally correct path.
+    -->
+    <string name="settings_language">Language</string>
+    <string name="settings_language_description">Choose the language for this app independently from your device.</string>
+</resources>

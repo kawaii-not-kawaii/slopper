@@ -12,7 +12,7 @@ import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.stashapp.android.core.common.AppResult
-import io.stashapp.android.core.data.prefs.PlayerPreferences
+import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.model.QueueState
 import io.stashapp.android.core.model.RepeatMode
@@ -67,7 +67,7 @@ class PlayerViewModel
         private val sceneRepository: SceneRepository,
         private val endpointProvider: StashEndpointProvider,
         private val okHttpClient: OkHttpClient,
-        val preferences: PlayerPreferences,
+        val preferences: PlayerSettings,
     ) : AndroidViewModel(application) {
         private val startSceneId: String = savedState["sceneId"] ?: error("sceneId required")
         private val queueIds: List<String> =
@@ -211,6 +211,12 @@ class PlayerViewModel
             val target = (before + deltaMs).coerceAtLeast(0L)
             p.seekTo(target)
             return target - before
+        }
+
+        /** Set playback speed directly (used by PlayerSettingsPanel). */
+        fun setPlaybackSpeed(speed: Float) {
+            player.setPlaybackSpeed(speed)
+            _state.update { it.copy(playbackSpeed = speed) }
         }
 
         /** Cycle through the speed presets. Returns the new speed. */
@@ -368,7 +374,14 @@ class PlayerViewModel
         }
 
         private fun onSceneEnded() {
-            val next = queue.advance() ?: return
+            val next = queue.advance()
+            if (next == null) {
+                // Queue exhausted with RepeatMode.OFF — emit a banner so the user knows
+                // playback stopped intentionally rather than silently "hanging".
+                _state.update { it.copy(banner = "End of queue") }
+                clearBannerLater()
+                return
+            }
             loadAndPlay(next, autoResume = false)
         }
 

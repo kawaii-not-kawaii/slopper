@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -34,9 +37,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.stashapp.android.core.designsystem.theme.StashColors
+import androidx.compose.ui.unit.sp
+import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.domain.DateBucket
 import io.stashapp.android.core.domain.SceneDurationBucket
 import io.stashapp.android.core.domain.SceneFilter
@@ -71,11 +77,14 @@ fun FilterSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        contentWindowInsets = { WindowInsets.navigationBars },
+        containerColor = SpineColors.Bg,
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .fillMaxHeight(0.84f)
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -167,22 +176,7 @@ fun FilterSheet(
 
             Spacer(Modifier.height(8.dp))
 
-            // Default-filter row — secondary tier, kept subtle.
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(onClick = { onSaveAsDefault(filter) }) {
-                    Text(if (hasSavedDefault) "Update default" else "Save as default")
-                }
-                if (hasSavedDefault) {
-                    TextButton(onClick = onClearDefault) { Text("Clear default") }
-                }
-                Spacer(Modifier.weight(1f))
-            }
-
-            // Primary actions
+            // Footer — Reset (ghost) + Apply (AccentPrimary filled). No Save view per D-01 Q4.
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -193,11 +187,18 @@ fun FilterSheet(
                     sort = SceneSort.DateDesc
                 }) { Text("Reset") }
                 Spacer(Modifier.weight(1f))
-                TextButton(onClick = onDismiss) { Text("Cancel") }
-                Button(onClick = {
-                    onApply(filter, sort)
-                    onDismiss()
-                }) { Text("Apply") }
+                Button(
+                    onClick = {
+                        onApply(filter, sort)
+                        onDismiss()
+                    },
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = SpineColors.AccentPrimary,
+                        contentColor = SpineColors.AccentOnPrimary,
+                    ),
+                ) {
+                    Text("Apply")
+                }
             }
 
             Spacer(Modifier.height(8.dp))
@@ -211,7 +212,11 @@ fun FilterSheet(
 private fun SectionTitle(text: String) {
     Text(
         text,
-        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+        style = TextStyle(
+            fontFamily = SpaceGrotesk,
+            fontSize = 13.sp,
+            fontWeight = FontWeight.SemiBold,
+        ),
         color = MaterialTheme.colorScheme.onSurface,
     )
 }
@@ -518,7 +523,7 @@ private fun ToggleChip(
         label = { Text(display) },
         colors =
             FilterChipDefaults.filterChipColors(
-                selectedContainerColor = StashColors.AccentPrimary.copy(alpha = 0.25f),
+                selectedContainerColor = SpineColors.AccentPrimary.copy(alpha = 0.25f),
             ),
     )
 }

@@ -153,10 +153,12 @@ adb install -r app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
 
 ## 4. Connect to your Stash server
 
-1. Launch the app — first run drops you on the **Connection** screen.
-2. Enter your Stash URL (e.g. `http://192.168.1.10:9999`) and API key.
-3. Tap **Test** — you should see the server version + scene count.
-4. Tap **Connect** — the library grid loads.
+1. Launch the app — a branded splash screen is shown while the connection
+   check runs. This is normal; it clears automatically (≤ 3 seconds max).
+2. First run drops you on the **Connection** screen.
+3. Enter your Stash URL (e.g. `http://192.168.1.10:9999`) and API key.
+4. Tap **Test** — you should see the server version + scene count.
+5. Tap **Connect** — the library grid loads.
 
 Credentials are persisted in encrypted prefs (Jetpack Security +
 AndroidKeyStore), so subsequent launches skip straight to the library.

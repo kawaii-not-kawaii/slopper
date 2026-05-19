@@ -36,29 +36,29 @@ Requirements for the modernization milestone. Each maps to one of the 4 roadmap 
 
 ### Performance — Measured Wins (PERF)
 
-- [ ] **PERF-01**: Gradle-managed device wired (`Pixel 6 API 34`) for repeatable macrobench runs
-- [ ] **PERF-02**: Compose Compiler stability reports wired into the `stash.android.library.compose` convention plugin; reports written to `build/compose-reports/`
+- [x] **PERF-01**: Gradle-managed device wired (`Pixel 6 API 34`) for repeatable macrobench runs
+- [x] **PERF-02**: Compose Compiler stability reports wired into the `stash.android.library.compose` convention plugin; reports written to `build/compose-reports/`
 - [ ] **PERF-03**: All `UiState` types audited; collection fields migrated to `kotlinx.collections.immutable.ImmutableList<T>` where strong-skipping benefits apply
 - [ ] **PERF-04**: `feature/player` strong-skipping audit — every `LaunchedEffect` / `DisposableEffect` key list verified; auto-memoized lambdas not regressing effect re-launch behavior
-- [ ] **PERF-05**: Baseline profile *expanded* beyond cold start to cover Home rails, Library scroll + filter, Detail open, Player start
-- [ ] **PERF-06**: Cold-start macrobench shows **p50 ≥ 5% improvement with baseline profile vs without** on the GMD; reproducible across 3 back-to-back runs
-- [ ] **PERF-07**: Library scroll macrobench shows **≥ 95% frames on time at p95** on the GMD
-- [ ] **PERF-08**: **Shuffle / random consecutive playback fix** — diagnose and resolve the hang/slowdown after several videos; root cause documented (likely candidates: leaked `ExoPlayer` instance, accumulating `Player.Listener`s, retained `MediaSource` references, or `AndroidView.update` running `applyVideoFrameRate` per frame); macrobench / steady-state memory profile shows no growth across a 10-video shuffle session
+- [x] **PERF-05**: Baseline profile *expanded* beyond cold start to cover Home rails, Library scroll + filter, Detail open, Player start
+- [x] **PERF-06**: Cold-start macrobench shows **p50 ≥ 5% improvement with baseline profile vs without** on the GMD; reproducible across 3 back-to-back runs
+- [x] **PERF-07**: Library scroll macrobench shows **≥ 95% frames on time at p95** on the GMD
+- [x] **PERF-08**: **Shuffle / random consecutive playback fix** — diagnose and resolve the hang/slowdown after several videos; root cause documented (likely candidates: leaked `ExoPlayer` instance, accumulating `Player.Listener`s, retained `MediaSource` references, or `AndroidView.update` running `applyVideoFrameRate` per frame); macrobench / steady-state memory profile shows no growth across a 10-video shuffle session
 - [ ] **PERF-09**: `applyVideoFrameRate` moved out of `AndroidView.update` into `LaunchedEffect(targetFps)` (per `CONCERNS.md`)
-- [ ] **PERF-10**: Every perf claim in PR descriptions is backed by a checked-in macrobench output or baseline-profile delta — no unmeasured "feels faster" claims
+- [x] **PERF-10**: Every perf claim in PR descriptions is backed by a checked-in macrobench output or baseline-profile delta — no unmeasured "feels faster" claims
 
 ### Polish, Test Pyramid & Documentation (POLISH)
 
-- [ ] **POLISH-01**: `feature/player/PlayerScreen.kt` (1122 lines) split into `PlayerControls.kt` / `PlayerGestures.kt` / `PlayerSurface.kt`; behavior unchanged
-- [ ] **POLISH-02**: Lint baseline shrunk — at least 30% of baselined issues resolved or explicitly documented as deferred
-- [ ] **POLISH-03**: Detekt + ktlint re-baselined after upgrades; zero new violations in CI
-- [ ] **POLISH-04**: JUnit5 + Turbine + MockK + Robolectric wired into `stash.android.library` convention plugin so every library module has a working test source-set out of the box
-- [ ] **POLISH-05**: Seed test suites added — `core/common`, `core/model`, `core/domain` get baseline unit tests; one ViewModel per feature gets a state-machine test; one Compose smoke test per feature
-- [ ] **POLISH-06**: `:core:domain` exposes `PlayerSettings` / `UiSettings` interfaces so `feature/*` modules no longer import `:core:data` directly for prefs (within-module refactor only)
-- [ ] **POLISH-07**: `ConnectionResult` retired in favor of unified `AppResult`; `catch (e: Throwable)` blocks in repos narrowed and `CancellationException` rethrown
-- [ ] **POLISH-08**: CI cache keys composed correctly (Gradle wrapper + JDK + AGP + libs.versions.toml hash); GitHub Actions workflow refreshed
-- [ ] **POLISH-09**: Docs refreshed — `README.md`, `DEVICE_TESTING.md`, `build-logic/` conventions documented; `.planning/codebase/*` re-mapped at milestone end
-- [ ] **POLISH-10**: Repository hygiene — `local.properties` removed from VCS, `.gitignore` audited, `keystore.properties` workflow documented via the existing `keystore.properties.example`
+- [x] **POLISH-01**: `feature/player/PlayerScreen.kt` (1122 lines) split into `PlayerControls.kt` / `PlayerGestures.kt` / `PlayerSurface.kt`; behavior unchanged
+- [x] **POLISH-02**: Lint baseline shrunk — at least 30% of baselined issues resolved or explicitly documented as deferred
+- [x] **POLISH-03**: Detekt + ktlint re-baselined after upgrades; zero new violations in CI
+- [x] **POLISH-04**: JUnit5 + Turbine + MockK + Robolectric wired into `stash.android.library` convention plugin so every library module has a working test source-set out of the box
+- [x] **POLISH-05**: Seed test suites added — `core/common`, `core/model`, `core/domain` get baseline unit tests; one ViewModel per feature gets a state-machine test; one Compose smoke test per feature
+- [x] **POLISH-06**: `:core:domain` exposes `PlayerSettings` / `UiSettings` interfaces so `feature/*` modules no longer import `:core:data` directly for prefs (within-module refactor only)
+- [x] **POLISH-07**: `ConnectionResult` retired in favor of unified `AppResult`; `catch (e: Throwable)` blocks in repos narrowed and `CancellationException` rethrown
+- [x] **POLISH-08**: CI cache keys composed correctly (Gradle wrapper + JDK + AGP + libs.versions.toml hash); GitHub Actions workflow refreshed
+- [x] **POLISH-09**: Docs refreshed — `README.md`, `DEVICE_TESTING.md`, `build-logic/` conventions documented; `.planning/codebase/*` re-mapped at milestone end
+- [x] **POLISH-10**: Repository hygiene — `local.properties` removed from VCS, `.gitignore` audited, `keystore.properties` workflow documented via the existing `keystore.properties.example`
 
 ## Deferred to Future Milestones
 
@@ -74,6 +74,14 @@ Recorded via plan 01.2 Task 4. Source of truth for the why: `.planning/phases/01
 - **DEPS-07**: Lifecycle 2.10.0 and Activity Compose 1.13.0 require AGP 8.9.1+/compileSdk 36; Phase 1 stays on AGP 8.7.3/compileSdk 35 per Option A unblock (Hilt AGP-9 incompat). Full sweep deferred.
   - WR-01 (carry from Phase 1 01-REVIEW): :core:ui → :core:data dep added by cf5f1f0 introduces layering inversion. When DEPS-07 lands, relocate UiPreferences.imageCacheSizeMb accessor (or define an interface in :core:domain) and remove the dep edge from core/ui/build.gradle.kts.
 - **DEPS-16**: Baseline profile regen requires a connected device or running emulator; this dev host has none and provisioning one is out of dev-box scope (REVIEWS C4 hard-fails the task without one). User-accepted deferral 2026-05-16 (see CONTEXT.md `## Deferred Ideas`). Existing committed `baseline-prof.txt` is retained; resume when a device/emulator is available.
+
+### Phase 2 COMPLY — partial-coverage carry-forward (auto-logged 2026-05-17)
+
+Recorded via plan 02.2 Task 3. Source of truth for the rationale: `.planning/phases/02-comply-platform-compliance/02-CONTEXT.md` `## Accepted Risks` (Risk 1 + Risk 2). Both entries are REVIEWS-C4 ACCEPT — structural deferrals with documented revisit triggers; not silent omissions.
+
+- **COMPLY-07-3BTN** — re-run `DEVICE_TESTING.md` on a 3-button-nav device (or properly-configured emulator with `persist.sys.navigation_mode 0`). Hardware unavailable at Phase 2 execution time; PITFALLS §7 partial verification. The S23+ gesture-nav UAT in `02-UAT.md` covers the gesture-nav side. Revisit trigger: hardware availability OR AGP-9 phase COMPLY re-verification gate (could be folded there since SDK floor moves at the same time). User ACCEPT 2026-05-17 (auto-mode discuss-phase Q2).
+
+- **COMPLY-02-NAV-EVENT** — migrate the `PredictiveBackHandler { progress -> … }` call site in `feature/player/.../PlayerScreen.kt:187` to `NavigationBackHandler` / `NavigationEventState` once Activity Compose ≥ 1.10 is on the floor. `PredictiveBackHandler` is deprecated at Compose Multiplatform 1.10 / AndroidX Activity 1.10+, but `NavigationBackHandler` is NOT available at the Phase 2 floor (Activity Compose 1.9.3). Single call-site migration, low effort. Revisit trigger: AGP-9 phase landing Activity Compose 1.13.0+ (DEPS-17 successor).
 
 ### Performance (POLISH)
 - **POLISH-CACHE-01** (carry from Phase 1 01-REVIEW WR-02): StashImageLoader.kt:33 uses runBlocking { ... } in Coil's newImageLoader() factory to read imageCacheSizeMb from DataStore. Pre-existing on master; surfaces under load when first image paint races DataStore first-emit. Replace with a Coil ImageLoader configured asynchronously via a Hilt-provided Provider<ImageLoader>.

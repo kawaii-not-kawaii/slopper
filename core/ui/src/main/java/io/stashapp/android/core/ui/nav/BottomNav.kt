@@ -1,15 +1,29 @@
 package io.stashapp.android.core.ui.nav
 
+import android.os.Build
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cast
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Label
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.ViewModule
+import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material.icons.outlined.Movie
@@ -22,16 +36,22 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlurEffect
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import io.stashapp.android.core.designsystem.theme.StashColors
+import androidx.compose.ui.unit.sp
+import io.stashapp.android.core.designsystem.theme.MetaMono
+import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
+import io.stashapp.android.core.designsystem.theme.SpineColors
 
 /**
  * A single selectable destination surfaced by the bottom navigation bar.
@@ -98,8 +118,11 @@ object MainNavItems {
 }
 
 /**
- * Bottom navigation bar. [visibleIds] controls which items show as tabs;
- * everything else (plus Settings / Disconnect) spills into the More sheet.
+ * Spine floating pill bottom navigation bar.
+ *
+ * Renders a centered Row with a frosted-glass pill container. Active tab shows
+ * AccentPrimary background with label; inactive tabs are icon-only.
+ * [onOpenMore] is kept for backward compatibility (the Browse screen triggers it).
  */
 @Composable
 fun MainBottomBar(
@@ -110,57 +133,72 @@ fun MainBottomBar(
 ) {
     val visibleItems = visibleIds.mapNotNull { id -> MainNavItems.All.find { it.id == id } }
 
-    NavigationBar(
-        containerColor = StashColors.SurfaceLow,
-        contentColor = StashColors.OnSurface,
-        tonalElevation = 0.dp,
-    ) {
-        visibleItems.forEach { item ->
-            val selected =
-                currentRoute == item.route ||
-                    (
-                        currentRoute?.startsWith(item.route.substringBefore("?")) == true &&
-                            currentRoute.substringBefore("?") == item.route.substringBefore("?")
-                    )
-            NavigationBarItem(
-                selected = selected,
-                onClick = { onNavigate(item.route) },
-                icon = {
-                    Icon(
-                        if (selected) item.iconFilled else item.iconOutlined,
-                        contentDescription = item.label,
-                    )
-                },
-                label = { Text(item.label, style = MaterialTheme.typography.labelSmall) },
-                colors =
-                    NavigationBarItemDefaults.colors(
-                        selectedIconColor = StashColors.AccentPrimary,
-                        selectedTextColor = StashColors.AccentPrimary,
-                        indicatorColor = StashColors.AccentPrimary.copy(alpha = 0.18f),
-                        unselectedIconColor = StashColors.OnSurfaceVariant,
-                        unselectedTextColor = StashColors.OnSurfaceVariant,
-                    ),
-            )
+    val blurModifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        Modifier.graphicsLayer {
+            renderEffect = BlurEffect(20f, 20f, TileMode.Clamp)
         }
-        // Always-visible More tab — opens the overflow sheet
-        NavigationBarItem(
-            selected = false,
-            onClick = onOpenMore,
-            icon = { Icon(Icons.Filled.Tune, contentDescription = "More") },
-            label = { Text("More", style = MaterialTheme.typography.labelSmall) },
-            colors =
-                NavigationBarItemDefaults.colors(
-                    unselectedIconColor = StashColors.OnSurfaceVariant,
-                    unselectedTextColor = StashColors.OnSurfaceVariant,
-                ),
-        )
+    } else {
+        Modifier
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, end = 12.dp, bottom = 14.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Row(
+            modifier = blurModifier
+                .background(
+                    color = SpineColors.Surface.copy(alpha = 0.92f),
+                    shape = RoundedCornerShape(16.dp),
+                )
+                .border(1.dp, SpineColors.Border, RoundedCornerShape(16.dp))
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            visibleItems.forEach { item ->
+                val selected = currentRoute?.startsWith(item.route) == true
+                val tabBg = if (selected) {
+                    Modifier.background(SpineColors.AccentPrimary, RoundedCornerShape(12.dp))
+                } else {
+                    Modifier
+                }
+                Row(
+                    modifier = tabBg
+                        .clickable { onNavigate(item.route) }
+                        .padding(horizontal = 12.dp, vertical = 9.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Icon(
+                        imageVector = if (selected) item.iconFilled else item.iconOutlined,
+                        contentDescription = item.label,
+                        tint = if (selected) SpineColors.AccentOnPrimary else SpineColors.OnSurfaceVariant,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    if (selected) {
+                        Text(
+                            text = item.label,
+                            style = TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = (-0.1).sp,
+                            ),
+                            color = SpineColors.AccentOnPrimary,
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
 /**
- * Overflow sheet shown when the user taps "More". Surfaces navigation items
- * that aren't in the bottom-bar's visible set, plus always-present shortcuts
- * to Settings and Disconnect.
+ * Overflow sheet — Spine styled with fixed Browse group (Tags/Markers/History)
+ * and App group (Settings/Customize nav/Cast).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -172,62 +210,98 @@ fun MoreSheet(
     onCustomize: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val hiddenItems = MainNavItems.All.filter { it.id !in visibleIds }
-
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = StashColors.SurfaceLow,
+        containerColor = SpineColors.SurfaceHigh,
+        contentWindowInsets = { WindowInsets.navigationBars },
     ) {
         Column(Modifier.padding(bottom = 16.dp)) {
+            // Browse group — fixed Spine items
             Text(
                 "Browse",
-                style = MaterialTheme.typography.labelMedium,
-                color = StashColors.OnSurfaceMuted,
+                style = MetaMono,
+                color = SpineColors.OnSurfaceMuted,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
             )
-            hiddenItems.forEach { item ->
-                ListItem(
-                    headlineContent = { Text(item.label) },
-                    leadingContent = { Icon(item.iconOutlined, contentDescription = null) },
-                    modifier =
-                        Modifier.clickable {
-                            onNavigate(item.route)
-                            onDismiss()
-                        },
-                    colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
-                )
-            }
-            HorizontalDivider(color = StashColors.Divider)
+            MoreSheetItem(
+                label = "Tags",
+                icon = Icons.Filled.Label,
+                onClick = {
+                    onNavigate(Routes.browse("tags"))
+                    onDismiss()
+                },
+            )
+            MoreSheetItem(
+                label = "Markers",
+                icon = Icons.Outlined.Bookmarks,
+                onClick = {
+                    onNavigate(Routes.browse("markers"))
+                    onDismiss()
+                },
+            )
+            MoreSheetItem(
+                label = "History",
+                icon = Icons.Filled.History,
+                onClick = {
+                    onNavigate(Routes.browse("history"))
+                    onDismiss()
+                },
+            )
+
+            HorizontalDivider(color = SpineColors.Border)
+
+            // App group
             Text(
                 "App",
-                style = MaterialTheme.typography.labelMedium,
-                color = StashColors.OnSurfaceMuted,
+                style = MetaMono,
+                color = SpineColors.OnSurfaceMuted,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
             )
-            ListItem(
-                headlineContent = { Text("Settings") },
-                leadingContent = { Icon(Icons.Filled.Tune, contentDescription = null) },
-                modifier =
-                    Modifier.clickable {
-                        onOpenSettings()
-                        onDismiss()
-                    },
-                colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
-            )
-            ListItem(
-                headlineContent = { Text("Customize nav bar") },
-                supportingContent = {
-                    Text("Choose which items appear at the bottom", style = MaterialTheme.typography.labelSmall)
+            MoreSheetItem(
+                label = "Settings",
+                icon = Icons.Filled.Tune,
+                onClick = {
+                    onOpenSettings()
+                    onDismiss()
                 },
-                leadingContent = { Icon(Icons.Filled.ViewModule, contentDescription = null) },
-                modifier =
-                    Modifier.clickable {
-                        onCustomize()
-                        onDismiss()
-                    },
-                colors = ListItemDefaults.colors(containerColor = StashColors.SurfaceLow),
+            )
+            MoreSheetItem(
+                label = "Customize nav bar",
+                icon = Icons.Filled.ViewModule,
+                onClick = {
+                    onCustomize()
+                    onDismiss()
+                },
+            )
+            MoreSheetItem(
+                label = "Cast",
+                icon = Icons.Filled.Cast,
+                onClick = { onDismiss() },
             )
         }
     }
+}
+
+@Composable
+private fun MoreSheetItem(
+    label: String,
+    icon: ImageVector,
+    onClick: () -> Unit,
+) {
+    ListItem(
+        headlineContent = {
+            Text(label, style = MaterialTheme.typography.titleSmall)
+        },
+        leadingContent = {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = SpineColors.AccentPrimary,
+                modifier = Modifier.size(22.dp),
+            )
+        },
+        modifier = Modifier.clickable(onClick = onClick),
+        colors = ListItemDefaults.colors(containerColor = SpineColors.SurfaceHigh),
+    )
 }

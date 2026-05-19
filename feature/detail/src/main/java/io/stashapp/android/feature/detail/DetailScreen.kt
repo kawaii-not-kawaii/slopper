@@ -1,6 +1,8 @@
 package io.stashapp.android.feature.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,22 +17,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,8 +43,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -48,29 +50,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import io.stashapp.android.core.designsystem.component.resolutionLabel
-import io.stashapp.android.core.designsystem.theme.LocalStashColors
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.JetBrainsMono
+import io.stashapp.android.core.designsystem.theme.MetaMono
+import io.stashapp.android.core.designsystem.theme.MonoSmall
+import io.stashapp.android.core.designsystem.theme.ShapeMedium
+import io.stashapp.android.core.designsystem.theme.ShapeSmall
+import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.PerformerRef
 import io.stashapp.android.core.model.SceneDetail
 import io.stashapp.android.core.model.TagRef
 
 /**
- * Plex-style scene detail page:
- *  - Hero backdrop (screenshot) with gradient scrim
- *  - Title, studio, date, codec/resolution row
- *  - Primary action: play
- *  - Performers row (avatar chips)
- *  - Tags (flow)
- *  - Markers (vertical list, tap to play from timestamp)
- *  - Details text block
+ * Spine-redesigned scene detail page:
+ *  - Card-style hero (16:10, ShapeMedium, 8dp/18dp padding) with back button,
+ *    meta pills, and 44dp AccentPrimary play circle
+ *  - Title block with studio (AccentPrimary MetaMono), SpaceGrotesk title,
+ *    date/rating/playcount row
+ *  - Full-width CTA button (AccentPrimary)
+ *  - 2-column technical metadata grid (SpineColors.Border hairline via bg)
+ *  - Cast rows (Surface ShapeSmall, 36dp avatar)
+ *  - Chapter/marker rows (Surface ShapeSmall, 64x36dp thumbnail)
+ *  - Tags FlowRow (CircleShape, SpineColors.Border)
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -82,20 +94,6 @@ fun DetailScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent,
-                    ),
-            )
-        },
         containerColor = MaterialTheme.colorScheme.background,
     ) { inner ->
         when {
@@ -120,6 +118,7 @@ fun DetailScreen(
                 SceneBody(
                     scene = state.scene!!,
                     contentPadding = inner,
+                    onBack = onBack,
                     onPlay = onPlay,
                     onRatingChange = viewModel::setRating,
                     onOrganizedToggle = viewModel::setOrganized,
@@ -135,189 +134,284 @@ fun DetailScreen(
 private fun SceneBody(
     scene: SceneDetail,
     contentPadding: PaddingValues,
+    onBack: () -> Unit,
     onPlay: (sceneId: String, startSeconds: Double?) -> Unit,
     onRatingChange: (Int?) -> Unit,
     onOrganizedToggle: (Boolean) -> Unit,
     onIncrementO: () -> Unit,
     onDecrementO: () -> Unit,
 ) {
-    val extra = LocalStashColors.current
     val s = scene.summary
 
     Column(
         Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(top = contentPadding.calculateTopPadding()),
     ) {
-        // Hero — screenshot with title overlay
+        // ---- Card-style hero ----
         Box(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(16f / 9f),
+                .padding(horizontal = 18.dp, vertical = 8.dp)
+                .aspectRatio(16f / 10f)
+                .clip(ShapeMedium)
+                .border(1.dp, SpineColors.Border, ShapeMedium),
         ) {
             AsyncImage(
                 model = s.screenshotUrl,
                 contentDescription = s.title,
-                contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize(),
             )
-            // Bottom fade-to-background so the title reads & blends into the page
+
+            // Back button — top-left
             Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            0.3f to Color.Transparent,
-                            1f to MaterialTheme.colorScheme.background,
-                        ),
-                    ),
-            )
-            // Giant play button centered on hero
-            Surface(
-                color = StashColors.AccentPrimary.copy(alpha = 0.92f),
-                contentColor = StashColors.AccentOnPrimary,
-                shape = CircleShape,
-                modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .size(72.dp),
-                onClick = { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(10.dp)
+                    .size(30.dp)
+                    .clip(CircleShape)
+                    .background(Color.Black.copy(alpha = 0.55f))
+                    .clickable { onBack() },
+                contentAlignment = Alignment.Center,
             ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        Icons.Filled.PlayArrow,
-                        contentDescription = "Play",
-                        modifier = Modifier.size(40.dp),
+                Icon(
+                    Icons.AutoMirrored.Outlined.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.White,
+                    modifier = Modifier.size(16.dp),
+                )
+            }
+
+            // Meta pills — bottom-left
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                listOfNotNull(
+                    s.durationSeconds?.takeIf { it > 0 }?.let { formatDuration(it) },
+                    resolutionLabel(s.width, s.height),
+                    s.videoCodec?.uppercase(),
+                ).forEach { label ->
+                    Text(
+                        label,
+                        style = MetaMono,
+                        color = Color.White,
+                        modifier = Modifier
+                            .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(4.dp))
+                            .padding(horizontal = 5.dp, vertical = 2.dp),
                     )
+                }
+            }
+
+            // Play button — bottom-right (44dp AccentPrimary circle)
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(SpineColors.AccentPrimary)
+                    .clickable { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    Icons.Filled.PlayArrow,
+                    contentDescription = "Play",
+                    tint = SpineColors.AccentOnPrimary,
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+        }
+
+        // ---- Title block ----
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp, vertical = 16.dp),
+        ) {
+            s.studio?.name?.let { studioName ->
+                Text(
+                    studioName.uppercase(),
+                    style = MetaMono.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
+                    color = SpineColors.AccentPrimary,
+                )
+                Spacer(Modifier.height(4.dp))
+            }
+            Text(
+                s.displayTitle,
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontSize = 24.sp,
+                    letterSpacing = (-0.6).sp,
+                    lineHeight = 26.sp,
+                ),
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Spacer(Modifier.height(6.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                s.date?.let {
+                    Text(it, style = MetaMono, color = SpineColors.OnSurfaceVariant)
+                }
+                s.rating100?.let { r ->
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Icon(Icons.Filled.Star, null, tint = SpineColors.Warning, modifier = Modifier.size(10.dp))
+                        Text("%.1f".format(r / 20.0), style = MetaMono, color = SpineColors.OnSurfaceVariant)
+                    }
+                }
+                if (s.playCount > 0) {
+                    Text("${s.playCount} plays", style = MetaMono, color = SpineColors.OnSurfaceMuted)
                 }
             }
         }
 
-        Column(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+        // ---- Primary CTA ----
+        Button(
+            onClick = { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = SpineColors.AccentPrimary,
+                contentColor = SpineColors.AccentOnPrimary,
+            ),
+            shape = ShapeSmall,
+            contentPadding = PaddingValues(12.dp),
         ) {
-            // Title + studio / date
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = s.displayTitle,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    s.studio?.name?.let {
-                        Text(
-                            it,
-                            style = MaterialTheme.typography.titleSmall,
-                            color = StashColors.AccentSecondary,
-                        )
-                    }
-                    s.date?.let {
-                        Dot()
-                        Text(
-                            it,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = extra.onSurfaceMuted,
-                        )
-                    }
-                    s.rating100?.let { r ->
-                        Dot()
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                Icons.Filled.Star,
-                                contentDescription = null,
-                                tint = StashColors.Warning,
-                                modifier = Modifier.size(14.dp),
-                            )
-                            Text(
-                                " %.1f".format(r / 20.0),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Tech + stats pills
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                s.durationSeconds?.takeIf { it > 0 }?.let { Pill(formatDuration(it)) }
-                resolutionLabel(s.width, s.height)?.let { Pill(it) }
-                s.videoCodec?.let { Pill(it.uppercase()) }
-                s.audioCodec?.let { Pill(it.uppercase()) }
-                s.bitrate?.takeIf { it > 0 }?.let { Pill("${(it / 1_000_000.0).format1()} Mbps") }
-                if (s.playCount > 0) Pill("▶ ${s.playCount}", accent = true)
-                if (s.oCounter > 0) Pill("● ${s.oCounter}", accent = true)
-                if (s.interactive) Pill("Interactive", accent = true)
-            }
-
-            // Primary play button (secondary to the hero one; useful after scroll)
-            Button(
-                onClick = { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Icon(Icons.Filled.PlayArrow, contentDescription = null)
-                Spacer(Modifier.size(8.dp))
-                Text(
-                    s.resumeTimeSeconds
-                        ?.takeIf { it > 2 }
-                        ?.let { "Resume from ${formatDuration(it)}" }
-                        ?: "Play",
-                )
-            }
-
-            // Action row — rating, o-counter, organize
-            ActionRow(
-                rating100 = s.rating100,
-                organized = s.organized,
-                oCounter = s.oCounter,
-                onRatingChange = onRatingChange,
-                onOrganizedToggle = onOrganizedToggle,
-                onIncrementO = onIncrementO,
-                onDecrementO = onDecrementO,
+            Icon(Icons.Filled.PlayArrow, null, modifier = Modifier.size(14.dp))
+            Spacer(Modifier.width(6.dp))
+            val label = s.resumeTimeSeconds
+                ?.takeIf { it > 2 }
+                ?.let { "Resume · ${formatDuration(it)}" }
+                ?: "Play"
+            Text(
+                label,
+                style = TextStyle(
+                    fontFamily = SpaceGrotesk,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
             )
+        }
 
-            if (s.performers.isNotEmpty()) {
-                Section(title = "Performers") {
-                    PerformerRow(s.performers)
-                }
-            }
+        Spacer(Modifier.height(16.dp))
 
-            if (s.tags.isNotEmpty()) {
-                Section(title = "Tags") {
-                    TagFlow(s.tags)
-                }
-            }
+        // ---- Action row (rating, o-counter, organized) ----
+        ActionRow(
+            rating100 = s.rating100,
+            organized = s.organized,
+            oCounter = s.oCounter,
+            onRatingChange = onRatingChange,
+            onOrganizedToggle = onOrganizedToggle,
+            onIncrementO = onIncrementO,
+            onDecrementO = onDecrementO,
+            modifier = Modifier.padding(horizontal = 18.dp),
+        )
 
-            if (scene.markers.isNotEmpty()) {
-                Section(title = "Markers") {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        scene.markers.forEach { marker ->
-                            MarkerRow(marker) { onPlay(s.id, marker.seconds) }
-                        }
+        Spacer(Modifier.height(24.dp))
+
+        // ---- 2-col technical metadata grid ----
+        // SpineColors.Border bg shows through 1dp gaps as hairline dividers (T-05-10: non-lazy, no nested scroll)
+        val meta = listOfNotNull(
+            s.videoCodec?.let { "Codec" to it },
+            s.bitrate?.takeIf { it > 0 }?.let { "Bitrate" to "${it / 1000}kbps" },
+            resolutionLabel(s.width, s.height)?.let { "Resolution" to it },
+            null, // Framerate not in SceneDetail.summary — skip
+            null, // Size not in SceneDetail.summary — skip
+            s.date?.let { "Added" to it },
+        )
+        if (meta.isNotEmpty()) {
+            MetadataGrid(
+                meta = meta,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+            )
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        // ---- Cast ----
+        if (s.performers.isNotEmpty()) {
+            Section(title = "Performers") {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    s.performers.forEach { performer ->
+                        PerformerRow(performer)
                     }
                 }
             }
+        }
 
-            s.details?.takeIf { it.isNotBlank() }?.let { details ->
-                Section(title = "Details") {
-                    Text(
-                        details,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+        // ---- Tags ----
+        if (s.tags.isNotEmpty()) {
+            Section(title = "Tags") {
+                TagFlow(s.tags)
+            }
+        }
+
+        // ---- Chapters / Markers ----
+        if (scene.markers.isNotEmpty()) {
+            Section(title = "Markers") {
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    scene.markers.forEach { marker ->
+                        ChapterRow(marker) { onPlay(s.id, marker.seconds) }
+                    }
                 }
             }
+        }
 
-            Spacer(Modifier.height(contentPadding.calculateBottomPadding() + 24.dp))
+        s.details?.takeIf { it.isNotBlank() }?.let { details ->
+            Section(title = "Details") {
+                Text(
+                    details,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        Spacer(Modifier.height(contentPadding.calculateBottomPadding() + 24.dp))
+    }
+}
+
+/** Non-lazy 2-column metadata grid. Uses SpineColors.Border background with 1dp gaps for hairline divider effect. */
+@Composable
+private fun MetadataGrid(
+    meta: List<Pair<String, String>>,
+    modifier: Modifier = Modifier,
+) {
+    // Build rows of 2 items each
+    val rows = meta.chunked(2)
+    Column(
+        modifier = modifier.background(SpineColors.Border),
+        verticalArrangement = Arrangement.spacedBy(1.dp),
+    ) {
+        rows.forEach { rowItems ->
+            Row(horizontalArrangement = Arrangement.spacedBy(1.dp)) {
+                rowItems.forEach { (key, value) ->
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .background(SpineColors.Surface)
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                    ) {
+                        Text(key, style = MetaMono, color = SpineColors.OnSurfaceMuted)
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            value,
+                            style = TextStyle(fontFamily = JetBrainsMono, fontSize = 11.sp),
+                            color = SpineColors.OnSurface,
+                        )
+                    }
+                }
+                // Pad odd last row
+                if (rowItems.size == 1) {
+                    Box(Modifier.weight(1f).background(SpineColors.Surface))
+                }
+            }
         }
     }
 }
@@ -331,10 +425,10 @@ private fun ActionRow(
     onOrganizedToggle: (Boolean) -> Unit,
     onIncrementO: () -> Unit,
     onDecrementO: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        // 5-star rating row — each star is tappable, clicking an already-active
-        // star clears (sets to null).
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        // 5-star rating row
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -346,7 +440,7 @@ private fun ActionRow(
             )
             Spacer(Modifier.size(8.dp))
             (1..5).forEach { star ->
-                val threshold = star * 20 // 20/40/60/80/100
+                val threshold = star * 20
                 val active = (rating100 ?: 0) >= threshold
                 IconButton(
                     onClick = {
@@ -364,21 +458,20 @@ private fun ActionRow(
                     Icon(
                         if (active) Icons.Filled.Star else Icons.Filled.StarBorder,
                         contentDescription = "$star stars",
-                        tint = if (active) StashColors.Warning else LocalStashColors.current.onSurfaceMuted,
+                        tint = if (active) SpineColors.Warning else SpineColors.OnSurfaceMuted,
                         modifier = Modifier.size(24.dp),
                     )
                 }
             }
         }
 
-        // Organized + O-counter + reset rating, all in a wrap-friendly row
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Surface(
-                color = if (organized) StashColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = if (organized) StashColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
+                color = if (organized) SpineColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = if (organized) SpineColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
                 shape = RoundedCornerShape(8.dp),
                 onClick = { onOrganizedToggle(!organized) },
             ) {
@@ -401,7 +494,6 @@ private fun ActionRow(
 
             Spacer(Modifier.weight(1f))
 
-            // O-counter stepper
             Surface(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = RoundedCornerShape(8.dp),
@@ -412,27 +504,19 @@ private fun ActionRow(
                         enabled = oCounter > 0,
                         modifier = Modifier.size(36.dp),
                     ) {
-                        Icon(
-                            Icons.Filled.Remove,
-                            contentDescription = "Decrement O",
-                            modifier = Modifier.size(18.dp),
-                        )
+                        Icon(Icons.Filled.Remove, contentDescription = "Decrement O", modifier = Modifier.size(18.dp))
                     }
                     Text(
                         "● $oCounter",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = if (oCounter > 0) StashColors.AccentPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = if (oCounter > 0) SpineColors.AccentPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 4.dp),
                     )
                     IconButton(
                         onClick = onIncrementO,
                         modifier = Modifier.size(36.dp),
                     ) {
-                        Icon(
-                            Icons.Filled.Add,
-                            contentDescription = "Increment O",
-                            modifier = Modifier.size(18.dp),
-                        )
+                        Icon(Icons.Filled.Add, contentDescription = "Increment O", modifier = Modifier.size(18.dp))
                     }
                 }
             }
@@ -445,7 +529,12 @@ private fun Section(
     title: String,
     content: @Composable () -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         Text(
             title,
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -453,66 +542,94 @@ private fun Section(
         )
         content()
     }
+    Spacer(Modifier.height(24.dp))
 }
 
+/** Spine-styled performer row: 36dp circle avatar, name, chevron */
 @Composable
-private fun Dot() {
-    Text("·", color = LocalStashColors.current.onSurfaceMuted)
-}
-
-@Composable
-private fun Pill(
-    text: String,
-    accent: Boolean = false,
-) {
+private fun PerformerRow(performer: PerformerRef) {
     Surface(
-        color = if (accent) StashColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainerHigh,
-        contentColor = if (accent) StashColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
-        shape = RoundedCornerShape(6.dp),
+        color = SpineColors.Surface,
+        shape = ShapeSmall,
+        border = BorderStroke(1.dp, SpineColors.Border),
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Text(
-            text,
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-        )
+        Row(
+            modifier = Modifier.padding(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AsyncImage(
+                model = performer.imageUrl,
+                contentDescription = performer.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape),
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    performer.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                performer.gender?.let { gender ->
+                    Text(
+                        gender,
+                        style = MetaMono,
+                        color = SpineColors.OnSurfaceMuted,
+                    )
+                }
+            }
+            Icon(
+                Icons.Outlined.ChevronRight,
+                contentDescription = null,
+                tint = SpineColors.OnSurfaceFaint,
+                modifier = Modifier.size(16.dp),
+            )
+        }
     }
 }
 
+/** Spine-styled chapter/marker row: title + AccentPrimary tag label, timestamp */
 @Composable
-private fun PerformerRow(performers: List<PerformerRef>) {
-    androidx.compose.foundation.lazy.LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+private fun ChapterRow(
+    marker: Marker,
+    onClick: () -> Unit,
+) {
+    Surface(
+        color = SpineColors.Surface,
+        shape = ShapeSmall,
+        border = BorderStroke(1.dp, SpineColors.Border),
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        items(
-            count = performers.size,
-            key = { performers[it].id },
-        ) { i ->
-            val p = performers[i]
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.size(width = 80.dp, height = 110.dp),
-            ) {
-                Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                    modifier = Modifier.size(72.dp),
-                ) {
-                    AsyncImage(
-                        model = p.imageUrl,
-                        contentDescription = p.name,
-                        contentScale = androidx.compose.ui.layout.ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize().clip(CircleShape),
-                    )
-                }
-                Spacer(Modifier.height(4.dp))
+        Row(
+            modifier = Modifier.padding(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    p.name,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 2,
+                    marker.title.ifBlank { marker.primaryTagName },
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                if (marker.primaryTagName.isNotBlank() && marker.title.isNotBlank()) {
+                    Text(
+                        marker.primaryTagName,
+                        style = MetaMono,
+                        color = SpineColors.AccentPrimary,
+                    )
+                }
             }
+            Text(
+                formatDuration(marker.seconds),
+                style = MonoSmall,
+                color = SpineColors.OnSurfaceMuted,
+            )
         }
     }
 }
@@ -524,68 +641,21 @@ private fun TagFlow(tags: List<TagRef>) {
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        tags.forEach { t ->
-            Surface(
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = StashColors.AccentSecondary,
-                shape = RoundedCornerShape(50),
-            ) {
-                Text(
-                    t.name,
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun MarkerRow(
-    marker: Marker,
-    onClick: () -> Unit,
-) {
-    Surface(
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        shape = RoundedCornerShape(8.dp),
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Row(
-            Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                Icons.Filled.Bookmark,
-                contentDescription = null,
-                tint = StashColors.AccentPrimary,
-                modifier = Modifier.size(18.dp),
-            )
-            Spacer(Modifier.size(10.dp))
-            Column(Modifier.weight(1f)) {
-                Text(
-                    marker.title.ifBlank { marker.primaryTagName },
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                if (marker.title.isNotBlank() && marker.primaryTagName.isNotBlank()) {
-                    Text(
-                        marker.primaryTagName,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = LocalStashColors.current.onSurfaceMuted,
-                    )
-                }
-            }
+        tags.forEach { tag ->
             Text(
-                formatDuration(marker.seconds),
-                style = MaterialTheme.typography.labelMedium,
-                color = LocalStashColors.current.onSurfaceMuted,
+                tag.name,
+                style = MaterialTheme.typography.bodySmall,
+                color = SpineColors.OnSurface,
+                modifier = Modifier
+                    .background(SpineColors.Surface, CircleShape)
+                    .border(1.dp, SpineColors.Border, CircleShape)
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
             )
         }
     }
 }
 
-// Helpers — local copies to avoid making designsystem expose these broadly
+// Helpers
 private fun formatDuration(seconds: Double): String {
     val s = seconds.toInt()
     val h = s / 3600

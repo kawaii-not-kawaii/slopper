@@ -19,6 +19,16 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+    // COMPLY-06 (per D-06): AGP scans values-*/ directories at build time and
+    // generates app/build/intermediates/generated_res/.../locale_config.xml,
+    // auto-merging <application android:localeConfig="@xml/locale_config" />
+    // into the final manifest. No source-tree xml/locale_config.xml needed.
+    // (Pitfall E6 warns against manually adding android:localeConfig to the
+    // source manifest — AGP's merger handles it.)
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     signingConfigs {
         // Release signing config reads credentials from either environment
         // variables (CI pattern) or a `keystore.properties` file at the repo
@@ -129,6 +139,7 @@ dependencies {
     implementation(project(":feature:settings"))
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)

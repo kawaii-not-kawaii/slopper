@@ -14,9 +14,7 @@ dependencies {
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.media3.datasource.okhttp)
     implementation(libs.okhttp)
-
-    // Player prefs (seek sensitivity, etc.) live in :core:data via DataStore.
-    implementation(project(":core:data"))
+    implementation(libs.kotlinx.collections.immutable)
 
     // Prebuilt FFmpeg extension for Media3 — audio codecs (AC3/EAC3/DTS/TrueHD
     // etc.) plus H.264/HEVC/VP8/VP9 software decode fallback. Ships as a

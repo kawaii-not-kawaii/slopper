@@ -11,4 +11,5 @@ dependencies {
     api(libs.androidx.core.ktx)
     api(libs.coil.compose)
     api(libs.coil.network.okhttp)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 }

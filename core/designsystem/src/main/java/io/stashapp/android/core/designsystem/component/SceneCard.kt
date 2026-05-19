@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
@@ -35,8 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import io.stashapp.android.core.designsystem.theme.LocalStashColors
-import io.stashapp.android.core.designsystem.theme.StashColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 
 /**
  * Plex-style media card with 16:9 poster area, play overlay on hover/press,
@@ -57,17 +59,16 @@ fun SceneCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit = {},
 ) {
-    val extra = LocalStashColors.current
     var pressed by remember { mutableStateOf(false) }
     val overlayAlpha by animateColorAsState(
-        if (pressed) StashColors.ScrimStrong else Color.Transparent,
+        if (pressed) Color.Black.copy(alpha = 0.85f) else Color.Transparent,
         label = "overlay",
     )
 
     Column(modifier = modifier) {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainer,
-            shape = RoundedCornerShape(10.dp),
+            shape = ShapeSmall,  // SPINE-04: 6dp per design spec (was 10dp ShapeMedium)
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -95,8 +96,8 @@ fun SceneCard(
                             .fillMaxSize()
                             .background(
                                 Brush.verticalGradient(
-                                    0.55f to Color.Transparent,
-                                    1f to extra.scrimStrong,
+                                    0.45f to Color.Transparent,
+                                    1.0f to Color(0xEB0A0D12),
                                 ),
                             ),
                 )
@@ -156,21 +157,22 @@ fun SceneCard(
                     }
                 }
 
-                // Resume progress bar along bottom edge
-                resumeFraction?.takeIf { it > 0f }?.let { frac ->
+                // Resume progress bar along bottom edge (fix: fillMaxWidth(fraction) not size(width=0))
+                if ((resumeFraction ?: 0f) > 0f) {
                     Box(
                         modifier =
                             Modifier
                                 .align(Alignment.BottomStart)
                                 .fillMaxWidth()
-                                .size(width = 0.dp, height = 3.dp)
-                                .background(Color(0x33FFFFFF)),
+                                .height(2.dp)
+                                .background(Color.White.copy(alpha = 0.10f)),
                     ) {
                         Box(
                             modifier =
                                 Modifier
-                                    .fillMaxSize()
-                                    .background(StashColors.AccentPrimary),
+                                    .fillMaxWidth(resumeFraction!!.coerceIn(0f, 1f))
+                                    .fillMaxHeight()
+                                    .background(SpineColors.AccentPrimary),
                         )
                     }
                 }
@@ -195,8 +197,8 @@ private fun Chip(
     accent: Boolean = false,
 ) {
     Surface(
-        color = if (accent) StashColors.AccentPrimary else StashColors.ScrimMedium,
-        contentColor = if (accent) StashColors.AccentOnPrimary else Color.White,
+        color = if (accent) SpineColors.AccentPrimary else SpineColors.SurfaceTop,
+        contentColor = if (accent) SpineColors.AccentOnPrimary else Color.White,
         shape = RoundedCornerShape(4.dp),
     ) {
         Text(
@@ -213,7 +215,7 @@ private fun RatingPill(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        color = StashColors.ScrimMedium,
+        color = SpineColors.SurfaceTop,
         contentColor = Color.White,
         shape = RoundedCornerShape(12.dp),
         modifier = modifier,
@@ -226,7 +228,7 @@ private fun RatingPill(
             Icon(
                 imageVector = Icons.Filled.Star,
                 contentDescription = null,
-                tint = StashColors.Warning,
+                tint = SpineColors.Warning,
                 modifier = Modifier.size(12.dp),
             )
             Text(

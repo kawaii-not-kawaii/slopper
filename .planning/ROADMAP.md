@@ -20,16 +20,16 @@
 | Phase | Plans | Status | Completed |
 |-------|-------|--------|-----------|
 | 1. DEPS (Foundation Bump) | 0/3 | Not started | — |
-| 2. COMPLY (Platform Compliance) | 0/2 | Not started | — |
-| 3. PERF (Measured Wins) | 0/3 | Not started | — |
-| 4. POLISH (Test Pyramid & Cleanup) | 0/3 | Not started | — |
+| 2. COMPLY (Platform Compliance) | 2/2 | Planned | — |
+| 3. PERF (Measured Wins) | 2/3 | In Progress|  |
+| 4. POLISH (Test Pyramid & Cleanup) | 3/3 | Complete   | 2026-05-18 |
 
 ## Phases
 
 - [ ] **Phase 1: DEPS** — Land toolchain + dependency floor (lint baseline → JDK → Gradle → AGP → Kotlin → Compose BOM → AndroidX/Hilt/Coil sweep) with the build green
 - [ ] **Phase 2: COMPLY** — Resolve every framework-enforced contract that `targetSdk = 36` makes mandatory (edge-to-edge, predictive back, POST_NOTIFICATIONS, Splash API, per-app locales, orphan FGS permission)
 - [ ] **Phase 3: PERF** — Wire GMD, expand baseline profile, hit numeric perf floors, fix the shuffle-playback bug
-- [ ] **Phase 4: POLISH** — Split `PlayerScreen.kt`, shrink lint baseline, wire JUnit5/Turbine/MockK/Robolectric, seed tests, retire `ConnectionResult`, refresh docs
+- [x] **Phase 4: POLISH** — Split `PlayerScreen.kt`, shrink lint baseline, wire JUnit5/Turbine/MockK/Robolectric, seed tests, retire `ConnectionResult`, refresh docs (completed 2026-05-18)
 
 ## Phase Details
 
@@ -141,6 +141,10 @@ grep -c 'android:enableOnBackInvokedCallback="true"' app/src/main/AndroidManifes
 - §7 Edge-to-edge breaks `PlayerScreen` gestures + `FilterSheet` insets on 3-button-nav OEMs (High) — mitigated by mandatory dual-device test.
 - §8 Predictive back regression on conditional `BackHandler(enabled=…)` (Medium) — gate `enabled` flag stability mid-gesture; never mutate during the gesture.
 - Permission UX: requesting `POST_NOTIFICATIONS` at app start is a known anti-pattern — gate behind first-use.
+
+**Created plans** (executable PLAN.md files in `.planning/phases/02-comply-platform-compliance/`):
+- [ ] `02.1-PLAN.md` — Insets + Back + Splash (COMPLY-01, COMPLY-02, COMPLY-04)
+- [ ] `02.2-PLAN.md` — Permissions + Locales + Manifest hygiene + UAT (COMPLY-03, COMPLY-05, COMPLY-06, COMPLY-07)
 
 ---
 
@@ -258,10 +262,10 @@ find feature -path '*/src/*Test/*ScreenSmokeTest.kt' | wc -l
 **Goal:** [To be planned]
 **Requirements**: TBD
 **Depends on:** Phase 4
-**Plans:** 0 plans
+**Plans:** 3/3 plans complete
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 5 to break down)
+- [x] TBD (run /gsd-plan-phase 5 to break down) (completed 2026-05-19)
 
 ---
 

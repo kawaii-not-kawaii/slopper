@@ -3,8 +3,10 @@ package io.stashapp.android.buildlogic
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 
 class AndroidComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -14,6 +16,19 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             val extension = extensions.getByType(CommonExtension::class.java)
             extension.apply {
                 buildFeatures.compose = true
+            }
+
+            // Wire Compose Compiler stability reports and metrics per D-02.
+            // reportsDestination → per-module build/compose-reports/ (gitignored via build/)
+            // metricsDestination → per-module build/compose-metrics/
+            // stabilityConfigurationFile → project-root compose_stability.conf (required to exist)
+            // Note: properties are Gradle lazy DirectoryProperty/RegularFileProperty — use .set()
+            extensions.configure<ComposeCompilerGradlePluginExtension> {
+                reportsDestination.set(layout.buildDirectory.dir("compose-reports"))
+                metricsDestination.set(layout.buildDirectory.dir("compose-metrics"))
+                stabilityConfigurationFile.set(
+                    rootProject.layout.projectDirectory.file("compose_stability.conf")
+                )
             }
 
             dependencies {

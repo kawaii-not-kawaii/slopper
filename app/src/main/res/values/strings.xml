@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Stash</string>
+    <!-- COMPLY-06 (per D-06): per-app language picker (API 33+) -->
+    <string name="settings_language">Language</string>
+    <string name="settings_language_description">Choose the language for this app independently from your device.</string>
 </resources>

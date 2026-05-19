@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -50,11 +53,13 @@ import io.stashapp.android.feature.home.HomeScreen
 import io.stashapp.android.feature.library.LibraryScreen
 import io.stashapp.android.feature.player.PlayerScreen
 import io.stashapp.android.feature.settings.SettingsScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 @HiltViewModel
@@ -82,14 +87,25 @@ class RootViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    // Pattern A (per D-05): flipped to true once RootViewModel.start emits non-null.
+    // Lives on the Activity instance so the SplashScreen keep-condition lambda
+    // can read it without touching the Hilt graph before super.onCreate.
+    private val appReady = AtomicBoolean(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        // installSplashScreen MUST be called BEFORE super.onCreate per the
+        // SplashScreen migration guide. The library swaps the activity's theme
+        // back to postSplashScreenTheme (Theme.Stash) at this point.
+        val splashScreen: SplashScreen = installSplashScreen()
+        splashScreen.setKeepOnScreenCondition { !appReady.get() }
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         requestHighestRefreshRate()
         setContent {
             StashTheme {
                 val rootViewModel: RootViewModel = hiltViewModel()
-                StashAppContent(rootViewModel = rootViewModel)
+                StashAppContent(rootViewModel = rootViewModel, appReady = appReady)
             }
         }
     }
@@ -153,9 +169,27 @@ private fun isMainTabRoute(route: String?): Boolean =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun StashAppContent(rootViewModel: RootViewModel) {
+private fun StashAppContent(
+    rootViewModel: RootViewModel,
+    appReady: AtomicBoolean,
+) {
     val navController = rememberNavController()
     val start by rootViewModel.start.collectAsState()
+    // Pattern A gate-flip (per CONTEXT.md D-05 + REVIEWS SHOULD FIX #2 Case B):
+    // reuse the existing `start` collection rather than introducing a duplicate.
+    // Keyed on COLLECTED VALUE (String?), NOT the StateFlow object, to defeat
+    // strong-skipping memoization per RESEARCH §E7.
+    LaunchedEffect(start) {
+        if (start != null) appReady.set(true)
+    }
+    // Safety timeout (per RESEARCH §A4 / §E3): even if the StateFlow ever fails
+    // to emit, dismiss splash after 3s to avoid ANR. In practice the
+    // DataStore-backed flow emits in <100ms. Intentional SPEC deviation —
+    // documented in commit body.
+    LaunchedEffect(Unit) {
+        delay(3000)
+        appReady.set(true)
+    }
 
     Surface(
         color = MaterialTheme.colorScheme.background,

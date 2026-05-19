@@ -2,11 +2,11 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$PerformersPagingSource$e: Throwable</ID>
-    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$StudiosPagingSource$e: Throwable</ID>
-    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$TagsPagingSource$e: Throwable</ID>
-    <ID>TooGenericExceptionCaught:DefaultConnectionRepository.kt$DefaultConnectionRepository$e: Throwable</ID>
-    <ID>TooGenericExceptionCaught:DefaultSceneRepository.kt$DefaultSceneRepository$e: Throwable</ID>
-    <ID>TooGenericExceptionCaught:ScenePagingSource.kt$ScenePagingSource$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$PerformersPagingSource$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$StudiosPagingSource$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:BrowsePagingSources.kt$TagsPagingSource$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DefaultConnectionRepository.kt$DefaultConnectionRepository$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DefaultSceneRepository.kt$DefaultSceneRepository$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ScenePagingSource.kt$ScenePagingSource$e: Exception</ID>
   </CurrentIssues>
 </SmellBaseline>

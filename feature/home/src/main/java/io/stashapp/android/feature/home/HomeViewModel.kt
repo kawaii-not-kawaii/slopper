@@ -9,6 +9,9 @@ import io.stashapp.android.core.domain.SceneQuery
 import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.domain.SceneSort
 import io.stashapp.android.core.model.SceneSummary
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,15 +37,15 @@ enum class HomeRailKind(
 data class HomeRail(
     val kind: HomeRailKind,
     val loading: Boolean = true,
-    val scenes: List<SceneSummary> = emptyList(),
+    val scenes: ImmutableList<SceneSummary> = persistentListOf(),
     val error: String? = null,
 )
 
 data class HomeUiState(
-    val rails: List<HomeRail>,
+    val rails: ImmutableList<HomeRail>,
 ) {
     companion object {
-        val Initial = HomeUiState(HomeRailKind.entries.map { HomeRail(it) })
+        val Initial = HomeUiState(HomeRailKind.entries.map { HomeRail(it) }.toPersistentList())
     }
 }
 
@@ -75,12 +78,17 @@ class HomeViewModel
                                         rail
                                     } else {
                                         when (result) {
-                                            is AppResult.Success -> rail.copy(loading = false, scenes = result.data, error = null)
+                                            is AppResult.Success ->
+                                                rail.copy(
+                                                    loading = false,
+                                                    scenes = result.data.toPersistentList(),
+                                                    error = null,
+                                                )
                                             is AppResult.Failure -> rail.copy(loading = false, error = result.error.message)
                                         }
                                     }
                                 }
-                            prev.copy(rails = updated)
+                            prev.copy(rails = updated.toPersistentList())
                         }
                     }
             }

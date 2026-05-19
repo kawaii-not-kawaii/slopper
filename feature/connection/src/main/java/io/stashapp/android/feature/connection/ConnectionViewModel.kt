@@ -3,8 +3,9 @@ package io.stashapp.android.feature.connection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.stashapp.android.core.common.AppError
+import io.stashapp.android.core.common.AppResult
 import io.stashapp.android.core.domain.ConnectionRepository
-import io.stashapp.android.core.model.ConnectionResult
 import io.stashapp.android.core.model.ServerInfo
 import io.stashapp.android.core.model.StashServer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,26 +53,21 @@ class ConnectionViewModel
                         displayName = s.displayName.ifBlank { s.baseUrl },
                     )
                 when (val result = connectionRepository.test(server)) {
-                    is ConnectionResult.Success ->
+                    is AppResult.Success ->
                         _state.update {
-                            it.copy(testing = false, serverInfo = result.info, error = null)
+                            it.copy(testing = false, serverInfo = result.data, error = null)
                         }
-                    is ConnectionResult.AuthFailed ->
-                        _state.update {
-                            it.copy(testing = false, error = result.message)
-                        }
-                    is ConnectionResult.InvalidUrl ->
-                        _state.update {
-                            it.copy(testing = false, error = result.reason)
-                        }
-                    is ConnectionResult.NetworkError ->
-                        _state.update {
-                            it.copy(testing = false, error = "Can't reach server: ${result.message}")
-                        }
-                    is ConnectionResult.ServerError ->
-                        _state.update {
-                            it.copy(testing = false, error = "Server error: ${result.message}")
-                        }
+                    is AppResult.Failure -> {
+                        val msg =
+                            when (val err = result.error) {
+                                is AppError.Auth -> err.message
+                                is AppError.Network -> "Can't reach server: ${err.message}"
+                                is AppError.Server -> "Server error: ${err.message}"
+                                is AppError.NotFound -> err.message
+                                is AppError.Unknown -> err.message
+                            }
+                        _state.update { it.copy(testing = false, error = msg) }
+                    }
                 }
             }
         }

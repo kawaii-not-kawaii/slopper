@@ -26,14 +26,26 @@ android {
     targetProjectPath = ":app"
 
     experimentalProperties["android.experimental.self-instrumenting"] = true
+
+    testOptions {
+        managedDevices {
+            localDevices {
+                create("pixel6Api34") {
+                    device = "Pixel 6"
+                    apiLevel = 34
+                    systemImageSource = "google_apis"
+                }
+            }
+        }
+    }
 }
 
-// Use whatever device is plugged in via adb when generation is requested.
-// Declaring a gradle-managed-device (GMD) here would let CI spin up an
-// emulator automatically — punted for now; profile generation is infrequent
-// and a real 120Hz phone gives the most representative trace.
+// Gradle Managed Device (PERF-01): replaced useConnectedDevices = true with GMD declaration.
+// The pixel6Api34 device is declared above; CI can spin up the emulator automatically.
+// Fallback: if google_apis system image is unavailable, see REVIEWS-C4 ACCEPT in 03-CONTEXT.md.
 baselineProfile {
-    useConnectedDevices = true
+    managedDevices += "pixel6Api34"
+    useConnectedDevices = false
 }
 
 androidComponents {

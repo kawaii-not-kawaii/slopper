@@ -75,14 +75,14 @@ The canonical module list lives in `settings.gradle.kts`.
 | `:core:network` | Apollo 4 client, OkHttp stack, `StashAuthInterceptor`, endpoint provider interface, Apollo-generated GraphQL code under `io.stashapp.android.graphql` | `StashEndpoint`, `StashEndpointProvider`, `NetworkModule` | `:core:common` |
 | `:core:data` | Repository **implementations**, paging sources, mappers, DataStore preference stores, Hilt `@Binds` module | `DefaultSceneRepository`, `DefaultConnectionRepository`, `DefaultBrowseRepository`, `EndpointStateHolder`, `ConnectionStore`, `UiPreferences`, `PlayerPreferences`, `DataModule` | `:core:domain` (api), `:core:network` (api) |
 | `:core:designsystem` | Material3 theme, color, typography, reusable design-system primitives | `StashTheme`, `SceneCard` | — |
-| `:core:ui` | Shared Compose UI utilities: route registry, bottom-nav chrome, sheet UI, Coil image loader factory | `Routes`, `MainBottomBar`, `MoreSheet`, `NavCustomizeSheet`, `StashImageLoader` | `:core:designsystem`, `:core:model`, `:core:domain`, `:core:network`, **`:core:data`** (see Layering rules) |
+| `:core:ui` | Shared Compose UI utilities: route registry, bottom-nav chrome, sheet UI, Coil image loader factory | `Routes`, `MainBottomBar`, `NavCustomizeSheet`, `StashImageLoader`. Note: `MoreSheet` is a **private composable inside `BottomNav.kt:179`**, not a standalone file. | `:core:designsystem`, `:core:model`, `:core:domain`, `:core:network`, **`:core:data`** (see Layering rules) |
 | `:feature:connection` | Sign-in / endpoint setup | `ConnectionScreen`, `ConnectionViewModel` | core modules via `stash.android.feature` |
 | `:feature:home` | Home rails (Continue watching, Recently released, Recently added, Most played) | `HomeScreen`, `HomeViewModel`, `HomeUiState` | core modules via `stash.android.feature` |
 | `:feature:library` | Paged scene grid with filter sheet and presets | `LibraryScreen`, `LibraryViewModel`, `FilterSheet` | + `:core:data` (UiPreferences) |
 | `:feature:browse` | Performers / studios / tags paged listings | `BrowseScreen`, `BrowseViewModel` | core modules via `stash.android.feature` |
 | `:feature:detail` | Single-scene detail + playback launch | `DetailScreen`, `DetailViewModel` | core modules via `stash.android.feature` |
 | `:feature:player` | Media3 ExoPlayer surface, queue handling, codec/capability checks | `PlayerScreen`, `PlayerViewModel`, `PlayerQueue`, `CodecCapabilities`, `StashPlayerFactory` | + `:core:data` (PlayerPreferences); Media3 ExoPlayer + nextlib FFmpeg |
-| `:feature:settings` | Settings UI, disconnect/reconnect, browse entry points | `SettingsScreen`, `SettingsViewModel` | + `:core:data` (UiPreferences) |
+| `:feature:settings` | Settings UI, disconnect/reconnect, browse entry points, per-app language picker | `SettingsScreen`, `SettingsViewModel`, `LanguageRow` (private — fires `ACTION_APP_LOCALE_SETTINGS`; guarded by `Build.VERSION.SDK_INT >= 33`) | + `:core:data` (UiPreferences); + `feature/settings/src/main/res/values/strings.xml` (co-located due to module-graph R-class constraint) |
 | `:baselineprofile` | Macrobenchmark module that generates the baseline profile installed by `:app`'s `androidx.profileinstaller`. Not part of a normal build; invoked via `./gradlew :app:generateBaselineProfile`. | — | drives `:app` |
 | `build-logic:convention` | Included build providing the `stash.android.*` Gradle convention plugins | `AndroidApplicationConventionPlugin`, `AndroidLibraryConventionPlugin`, `AndroidComposeConventionPlugin`, `AndroidHiltConventionPlugin`, `AndroidFeatureConventionPlugin` | — |
 
@@ -152,8 +152,11 @@ that is the entire wiring — every base dep comes from the feature plugin.
 
 End-to-end path for a screen that reads from the Stash server:
 
-1. **Activity boot.** `MainActivity.onCreate` enables edge-to-edge, requests the
-   highest available display refresh rate, then sets the Compose content to
+1. **Activity boot.** `MainActivity.onCreate` calls `installSplashScreen()`
+   (BEFORE `super.onCreate`) and sets a `setKeepOnScreenCondition` gate on
+   `RootViewModel.start` with a 3-second ANR safety-timeout. It then enables
+   edge-to-edge (`enableEdgeToEdge()`), requests the highest available display
+   refresh rate, and sets the Compose content to
    `StashTheme { StashAppContent(rootViewModel) }`.
 2. **Start destination.** `RootViewModel.init` collects
    `ConnectionRepository.activeServer()`. The first emission is either
@@ -234,6 +237,28 @@ decoders do not (AC3/EAC3/DTS/TrueHD, plus H.264/HEVC/VP8/VP9 fallback).
 The build file also picks up any `media3-decoder-ffmpeg*.aar` dropped in
 `feature/player/libs/` for users running custom decoder sets.
 
+**Edge-to-edge and insets.** `themes.xml` does not set `statusBarColor` or
+`navigationBarColor` (they were removed in COMPLY-01). All three
+`ModalBottomSheet` composables (`FilterSheet`, `NavCustomizeSheet`,
+`BottomNav.MoreSheet`) set `contentWindowInsets = { WindowInsets.navigationBars }`.
+`PlayerScreen` wraps its chrome (controls + locked-overlay) in
+`Box(Modifier.safeDrawingPadding())` while the `AndroidView` ExoPlayer surface
+stays full-bleed. Top-level `Scaffold`s use Material3 defaults
+(`ScaffoldDefaults.contentWindowInsets`, equivalent to `WindowInsets.systemBars`).
+
+**Predictive back.** `AndroidManifest.xml` opts in via
+`android:enableOnBackInvokedCallback="true"`. `PlayerScreen.kt:188` uses
+`PredictiveBackHandler` (from `androidx.activity`) instead of the removed
+`BackHandler`, with `try { progress.collect { … }; onExit() } catch (e: CancellationException) { throw e }`
+cancel semantics. No other back handlers exist in the repo.
+
+**Per-app language picker.** `app/build.gradle.kts` sets
+`androidResources { generateLocaleConfig = true }`. AGP produces
+`_generated_res_locale_config.xml` (referenced via `android:localeConfig` in
+the merged manifest). `SettingsScreen.LanguageRow` fires
+`Intent(Settings.ACTION_APP_LOCALE_SETTINGS)` guarded by
+`Build.VERSION.SDK_INT >= 33 (TIRAMISU)`.
+
 **State management.** ViewModels expose `StateFlow<UiState>`; composables
 consume via `collectAsStateWithLifecycle()`. Repositories return
 `Flow<PagingData<T>>` for paged data and `suspend AppResult<T>` for one-shot
@@ -241,18 +266,22 @@ calls. Exceptions never cross the repository boundary — they are caught and
 converted to `AppError` variants (`Network`, `Auth`, `NotFound`, `Server`,
 `Unknown`).
 
+## Performance infrastructure (Phase 3)
+
+- **Compose Compiler stability reports** enabled in `AndroidComposeConventionPlugin.kt` via `ComposeCompilerGradlePluginExtension.reportsDestination`. Reports generated for every Compose module on `compileReleaseKotlin` at `<module>/build/compose-reports/`.
+- **Gradle Managed Device** (Pixel 6 API 34) declared in `baselineprofile/build.gradle.kts` under `android { testOptions { managedDevices { ... } } }`. Task: `./gradlew :baselineprofile:pixel6Api34BenchmarkAndroidTest`.
+- **`ImmutableList<T>`** (`kotlinx-collections-immutable 0.4.0`) used for `HomeRail.scenes`, `HomeUiState.rails`, and `markers: ImmutableList<Marker>` in `PlayerControls`/`TimelineBar` — enables Compose strong-skipping.
+- **`applyVideoFrameRate`** in `PlayerScreen.kt` runs inside `LaunchedEffect(state.videoFrameRate)`, not in the `AndroidView.update` lambda (which fired on every recomposition).
+
 ## What is deliberately not here yet
 
 These are explicit deferrals, not oversights — do not add them ad hoc; they
 are scheduled work.
 
-- **No automated test suite.** There are no JVM unit tests, no Robolectric
-  tests, and no instrumented/Espresso tests. The test infrastructure work
-  is tracked as POLISH-04.
-- **No CI pipeline.** The repository has no `.github/workflows/` directory.
-  Lint, detekt, ktlint, and the OWASP dependency-check task run only on
-  developer machines today. CI bring-up is tracked as SEC-CI-01 in the
-  backlog.
+- **Test infrastructure landed (POLISH-04/05).** JUnit5 5.11.4 + Turbine 1.2.0 + MockK 1.14.0 + Robolectric 4.14.1 are wired in `stash.android.library` convention plugin. 17 seed tests pass. See TESTING.md for the roadmap to 80%+ coverage.
+- **Forgejo CI added (POLISH-08).** `.forgejo/workflows/ci.yml` runs `assembleDebug detekt ktlintCheck` on push/PR with a correct Gradle cache key. `lintDebug` excluded pending Coil 3.1.x+ upgrade (AR-04-LINT).
+- **`PlayerSettings`/`UiSettings` interfaces in `:core:domain`.** `feature/player` and `feature/library` no longer import `:core:data` directly for preferences.
+- **`ConnectionResult` retired.** `ConnectionRepository.test()` returns `AppResult<ServerInfo>`. All `catch (e: Throwable)` in `core/data` repositories now rethrow `CancellationException` first.
 - **No background `MediaSessionService`.** `:feature:player` uses Media3
   but does not expose a foreground media session for system controls or
   background playback. That work is tracked as BG-MEDIA-01.
