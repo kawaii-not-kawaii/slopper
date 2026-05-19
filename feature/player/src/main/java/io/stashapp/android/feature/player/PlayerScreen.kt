@@ -20,7 +20,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
@@ -40,7 +44,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -87,6 +93,8 @@ fun PlayerScreen(
         .collectAsStateWithLifecycle(initialValue = PlayerSettings.DEFAULT_SEEK_MS_PER_PX)
     val doubleTapSeekSec by viewModel.preferences.doubleTapSeekSeconds
         .collectAsStateWithLifecycle(initialValue = PlayerSettings.DEFAULT_DOUBLE_TAP_SEEK_SEC)
+    // Collected once for ChapterStrip — do NOT re-collect inside ChapterStrip call to avoid double-subscription
+    val position by viewModel.position.collectAsStateWithLifecycle()
 
     // Controls visibility, interaction timestamp for auto-hide, and MX-Player-
     // style local UI state (lock, rotation-lock, aspect mode, remaining-time).
@@ -160,6 +168,18 @@ fun PlayerScreen(
         }
     }
 
+    // D-06: pre-compute scrim brushes once per composition (stable reference)
+    val topScrimBrush = remember {
+        Brush.verticalGradient(
+            colors = listOf(Color.Black.copy(alpha = 0.7f), Color.Transparent),
+        )
+    }
+    val bottomScrimBrush = remember {
+        Brush.verticalGradient(
+            colors = listOf(Color.Transparent, Color(0xEB000000)),
+        )
+    }
+
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         // Media surface — drives `Surface.setFrameRate()` when the video
         // reports its fps, so the display compositor can schedule refresh
@@ -183,6 +203,24 @@ fun PlayerScreen(
         LaunchedEffect(state.videoFrameRate) {
             playerView?.let { applyVideoFrameRate(it, state.videoFrameRate) }
         }
+
+        // D-06 top scrim (90dp) — behind controls, above the media surface
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(90.dp)
+                .background(topScrimBrush)
+                .align(Alignment.TopCenter),
+        )
+
+        // D-06 bottom scrim (160dp) — behind controls, above the media surface
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+                .background(bottomScrimBrush)
+                .align(Alignment.BottomCenter),
+        )
 
         if (!locked) {
             // Gesture layer — tap / double-tap / horizontal drag
@@ -316,116 +354,138 @@ fun PlayerScreen(
                 }
             }
 
-            // Full control overlay (only when not locked)
-            if (!locked) {
-                AnimatedVisibility(
-                    visible = controlsVisible,
-                    enter =
-                        fadeIn(tween(220, easing = LinearOutSlowInEasing)) +
-                            slideInVertically(tween(220)) { it / 12 },
-                    exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
-                ) {
-                    PlayerControls(
-                        title =
-                            state.current
-                                ?.summary
-                                ?.displayTitle
-                                .orEmpty(),
-                        subtitle =
-                            state.current
-                                ?.summary
-                                ?.studio
-                                ?.name,
-                        queuePosition =
-                            state.queue?.let {
-                                if (it.items.size > 1) "${it.currentIndex + 1}/${it.items.size}" else null
-                            },
-                        isPlaying = state.isPlaying,
-                        shuffled = state.queue?.shuffled ?: false,
-                        repeatMode = state.queue?.repeatMode ?: RepeatMode.OFF,
-                        // Playhead state flow is observed inside TimelineBar so
-                        // ticks only recompose the bar, not the full control tree.
-                        positionFlow = viewModel.position,
-                        markers =
-                            state.current
-                                ?.markers
-                                .orEmpty()
-                                .toPersistentList(),
-                        playbackSpeed = state.playbackSpeed,
-                        canSkipPrev =
-                            state.queue?.let {
-                                it.currentIndex > 0 || it.repeatMode == RepeatMode.ALL
-                            } ?: false,
-                        canSkipNext =
-                            state.queue?.let {
-                                it.currentIndex < it.items.lastIndex || it.repeatMode != RepeatMode.OFF
-                            } ?: false,
-                        codecLabel = codecLabel(),
-                        rotationLocked = rotationLocked,
-                        resizeMode = resizeMode,
-                        doubleTapSeekSec = doubleTapSeekSec,
-                        showRemaining = showRemaining,
-                        onPlayPause = {
-                            val p = viewModel.player
-                            if (p.isPlaying) p.pause() else p.play()
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onNext = {
-                            viewModel.skipNext()
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onPrevious = {
-                            viewModel.skipPrevious()
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onShuffle = {
-                            viewModel.toggleShuffle()
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onRepeat = {
-                            viewModel.cycleRepeat()
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onSeek = { pos ->
-                            viewModel.seekTo(pos)
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onSeekBy = { delta ->
-                            viewModel.seekBy(delta)
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onPip = {
-                            activity?.let { enterPip(it) }
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onClose = onExit,
-                        onLock = {
-                            locked = true
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onToggleRotationLock = {
-                            rotationLocked = !rotationLocked
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onCycleResize = {
-                            resizeMode = nextResize(resizeMode)
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onCycleSpeed = {
-                            viewModel.cyclePlaybackSpeed()
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onToggleRemaining = {
-                            showRemaining = !showRemaining
-                            lastInteraction = System.currentTimeMillis()
-                        },
-                        onScreenshot = {
-                            // TODO: capture frame. MediaMetadataRetriever path works
-                            // but needs storage permission + URI handling — punting
-                            // to a follow-up pass since it's more than UI plumbing.
-                            viewModel.flashBanner("Screenshot — coming soon")
-                        },
+            // Bottom area: ChapterStrip + PlayerControls, anchored to bottom
+            // D-05/SPINE-11: ChapterStrip sits above the transport controls as a sibling.
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth(),
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Bottom,
+            ) {
+                // ChapterStrip — only visible when controls are visible (same guard as PlayerControls)
+                if (!locked && controlsVisible && state.current?.markers.orEmpty().isNotEmpty()) {
+                    ChapterStrip(
+                        markers = state.current?.markers.orEmpty().toPersistentList(),
+                        positionMs = position.positionMs,   // use already-collected val — do NOT re-collect
+                        durationMs = position.durationMs,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp)
+                            .navigationBarsPadding(),       // T-05-10 mitigation: avoid nav-bar clipping
                     )
+                }
+
+                // Full control overlay (only when not locked)
+                if (!locked) {
+                    AnimatedVisibility(
+                        visible = controlsVisible,
+                        enter =
+                            fadeIn(tween(220, easing = LinearOutSlowInEasing)) +
+                                slideInVertically(tween(220)) { it / 12 },
+                        exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
+                    ) {
+                        PlayerControls(
+                            title =
+                                state.current
+                                    ?.summary
+                                    ?.displayTitle
+                                    .orEmpty(),
+                            subtitle =
+                                state.current
+                                    ?.summary
+                                    ?.studio
+                                    ?.name,
+                            queuePosition =
+                                state.queue?.let {
+                                    if (it.items.size > 1) "${it.currentIndex + 1}/${it.items.size}" else null
+                                },
+                            isPlaying = state.isPlaying,
+                            shuffled = state.queue?.shuffled ?: false,
+                            repeatMode = state.queue?.repeatMode ?: RepeatMode.OFF,
+                            // Playhead state flow is observed inside TimelineBar so
+                            // ticks only recompose the bar, not the full control tree.
+                            positionFlow = viewModel.position,
+                            markers =
+                                state.current
+                                    ?.markers
+                                    .orEmpty()
+                                    .toPersistentList(),
+                            playbackSpeed = state.playbackSpeed,
+                            canSkipPrev =
+                                state.queue?.let {
+                                    it.currentIndex > 0 || it.repeatMode == RepeatMode.ALL
+                                } ?: false,
+                            canSkipNext =
+                                state.queue?.let {
+                                    it.currentIndex < it.items.lastIndex || it.repeatMode != RepeatMode.OFF
+                                } ?: false,
+                            codecLabel = codecLabel(),
+                            rotationLocked = rotationLocked,
+                            resizeMode = resizeMode,
+                            doubleTapSeekSec = doubleTapSeekSec,
+                            showRemaining = showRemaining,
+                            onPlayPause = {
+                                val p = viewModel.player
+                                if (p.isPlaying) p.pause() else p.play()
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onNext = {
+                                viewModel.skipNext()
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onPrevious = {
+                                viewModel.skipPrevious()
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onShuffle = {
+                                viewModel.toggleShuffle()
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onRepeat = {
+                                viewModel.cycleRepeat()
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onSeek = { pos ->
+                                viewModel.seekTo(pos)
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onSeekBy = { delta ->
+                                viewModel.seekBy(delta)
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onPip = {
+                                activity?.let { enterPip(it) }
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onClose = onExit,
+                            onLock = {
+                                locked = true
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onToggleRotationLock = {
+                                rotationLocked = !rotationLocked
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onCycleResize = {
+                                resizeMode = nextResize(resizeMode)
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onCycleSpeed = {
+                                viewModel.cyclePlaybackSpeed()
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onToggleRemaining = {
+                                showRemaining = !showRemaining
+                                lastInteraction = System.currentTimeMillis()
+                            },
+                            onScreenshot = {
+                                // TODO: capture frame. MediaMetadataRetriever path works
+                                // but needs storage permission + URI handling — punting
+                                // to a follow-up pass since it's more than UI plumbing.
+                                viewModel.flashBanner("Screenshot — coming soon")
+                            },
+                        )
+                    }
                 }
             }
         }
