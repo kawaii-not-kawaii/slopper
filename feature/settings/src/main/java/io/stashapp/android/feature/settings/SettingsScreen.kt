@@ -49,10 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.stashapp.android.core.data.prefs.PlayerPreferences
 import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.designsystem.theme.JetBrainsMono
@@ -60,34 +57,8 @@ import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
-import io.stashapp.android.core.domain.ConnectionRepository
 import io.stashapp.android.feature.player.CodecCapabilities
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-@HiltViewModel
-class SettingsViewModel
-    @Inject
-    constructor(
-        private val connectionRepository: ConnectionRepository,
-        val playerPrefs: PlayerPreferences,
-        val uiPrefs: UiPreferences,
-    ) : ViewModel() {
-        fun disconnect(onDone: () -> Unit) {
-            viewModelScope.launch {
-                connectionRepository.disconnect()
-                onDone()
-            }
-        }
-
-        fun <T> setPlayer(setter: suspend PlayerPreferences.() -> Unit) {
-            viewModelScope.launch { playerPrefs.setter() }
-        }
-
-        fun <T> setUi(setter: suspend UiPreferences.() -> Unit) {
-            viewModelScope.launch { uiPrefs.setter() }
-        }
-    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

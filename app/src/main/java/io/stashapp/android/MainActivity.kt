@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,9 +56,11 @@ import io.stashapp.android.feature.player.PlayerScreen
 import io.stashapp.android.feature.settings.SettingsScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -71,6 +74,9 @@ class RootViewModel
     ) : ViewModel() {
         private val _start = MutableStateFlow<String?>(null)
         val start: StateFlow<String?> = _start.asStateFlow()
+
+        val accentPalette: StateFlow<String> = uiPreferences.accentPalette
+            .stateIn(viewModelScope, SharingStarted.Eagerly, "sage")
 
         init {
             viewModelScope.launch {
@@ -103,8 +109,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         requestHighestRefreshRate()
         setContent {
-            StashTheme {
-                val rootViewModel: RootViewModel = hiltViewModel()
+            val rootViewModel: RootViewModel = hiltViewModel()
+            val accentName by rootViewModel.accentPalette.collectAsStateWithLifecycle()
+            StashTheme(accentName = accentName) {
                 StashAppContent(rootViewModel = rootViewModel, appReady = appReady)
             }
         }
