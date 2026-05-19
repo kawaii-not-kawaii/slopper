@@ -1,6 +1,5 @@
 package io.stashapp.android.core.ui.nav
 
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -42,9 +41,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlurEffect
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -134,14 +130,6 @@ fun MainBottomBar(
 ) {
     val visibleItems = visibleIds.mapNotNull { id -> MainNavItems.All.find { it.id == id } }
 
-    val blurModifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        Modifier.graphicsLayer {
-            renderEffect = BlurEffect(20f, 20f, TileMode.Clamp)
-        }
-    } else {
-        Modifier
-    }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,7 +138,7 @@ fun MainBottomBar(
         contentAlignment = Alignment.Center,
     ) {
         Row(
-            modifier = blurModifier
+            modifier = Modifier
                 .background(
                     color = SpineColors.Surface.copy(alpha = 0.92f),
                     shape = RoundedCornerShape(16.dp),
