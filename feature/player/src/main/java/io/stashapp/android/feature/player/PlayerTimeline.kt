@@ -263,6 +263,52 @@ internal fun BannerPill(text: String) {
     }
 }
 
+/**
+ * Spine chapter strip — Canvas-based proportional segment bar.
+ *
+ * Renders a horizontal track divided into segments by [markers]. Each segment
+ * is filled with AccentPrimary if it has been played (start < playedFraction),
+ * otherwise with a low-opacity white. A 4dp gap is placed between segments.
+ */
+@Composable
+internal fun ChapterStrip(
+    markers: ImmutableList<Marker>,
+    positionMs: Long,
+    durationMs: Long,
+    modifier: Modifier = Modifier,
+) {
+    if (markers.isEmpty() || durationMs <= 0) return
+    val density = LocalDensity.current
+    androidx.compose.foundation.Canvas(modifier.height(24.dp)) {
+        val segmentGap = with(density) { 4.dp.toPx() }
+        val trackH = with(density) { 3.dp.toPx() }
+        val centerY = size.height / 2f
+        val playedFraction = (positionMs.toFloat() / durationMs).coerceIn(0f, 1f)
+
+        val sortedMarkers = markers.sortedBy { it.seconds }
+        val boundaries = buildList {
+            add(0f)
+            sortedMarkers.forEach { m ->
+                add((m.seconds / (durationMs / 1000.0)).toFloat().coerceIn(0f, 1f))
+            }
+            add(1f)
+        }
+
+        boundaries.zipWithNext().forEach { (start, end) ->
+            val segStart = size.width * start + if (start > 0f) segmentGap / 2 else 0f
+            val segEnd = size.width * end - if (end < 1f) segmentGap / 2 else 0f
+            val segW = (segEnd - segStart).coerceAtLeast(0f)
+            val isPlayed = start < playedFraction
+
+            drawRect(
+                color = if (isPlayed) SpineColors.AccentPrimary else Color.White.copy(alpha = 0.18f),
+                topLeft = androidx.compose.ui.geometry.Offset(segStart, centerY - trackH / 2),
+                size = androidx.compose.ui.geometry.Size(segW, trackH),
+            )
+        }
+    }
+}
+
 // ---- Helpers ----------------------------------------------------------------
 
 internal fun formatDuration(ms: Long): String {
