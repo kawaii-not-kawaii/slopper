@@ -267,6 +267,18 @@ find feature -path '*/src/*Test/*ScreenSmokeTest.kt' | wc -l
 Plans:
 - [x] TBD (run /gsd-plan-phase 5 to break down) (completed 2026-05-19)
 
+### Phase 6: SETTINGS-V3 (Hub + Drill-Down Settings Redesign)
+
+**Goal:** Replace the single-scroll SettingsScreen with v3.0 hub + drill-down: landing hub with server status card + quick search + grouped HubRows; 7 detail pages (Playback, Quality & codecs, Display, Library, Server, About, Search overlay); new CSlider/HubRow/DRow components.
+
+**Depends on:** Phase 5 (Spine tokens, SpineColors, typography)
+**Requirements:** SETTINGS-01..11
+
+**Suggested Plans:**
+- **Plan 6.1** — Hub landing + sub-navigation + new components (SETTINGS-01, 02, 03, 04, 05)
+- **Plan 6.2** — Detail pages (SETTINGS-06..10)
+- **Plan 6.3** — Settings search overlay + smoke test updates (SETTINGS-11)
+
 ---
 
 ## Cross-Phase Dependencies

@@ -1173,3 +1173,124 @@ command_manifest:
     tracker_synced: false
     completed_at: null
     tracker_comment_url: null
+
+---
+
+## Phase 6 — SETTINGS-V3 (Hub + Drill-Down Settings Redesign)
+ui: true
+phase_name: "SETTINGS-V3 — Hub + Drill-Down Settings Redesign"
+phase_dir: .planning/phases/06-settings-redesign
+state: phase_6_active
+assumptions_open: 0
+cc_concerns_cleared: false
+advisory_notes: []
+accepted_risks: []
+issue_number: 8
+issue_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/8
+command_manifest:
+  - step: 1
+    cmd: "/gsd-spec-phase 6"
+    output_file: ".planning/phases/06-settings-redesign/06-SPEC.md"
+    gate_file: "gates/spec.md"
+    status: complete
+    gate_passed: true
+    tracker_synced: true
+    completed_at: 2026-05-19T13:25:00+09:00
+    tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/8#issuecomment-482
+    commit: pending
+    requirement_count: 11
+    ambiguity_score: 0.120
+    notes:
+      - "v3.0 design handoff — hub+7-detail-pages fully specced"
+      - "Current state: 579-line single-scroll SettingsScreen.kt"
+      - "New: CSlider, DRow, HubRow components; 6 sub-routes; palette picker; settings search"
+  - step: 2
+    cmd: "/gsd-discuss-phase 6"
+    output_file: ".planning/phases/06-settings-redesign/06-CONTEXT.md"
+    gate_file: "gates/discuss.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 3
+    cmd: "/gsd-plan-phase 6"
+    output_file_glob: ".planning/phases/06-settings-redesign/06*-PLAN.md"
+    gate_file: "gates/plan.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 4
+    cmd: "/gsd-review --phase 6 --all"
+    output_file: ".planning/phases/06-settings-redesign/06-REVIEWS.md"
+    gate_file: "gates/review.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 5
+    cmd: "/gsd-execute-phase 6"
+    output_file: ".planning/phases/06-settings-redesign/VERIFICATION.md"
+    gate_file: "gates/execute.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 6
+    cmd: "/gsd-verify-work 6"
+    output_file: ".planning/phases/06-settings-redesign/06-UAT.md"
+    gate_file: "gates/verify.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 7
+    cmd: "/gsd-extract-learnings 6"
+    output_file: ".planning/phases/06-settings-redesign/06-LEARNINGS.md"
+    gate_file: "gates/learnings.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 8
+    cmd: "/gsd-secure-phase 6"
+    output_file_glob: ".planning/phases/06-settings-redesign/*SECURITY*"
+    gate_file: "gates/security.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 9
+    cmd: "/gsd-validate-phase 6"
+    output_file_glob: ".planning/phases/06-settings-redesign/*VALIDATION*"
+    gate_file: "gates/validation.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 10
+    cmd: "/gsd-docs-update 6"
+    output_marker: "docs_updated_at"
+    gate_file: "gates/docs.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
+  - step: 11
+    cmd: "/gsd-ship 6"
+    output_marker: "pr_merged_at"
+    gate_file: "gates/ship.md"
+    status: pending
+    gate_passed: false
+    tracker_synced: false
+    completed_at: null
+    tracker_comment_url: null
