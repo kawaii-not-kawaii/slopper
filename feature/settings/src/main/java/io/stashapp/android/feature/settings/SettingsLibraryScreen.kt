@@ -186,7 +186,7 @@ fun SettingsLibraryScreen(
                                 .padding(horizontal = 14.dp, vertical = 8.dp),
                         ) {
                             Text(
-                                text = "Clear image cache · $cacheMb MB used",
+                                text = "Clear image cache · up to $cacheMb MB",
                                 style = MetaMono,
                                 color = SpineColors.AccentCool,
                             )
