@@ -279,7 +279,7 @@ Plans:
 Plans:
 - [x] 06.1-PLAN.md — Foundation: prefs + ViewModel + AccentColors + CSlider + DRow + sub-routes + hub landing (SETTINGS-01..05)
 - [x] 06.2-PLAN.md — Detail pages: Playback, Codecs, Display, Library, Server, About (SETTINGS-06..10)
-- [ ] 06.3-PLAN.md — Settings search overlay + smoke test updates (SETTINGS-11)
+- [x] 06.3-PLAN.md — Settings search overlay + smoke test updates (SETTINGS-11)
 
 ---
 
