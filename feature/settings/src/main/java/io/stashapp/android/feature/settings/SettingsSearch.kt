@@ -48,6 +48,7 @@ val SettingsSearchIndex: List<SettingsSearchEntry> = listOf(
     SettingsSearchEntry("Long-press behavior", "Action on long-pressing a scene card", "Display · Library layout", Routes.SettingsDisplay),
     SettingsSearchEntry("Rating on cards", "Show star rating overlay on scene thumbnails", "Display · Card chrome", Routes.SettingsDisplay),
     SettingsSearchEntry("Play count on cards", "Show view count badge on scene thumbnails", "Display · Card chrome", Routes.SettingsDisplay),
+    SettingsSearchEntry("Resolution badge", "Show resolution label on scene thumbnail cards", "Display · Card chrome", Routes.SettingsDisplay),
     SettingsSearchEntry("Resume bar", "Show progress bar at the bottom of watched scene cards", "Display · Card chrome", Routes.SettingsDisplay),
     SettingsSearchEntry("Studio caption", "Show studio name below scene thumbnails", "Display · Card chrome", Routes.SettingsDisplay),
     SettingsSearchEntry("Chapter strip", "Show proportional chapter markers above the player timeline", "Display · Player", Routes.SettingsDisplay),
