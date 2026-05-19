@@ -109,6 +109,8 @@ fun PlayerScreen(
     var scrubPreview by remember { mutableStateOf<ScrubPreview?>(null) }
     var stepLeft by remember { mutableStateOf<StepSeek?>(null) }
     var stepRight by remember { mutableStateOf<StepSeek?>(null) }
+    // D-11: right-anchored player settings panel
+    var showSettingsPanel by remember { mutableStateOf(false) }
 
     // Force landscape unless rotation is locked to the current orientation.
     DisposableEffect(activity, rotationLocked) {
@@ -483,11 +485,30 @@ fun PlayerScreen(
                                 // to a follow-up pass since it's more than UI plumbing.
                                 viewModel.flashBanner("Screenshot — coming soon")
                             },
+                            onToggleSettings = {
+                                showSettingsPanel = !showSettingsPanel
+                                lastInteraction = System.currentTimeMillis()
+                            },
                         )
                     }
                 }
             }
         }
+
+        // D-11: PlayerSettingsPanel — right-anchored, ~40% landscape width, slides in from right
+        PlayerSettingsPanel(
+            visible = showSettingsPanel,
+            playbackSpeed = state.playbackSpeed,
+            onSpeedChange = { speed ->
+                viewModel.setPlaybackSpeed(speed)
+                lastInteraction = System.currentTimeMillis()
+            },
+            onDismiss = {
+                showSettingsPanel = false
+                lastInteraction = System.currentTimeMillis()
+            },
+            modifier = Modifier.align(Alignment.CenterEnd),
+        )
     }
 }
 

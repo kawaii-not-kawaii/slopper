@@ -213,6 +213,12 @@ class PlayerViewModel
             return target - before
         }
 
+        /** Set playback speed directly (used by PlayerSettingsPanel). */
+        fun setPlaybackSpeed(speed: Float) {
+            player.setPlaybackSpeed(speed)
+            _state.update { it.copy(playbackSpeed = speed) }
+        }
+
         /** Cycle through the speed presets. Returns the new speed. */
         fun cyclePlaybackSpeed(): Float {
             val presets = PLAYBACK_SPEEDS

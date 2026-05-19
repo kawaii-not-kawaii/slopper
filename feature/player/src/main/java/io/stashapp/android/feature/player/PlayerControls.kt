@@ -44,6 +44,7 @@ import androidx.compose.material.icons.filled.ScreenRotation
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -109,6 +110,7 @@ internal fun PlayerControls(
     onCycleSpeed: () -> Unit,
     onToggleRemaining: () -> Unit,
     onScreenshot: () -> Unit,
+    onToggleSettings: () -> Unit = {},
 ) {
     // Note: outer wrap in PlayerScreen Box(safeDrawingPadding()) already
     // handles system-bar inset for the entire control overlay layer per
@@ -202,6 +204,7 @@ internal fun PlayerControls(
                     CodecBadge(codecLabel)
                     SpeedPill(playbackSpeed, onCycleSpeed)
                     PipChip(onClick = onPip)
+                    SettingsChip(onClick = onToggleSettings)
                 }
             }
 
@@ -449,6 +452,33 @@ private fun SpeedPill(
             Text(
                 PlayerViewModel.formatSpeed(speed),
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsChip(onClick: () -> Unit) {
+    Surface(
+        color = SpineColors.SurfaceTop.copy(alpha = 0.85f),
+        contentColor = Color.White,
+        shape = TopChipShape,
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = Color.White.copy(alpha = 0.25f),
+            ),
+        modifier =
+            Modifier
+                .height(TopChipHeight)
+                .widthIn(min = TopChipMinWidth)
+                .clickable(onClick = onClick),
+    ) {
+        Box(Modifier.fillMaxHeight().padding(horizontal = 10.dp), contentAlignment = Alignment.Center) {
+            Icon(
+                Icons.Filled.Settings,
+                contentDescription = "Player settings",
+                modifier = Modifier.size(20.dp),
             )
         }
     }
