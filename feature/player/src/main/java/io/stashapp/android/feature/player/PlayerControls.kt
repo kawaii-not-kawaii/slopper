@@ -11,6 +11,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Forward10
@@ -60,6 +62,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import io.stashapp.android.core.designsystem.theme.ShapeMedium
 import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.RepeatMode
@@ -316,11 +319,15 @@ private fun PlayPauseFlat(
     isPlaying: Boolean,
     onClick: () -> Unit,
 ) {
-    // Flat, no circle wrapper — matches MX Player. AnimatedContent gives the
-    // icon swap a bit of motion so it doesn't feel too austere.
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.size(64.dp),
+    // Spine 52dp AccentPrimary play/pause button (SPINE-11, D-transport).
+    // ShapeMedium (10dp radius) per design handoff.
+    Box(
+        modifier = Modifier
+            .size(52.dp)
+            .clip(ShapeMedium)
+            .background(SpineColors.AccentPrimary)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
     ) {
         AnimatedContent(
             targetState = isPlaying,
@@ -333,8 +340,8 @@ private fun PlayPauseFlat(
             Icon(
                 if (playing) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                 contentDescription = if (playing) "Pause" else "Play",
-                tint = Color.White,
-                modifier = Modifier.size(52.dp),
+                tint = SpineColors.AccentOnPrimary,
+                modifier = Modifier.size(28.dp),
             )
         }
     }
