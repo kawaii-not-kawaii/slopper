@@ -169,7 +169,6 @@ class UiPreferences
 
         // ---- Helpers -------------------------------------------------------------
 
-        @Suppress("UNCHECKED_CAST")
         private fun <T> flow(
             key: androidx.datastore.preferences.core.Preferences.Key<T>,
             default: T,
