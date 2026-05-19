@@ -53,7 +53,13 @@ import io.stashapp.android.feature.detail.DetailScreen
 import io.stashapp.android.feature.home.HomeScreen
 import io.stashapp.android.feature.library.LibraryScreen
 import io.stashapp.android.feature.player.PlayerScreen
+import io.stashapp.android.feature.settings.SettingsAboutScreen
+import io.stashapp.android.feature.settings.SettingsCodecsScreen
+import io.stashapp.android.feature.settings.SettingsDisplayScreen
+import io.stashapp.android.feature.settings.SettingsLibraryScreen
+import io.stashapp.android.feature.settings.SettingsPlaybackScreen
 import io.stashapp.android.feature.settings.SettingsScreen
+import io.stashapp.android.feature.settings.SettingsServerScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -439,10 +445,39 @@ private fun AppNavHost(
                         popUpTo(0) { inclusive = true }
                     }
                 },
-                onBrowsePerformers = { navController.navigate(Routes.browse("performers")) },
-                onBrowseStudios = { navController.navigate(Routes.browse("studios")) },
-                onBrowseTags = { navController.navigate(Routes.browse("tags")) },
+                onPlaybackClick = { navController.navigate(Routes.SettingsPlayback) },
+                onCodecsClick   = { navController.navigate(Routes.SettingsCodecs) },
+                onDisplayClick  = { navController.navigate(Routes.SettingsDisplay) },
+                onLibraryClick  = { navController.navigate(Routes.SettingsLibrary) },
+                onServerClick   = { navController.navigate(Routes.SettingsServer) },
+                onAboutClick    = { navController.navigate(Routes.SettingsAbout) },
             )
+        }
+
+        composable(Routes.SettingsPlayback) {
+            SettingsPlaybackScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.SettingsCodecs) {
+            SettingsCodecsScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.SettingsDisplay) {
+            SettingsDisplayScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.SettingsLibrary) {
+            SettingsLibraryScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.SettingsServer) {
+            SettingsServerScreen(
+                onBack = { navController.popBackStack() },
+                onDisconnected = {
+                    navController.navigate(Routes.Connection) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+            )
+        }
+        composable(Routes.SettingsAbout) {
+            SettingsAboutScreen(onBack = { navController.popBackStack() })
         }
     }
 }
