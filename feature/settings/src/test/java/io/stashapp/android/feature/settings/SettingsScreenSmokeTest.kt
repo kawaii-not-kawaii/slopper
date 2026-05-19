@@ -12,6 +12,8 @@ import org.junit.jupiter.api.TestInstance
  * class — it exposes PlayerPreferences and UiPreferences directly as DataStore
  * flows. These tests confirm the module compiles and the ViewModel class contract
  * is accessible.
+ *
+ * Plan 6.3 additions: SettingsSearchIndex and SettingsSearchEntry smoke tests.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SettingsScreenSmokeTest {
@@ -25,6 +27,21 @@ class SettingsScreenSmokeTest {
     @Test
     fun `SettingsViewModel class simple name is correct`() {
         assertEquals("SettingsViewModel", SettingsViewModel::class.simpleName)
+    }
+
+    @Test
+    fun `SettingsSearchIndex is non-empty`() {
+        assert(SettingsSearchIndex.isNotEmpty())
+        assert(SettingsSearchIndex.size >= 20)
+    }
+
+    @Test
+    fun `SettingsSearchEntry fields are accessible`() {
+        val entry = SettingsSearchIndex.first()
+        assertNotNull(entry.label)
+        assertNotNull(entry.hint)
+        assertNotNull(entry.breadcrumb)
+        assertNotNull(entry.route)
     }
 
     private fun assertEquals(
