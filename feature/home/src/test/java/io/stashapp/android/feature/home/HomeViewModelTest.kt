@@ -31,7 +31,10 @@ class HomeViewModelTest {
 
     @Test
     fun `HomeRailKind entries are all represented`() {
-        val kinds = HomeUiState.Initial.rails.map { it.kind }.toSet()
+        val kinds =
+            HomeUiState.Initial.rails
+                .map { it.kind }
+                .toSet()
         assertEquals(HomeRailKind.entries.toSet(), kinds)
     }
 }

@@ -23,7 +23,11 @@ class SettingsViewModelTest {
         assertEquals("SettingsViewModel", SettingsViewModel::class.simpleName)
     }
 
-    private fun assertEquals(expected: String, actual: String?) {
-        org.junit.jupiter.api.Assertions.assertEquals(expected, actual)
+    private fun assertEquals(
+        expected: String,
+        actual: String?,
+    ) {
+        org.junit.jupiter.api.Assertions
+            .assertEquals(expected, actual)
     }
 }

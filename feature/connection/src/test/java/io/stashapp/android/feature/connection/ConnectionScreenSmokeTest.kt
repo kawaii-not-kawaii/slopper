@@ -34,11 +34,12 @@ class ConnectionScreenSmokeTest {
 
     @Test
     fun `ConnectionUiState with error represents failed test state`() {
-        val state = ConnectionUiState(
-            baseUrl = "http://192.168.1.10:9999",
-            testing = false,
-            error = "Can't reach server: Connection refused",
-        )
+        val state =
+            ConnectionUiState(
+                baseUrl = "http://192.168.1.10:9999",
+                testing = false,
+                error = "Can't reach server: Connection refused",
+            )
         assertNotNull(state.error)
         assertFalse(state.testing)
     }
