@@ -1,40 +1,50 @@
 package io.stashapp.android.feature.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.Refresh
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.stashapp.android.core.designsystem.component.SceneCard
+import io.stashapp.android.core.designsystem.component.SpineResumeCard
 import io.stashapp.android.core.designsystem.component.resolutionLabel
+import io.stashapp.android.core.designsystem.theme.MetaMono
+import io.stashapp.android.core.designsystem.theme.ShapeSmall
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.SceneSummary
 import kotlinx.collections.immutable.ImmutableList
 
@@ -45,8 +55,9 @@ import kotlinx.collections.immutable.ImmutableList
  *
  * Each rail is horizontally scrollable. Tapping a card opens scene detail;
  * long-pressing launches the player with that rail as the queue.
+ *
+ * Top bar is an inline Row (Spine design) — no TopAppBar/Scaffold topBar.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onSceneClick: (sceneId: String) -> Unit,
@@ -57,37 +68,110 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Home") },
-                actions = {
-                    IconButton(onClick = viewModel::load) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Refresh")
-                    }
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Settings")
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                    ),
-            )
-        },
+        containerColor = MaterialTheme.colorScheme.background,
     ) { inner ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding =
-                PaddingValues(
-                    top = inner.calculateTopPadding() + 8.dp,
-                    bottom = inner.calculateBottomPadding() + 16.dp,
-                ),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            contentPadding = PaddingValues(
+                top = inner.calculateTopPadding(),
+                bottom = inner.calculateBottomPadding() + 16.dp,
+            ),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
+            // Inline Spine top bar — replaces TopAppBar
+            item(key = "top_bar") {
+                SpineTopBar(
+                    onSearchClick = { /* TODO: wire to search */ },
+                    onRefreshClick = viewModel::load,
+                )
+            }
+
+            // SpineResumeCard slot — gated on resume state
+            // TODO: wire to HomeUiState.resumeScene once that field is added
+            if (false) {
+                item(key = "resume_card") {
+                    SpineResumeCard(
+                        thumbnailUrl = "",
+                        title = "",
+                        studio = null,
+                        remainingLabel = "",
+                        progress = 0f,
+                        onClick = {},
+                        modifier = Modifier.padding(horizontal = 18.dp),
+                    )
+                }
+            }
+
             items(
                 items = state.rails,
                 key = { it.kind.name },
-            ) { rail -> HomeRailRow(rail, onSceneClick, onPlayQueue) }
+            ) { rail ->
+                HomeRailRow(rail, onSceneClick, onPlayQueue)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SpineTopBar(
+    onSearchClick: () -> Unit,
+    onRefreshClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp, start = 18.dp, end = 18.dp, bottom = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // Logo: rotated-diamond accent shape
+        Box(
+            modifier = Modifier
+                .size(22.dp)
+                .rotate(45f)
+                .clip(ShapeSmall)
+                .background(SpineColors.AccentPrimary),
+        )
+        Spacer(Modifier.width(8.dp))
+        Text("Slopper", style = MaterialTheme.typography.titleLarge)
+
+        // Server name badge — no server field in HomeUiState yet; omit when blank
+        val serverHost = "" // TODO: wire from HomeUiState once server field is added
+        if (serverHost.isNotBlank()) {
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = serverHost,
+                style = MetaMono,
+                color = SpineColors.OnSurfaceVariant,
+                modifier = Modifier
+                    .background(SpineColors.Surface, RoundedCornerShape(4.dp))
+                    .border(1.dp, SpineColors.Border, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp),
+            )
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        IconButton(
+            onClick = onSearchClick,
+            modifier = Modifier.size(32.dp),
+        ) {
+            Icon(
+                Icons.Outlined.Search,
+                contentDescription = "Search",
+                tint = SpineColors.OnSurfaceVariant,
+                modifier = Modifier.size(18.dp),
+            )
+        }
+        IconButton(
+            onClick = onRefreshClick,
+            modifier = Modifier.size(32.dp),
+        ) {
+            Icon(
+                Icons.Outlined.Refresh,
+                contentDescription = "Refresh",
+                tint = SpineColors.OnSurfaceVariant,
+                modifier = Modifier.size(18.dp),
+            )
         }
     }
 }
@@ -103,12 +187,37 @@ private fun HomeRailRow(
     if (!rail.loading && rail.scenes.isEmpty() && rail.error == null) return
 
     Column {
-        Text(
-            rail.kind.title,
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
+        // Spine-styled section header: title + count badge + chevron
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                rail.kind.title,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+            )
+            Spacer(Modifier.width(6.dp))
+            if (!rail.loading && rail.scenes.isNotEmpty()) {
+                Text(
+                    text = "${rail.scenes.size}",
+                    style = MetaMono,
+                    color = SpineColors.OnSurfaceMuted,
+                    modifier = Modifier
+                        .background(SpineColors.Surface, RoundedCornerShape(3.dp))
+                        .padding(horizontal = 5.dp, vertical = 1.dp),
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            Icon(
+                Icons.Outlined.ChevronRight,
+                contentDescription = null,
+                tint = SpineColors.OnSurfaceFaint,
+                modifier = Modifier.size(16.dp),
+            )
+        }
+
         Spacer(Modifier.height(10.dp))
 
         when {
@@ -122,7 +231,9 @@ private fun HomeRailRow(
 @Composable
 private fun RailLoading() {
     Box(
-        Modifier.fillMaxWidth().height(140.dp),
+        Modifier
+            .fillMaxWidth()
+            .height(140.dp),
         contentAlignment = Alignment.Center,
     ) { CircularProgressIndicator(strokeWidth = 2.dp) }
 }
@@ -130,7 +241,10 @@ private fun RailLoading() {
 @Composable
 private fun RailError(message: String) {
     Box(
-        Modifier.fillMaxWidth().height(80.dp).padding(horizontal = 16.dp),
+        Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(horizontal = 18.dp),
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(
@@ -149,8 +263,8 @@ private fun RailScenes(
 ) {
     val ids = scenes.map { it.id }
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(horizontal = 18.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         items(count = scenes.size, key = { scenes[it].id }) { index ->
             val scene = scenes[index]
@@ -160,7 +274,7 @@ private fun RailScenes(
                     val pos = scene.resumeTimeSeconds
                     if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
                 }
-            Box(Modifier.width(220.dp)) {
+            Box(Modifier.width(180.dp)) {
                 SceneCard(
                     title = scene.displayTitle,
                     screenshotUrl = scene.screenshotUrl,
