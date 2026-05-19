@@ -61,9 +61,10 @@ class SettingsViewModel
         }
 
         // --- Search (SETTINGS-11, wired by Plan 6.3) ---
-        val searchQuery = MutableStateFlow("")
+        private val _searchQuery = MutableStateFlow("")
+        val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-        val searchResults: StateFlow<List<SettingsSearchEntry>> = searchQuery
+        val searchResults: StateFlow<List<SettingsSearchEntry>> = _searchQuery
             .map { q ->
                 if (q.isBlank()) emptyList()
                 else SettingsSearchIndex.filter { entry ->
@@ -73,7 +74,7 @@ class SettingsViewModel
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
         fun updateSearchQuery(query: String) {
-            searchQuery.value = query
+            _searchQuery.value = query
         }
 
         init {
