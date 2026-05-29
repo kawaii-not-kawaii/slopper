@@ -1,7 +1,15 @@
+---
+status: passed
+phase: 03-perf-measured-wins
+verdict: PASS-WITH-NOTES
+resolution: "Code-level verification passed (8/10 SPEC bullets COVERED). Device-dependent macrobench measurement deferred-accepted at v1.0 close — see 03-UAT-DEFERRED.md."
+updated: 2026-05-29
+---
+
 # Phase 3 PERF — UAT
 
 **Phase:** 3 — PERF (Measured Wins)
-**Status:** PASS-WITH-NOTES — UAT deferred to end-of-milestone
+**Status:** PASS-WITH-NOTES — code verified; device perf deferred-accepted at v1.0 close
 **Date:** 2026-05-19
 **Mode:** Deferred (all human testing batched per user instruction)
 

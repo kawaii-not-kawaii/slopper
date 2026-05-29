@@ -233,9 +233,11 @@ All journeys gate-checked with `device.waitForIdle()` between steps. If a journe
 
 </code_context>
 
-## Open Questions (resolved for planning)
+## Resolved Questions
 
-| # | Question | Decision |
+_All gray areas resolved during planning (auto-mode); none remained open at execution. Status: RESOLVED._
+
+| # | Question | Decision (RESOLVED) |
 |---|----------|----------|
 | 1 | GMD API level? | API 34 / Pixel 6 / google_apis |
 | 2 | Stability reports DSL for Kotlin 2.2.20? | `ComposeCompilerGradlePluginExtension.reportsDestination` — verify exact API against Kotlin 2.2.20 Compose Compiler plugin |

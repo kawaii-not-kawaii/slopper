@@ -1,6 +1,13 @@
+---
+status: deferred-accepted
+phase: 03-perf-measured-wins
+resolution: "Macrobenchmark execution + benchmark output capture accepted as carried tech debt at v1.0 close. Code-level PERF infrastructure verified (8/10 SPEC bullets, see 03-UAT.md). Device-dependent perf measurement deferred to a future PERF-validation pass."
+updated: 2026-05-29
+---
+
 # Phase 3 PERF — Deferred UAT
 
-**Status:** DEFERRED — awaiting end-of-milestone device testing session
+**Status:** DEFERRED-ACCEPTED at v1.0 close — macrobench execution carried as tech debt.
 **Deferred by:** D-09 (Plan 3.3 human checkpoint per CONTEXT.md)
 **Acceptance gate:** PERF-06, PERF-07, PERF-08 outputs required before Phase 3 PR is merged
 **Created:** 2026-05-18

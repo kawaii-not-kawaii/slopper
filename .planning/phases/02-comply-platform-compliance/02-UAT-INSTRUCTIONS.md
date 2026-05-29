@@ -1,6 +1,14 @@
+---
+status: resolved
+phase: 02-comply-platform-compliance
+kind: reference-doc
+resolution: "Reference/how-to only. Actual Phase 2 UAT completed in 02-UAT.md (verbal PASS on Galaxy S23+ / Android 16). This instructions doc is superseded."
+updated: 2026-05-29
+---
+
 # Phase 2 — UAT Capture Instructions (Task 4 of Plan 02.2)
 
-**Status:** Awaiting human action.
+**Status:** RESOLVED — reference doc; UAT executed in `02-UAT.md` (verbal PASS on S23+).
 **Branch:** `phase-2/comply-platform-compliance`
 **Build SHA:** `9c65e91`
 **Build state:** `./gradlew --configuration-cache assembleDebug` green.
