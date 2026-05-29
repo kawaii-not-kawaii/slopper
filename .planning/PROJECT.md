@@ -87,5 +87,17 @@ This document evolves at phase transitions and milestone boundaries.
 3. Audit Out of Scope — reasons still valid?
 4. Update Context with current state
 
+## Current State
+
+**Shipped:** v1.0 Modernization (2026-05-29) — 6 phases, 17 plans, ~24.7K LOC Kotlin.
+DEPS → COMPLY → PERF → POLISH → SPINE → SETTINGS-V3 all complete and verified.
+Build green; running on Galaxy S23+ (Android 16). Device UAT passed for Phases 2 & 6.
+
+**Carried tech debt:** AGP 9 / compileSdk 36 (DEPS-17, blocked on Hilt), macrobench execution (Phase 3),
+formal visual screenshot audit (Phase 5), COMPLY-07-3BTN, COMPLY-02-NAV-EVENT, WR-02 ViewModel interface refactor.
+
+**Next milestone goals:** TBD — start with `/gsd-new-milestone`. Candidate themes: AGP 9 toolchain
+(once Hilt supports it), background playback (BG-MEDIA / MediaSessionService), measured perf validation pass.
+
 ---
-*Last updated: 2026-05-19 — Phase 6 (SETTINGS-V3) complete. All 6 milestone phases executed: DEPS → COMPLY → PERF → POLISH → SPINE → SETTINGS-V3. Awaiting milestone completion (/gsd-complete-milestone).*
+*Last updated: 2026-05-29 after v1.0 Modernization milestone shipped.*
