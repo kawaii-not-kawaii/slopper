@@ -27,7 +27,6 @@ class SettingsViewModel
         val playerPrefs: PlayerPreferences,
         val uiPrefs: UiPreferences,
     ) : ViewModel() {
-
         // --- Existing helpers (unchanged) ---
 
         fun disconnect(onDone: () -> Unit) {
@@ -53,8 +52,9 @@ class SettingsViewModel
         private val _serverInfo = MutableStateFlow<ServerInfo?>(null)
         val serverInfo: StateFlow<ServerInfo?> = _serverInfo.asStateFlow()
 
-        val accentPalette: StateFlow<String> = uiPrefs.accentPalette
-            .stateIn(viewModelScope, SharingStarted.Eagerly, "sage")
+        val accentPalette: StateFlow<String> =
+            uiPrefs.accentPalette
+                .stateIn(viewModelScope, SharingStarted.Eagerly, "sage")
 
         fun setAccentPalette(name: String) {
             viewModelScope.launch { uiPrefs.setAccentPalette(name) }
@@ -64,14 +64,17 @@ class SettingsViewModel
         private val _searchQuery = MutableStateFlow("")
         val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-        val searchResults: StateFlow<List<SettingsSearchEntry>> = _searchQuery
-            .map { q ->
-                if (q.isBlank()) emptyList()
-                else SettingsSearchIndex.filter { entry ->
-                    (entry.label + " " + entry.hint).contains(q, ignoreCase = true)
-                }
-            }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+        val searchResults: StateFlow<List<SettingsSearchEntry>> =
+            _searchQuery
+                .map { q ->
+                    if (q.isBlank()) {
+                        emptyList()
+                    } else {
+                        SettingsSearchIndex.filter { entry ->
+                            (entry.label + " " + entry.hint).contains(q, ignoreCase = true)
+                        }
+                    }
+                }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
         fun updateSearchQuery(query: String) {
             _searchQuery.value = query

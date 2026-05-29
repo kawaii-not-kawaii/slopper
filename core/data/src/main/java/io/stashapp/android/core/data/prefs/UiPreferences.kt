@@ -119,52 +119,67 @@ class UiPreferences
         // ---- Accent palette (D-05) -----------------------------------------------
 
         override val accentPalette: Flow<String> = flow(KEY_ACCENT_PALETTE, DEFAULT_ACCENT_PALETTE)
+
         override suspend fun setAccentPalette(name: String) = put(KEY_ACCENT_PALETTE, name)
 
         // ---- Display (SETTINGS-08) -----------------------------------------------
 
         override val reduceMotion: Flow<Boolean> = flow(KEY_REDUCE_MOTION, DEFAULT_REDUCE_MOTION)
+
         override suspend fun setReduceMotion(v: Boolean) = put(KEY_REDUCE_MOTION, v)
 
         override val cardDensity: Flow<String> = flow(KEY_CARD_DENSITY, DEFAULT_CARD_DENSITY)
+
         override suspend fun setCardDensity(v: String) = put(KEY_CARD_DENSITY, v)
 
         override val longPressBehavior: Flow<String> = flow(KEY_LONG_PRESS_BEHAVIOR, DEFAULT_LONG_PRESS_BEHAVIOR)
+
         override suspend fun setLongPressBehavior(v: String) = put(KEY_LONG_PRESS_BEHAVIOR, v)
 
         override val showResumeBar: Flow<Boolean> = flow(KEY_SHOW_RESUME_BAR, DEFAULT_SHOW_RESUME_BAR)
+
         override suspend fun setShowResumeBar(v: Boolean) = put(KEY_SHOW_RESUME_BAR, v)
 
         override val showStudioCaption: Flow<Boolean> = flow(KEY_SHOW_STUDIO_CAPTION, DEFAULT_SHOW_STUDIO_CAPTION)
+
         override suspend fun setShowStudioCaption(v: Boolean) = put(KEY_SHOW_STUDIO_CAPTION, v)
 
         override val showChapterStrip: Flow<Boolean> = flow(KEY_SHOW_CHAPTER_STRIP, DEFAULT_SHOW_CHAPTER_STRIP)
+
         override suspend fun setShowChapterStrip(v: Boolean) = put(KEY_SHOW_CHAPTER_STRIP, v)
 
         override val tapToPeekInfo: Flow<Boolean> = flow(KEY_TAP_TO_PEEK_INFO, DEFAULT_TAP_TO_PEEK_INFO)
+
         override suspend fun setTapToPeekInfo(v: Boolean) = put(KEY_TAP_TO_PEEK_INFO, v)
 
         // ---- Library (SETTINGS-09) -----------------------------------------------
 
         override val syncRatings: Flow<Boolean> = flow(KEY_SYNC_RATINGS, DEFAULT_SYNC_RATINGS)
+
         override suspend fun setSyncRatings(v: Boolean) = put(KEY_SYNC_RATINGS, v)
 
         override val syncOCounter: Flow<Boolean> = flow(KEY_SYNC_O_COUNTER, DEFAULT_SYNC_O_COUNTER)
+
         override suspend fun setSyncOCounter(v: Boolean) = put(KEY_SYNC_O_COUNTER, v)
 
         override val syncMarkers: Flow<Boolean> = flow(KEY_SYNC_MARKERS, DEFAULT_SYNC_MARKERS)
+
         override suspend fun setSyncMarkers(v: Boolean) = put(KEY_SYNC_MARKERS, v)
 
         override val cacheDuration: Flow<String> = flow(KEY_CACHE_DURATION, DEFAULT_CACHE_DURATION)
+
         override suspend fun setCacheDuration(v: String) = put(KEY_CACHE_DURATION, v)
 
         override val keepWatchHistory: Flow<Boolean> = flow(KEY_KEEP_WATCH_HISTORY, DEFAULT_KEEP_WATCH_HISTORY)
+
         override suspend fun setKeepWatchHistory(v: Boolean) = put(KEY_KEEP_WATCH_HISTORY, v)
 
         override val historyOnHome: Flow<Boolean> = flow(KEY_HISTORY_ON_HOME, DEFAULT_HISTORY_ON_HOME)
+
         override suspend fun setHistoryOnHome(v: Boolean) = put(KEY_HISTORY_ON_HOME, v)
 
         override val smartRails: Flow<Boolean> = flow(KEY_SMART_RAILS, DEFAULT_SMART_RAILS)
+
         override suspend fun setSmartRails(v: Boolean) = put(KEY_SMART_RAILS, v)
 
         // ---- Helpers -------------------------------------------------------------

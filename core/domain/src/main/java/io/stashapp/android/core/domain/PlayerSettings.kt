@@ -50,15 +50,25 @@ interface PlayerSettings {
     val preBufferOnHover: Flow<Boolean>
 
     suspend fun setShowChapterThumbnails(v: Boolean)
+
     suspend fun setLockControlsOnIdle(v: Boolean)
+
     suspend fun setShowCodecBadge(v: Boolean)
+
     suspend fun setShowQueuePosition(v: Boolean)
+
     suspend fun setHapticsOnSeek(v: Boolean)
+
     suspend fun setHdrPassthrough(v: Boolean)
+
     suspend fun setMatchRefreshRate(v: Boolean)
+
     suspend fun setMatchResolution(v: Boolean)
+
     suspend fun setFallbackOnDecoderError(v: Boolean)
+
     suspend fun setTunneling(v: Boolean)
+
     suspend fun setPreBufferOnHover(v: Boolean)
 
     companion object {

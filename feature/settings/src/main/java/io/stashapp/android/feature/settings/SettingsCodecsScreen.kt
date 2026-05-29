@@ -1,7 +1,7 @@
 package io.stashapp.android.feature.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import android.widget.Toast
 import io.stashapp.android.core.designsystem.component.DRow
 import io.stashapp.android.core.designsystem.component.DRowStacked
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
@@ -68,11 +67,12 @@ fun SettingsCodecsScreen(
                 title = {
                     Text(
                         "Quality & Codecs",
-                        style = TextStyle(
-                            fontFamily = SpaceGrotesk,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                         color = SpineColors.OnSurface,
                     )
                 },
@@ -94,9 +94,10 @@ fun SettingsCodecsScreen(
         item {
             val accent = LocalAccentColors.current
             Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 6.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 6.dp),
                 color = accent.primary.copy(alpha = 0.06f),
                 shape = ShapeSmall,
                 border = BorderStroke(1.dp, accent.primary.copy(alpha = 0.25f)),
@@ -137,11 +138,12 @@ fun SettingsCodecsScreen(
             ) {
                 DRowStacked(label = "Decoder preference") {
                     ChipRow(
-                        options = listOf(
-                            "Auto" to "auto",
-                            "Prefer HW" to "prefer_hw",
-                            "Prefer SW" to "prefer_sw",
-                        ),
+                        options =
+                            listOf(
+                                "Auto" to "auto",
+                                "Prefer HW" to "prefer_hw",
+                                "Prefer SW" to "prefer_sw",
+                            ),
                         selected = decoderPref,
                         onSelect = { v -> viewModel.setPlayer { setDecoderPreference(v) } },
                     )
@@ -177,11 +179,12 @@ fun SettingsCodecsScreen(
             ) {
                 DRowStacked(label = "Buffer size") {
                     ChipRow(
-                        options = listOf(
-                            "Small · 15s" to "small",
-                            "Medium · 50s" to "medium",
-                            "Large · 2min" to "large",
-                        ),
+                        options =
+                            listOf(
+                                "Small · 15s" to "small",
+                                "Medium · 50s" to "medium",
+                                "Large · 2min" to "large",
+                            ),
                         selected = bufferPreset,
                         onSelect = { v -> viewModel.setPlayer { setVideoBufferPreset(v) } },
                     )
@@ -243,9 +246,10 @@ fun SettingsCodecsScreen(
                 onClick = {
                     Toast.makeText(context, "Codec test — coming soon", Toast.LENGTH_SHORT).show()
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 18.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp, vertical = 12.dp),
                 border = BorderStroke(1.dp, SpineColors.Border),
                 shape = ShapeSmall,
             ) {
@@ -259,4 +263,3 @@ fun SettingsCodecsScreen(
         }
     }
 }
-

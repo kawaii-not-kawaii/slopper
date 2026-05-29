@@ -10,14 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpineColors
 
 /**
@@ -68,7 +68,7 @@ fun SceneCard(
     Column(modifier = modifier) {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainer,
-            shape = ShapeSmall,  // SPINE-04: 6dp per design spec (was 10dp ShapeMedium)
+            shape = ShapeSmall, // SPINE-04: 6dp per design spec (was 10dp ShapeMedium)
             modifier =
                 Modifier
                     .fillMaxWidth()

@@ -192,10 +192,11 @@ fun FilterSheet(
                         onApply(filter, sort)
                         onDismiss()
                     },
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = SpineColors.AccentPrimary,
-                        contentColor = SpineColors.AccentOnPrimary,
-                    ),
+                    colors =
+                        androidx.compose.material3.ButtonDefaults.buttonColors(
+                            containerColor = SpineColors.AccentPrimary,
+                            contentColor = SpineColors.AccentOnPrimary,
+                        ),
                 ) {
                     Text("Apply")
                 }
@@ -212,11 +213,12 @@ fun FilterSheet(
 private fun SectionTitle(text: String) {
     Text(
         text,
-        style = TextStyle(
-            fontFamily = SpaceGrotesk,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold,
-        ),
+        style =
+            TextStyle(
+                fontFamily = SpaceGrotesk,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+            ),
         color = MaterialTheme.colorScheme.onSurface,
     )
 }

@@ -32,9 +32,10 @@ fun DRow(
     trailing: @Composable (() -> Unit)? = null,
 ) {
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -67,9 +68,10 @@ fun DRowStacked(
     body: @Composable () -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(14.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(14.dp),
     ) {
         Text(
             text = label,

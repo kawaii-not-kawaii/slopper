@@ -62,7 +62,7 @@ fun NavCustomizeSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = SpineColors.Bg,
-        contentWindowInsets = { WindowInsets.navigationBars },  // COMPLY-01 — do not remove
+        contentWindowInsets = { WindowInsets.navigationBars }, // COMPLY-01 — do not remove
     ) {
         Column(
             Modifier
@@ -73,11 +73,12 @@ fun NavCustomizeSheet(
         ) {
             // Spine info banner
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(SpineColors.AccentPrimary.copy(alpha = 0.08f), ShapeSmall)
-                    .border(1.dp, SpineColors.AccentPrimary.copy(alpha = 0.20f), ShapeSmall)
-                    .padding(10.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(SpineColors.AccentPrimary.copy(alpha = 0.08f), ShapeSmall)
+                        .border(1.dp, SpineColors.AccentPrimary.copy(alpha = 0.20f), ShapeSmall)
+                        .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -101,10 +102,11 @@ fun NavCustomizeSheet(
                 val atCap = selected.size >= maxVisible && !isSelected
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp)
-                        .then(if (atCap) Modifier.alpha(0.4f) else Modifier),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                            .then(if (atCap) Modifier.alpha(0.4f) else Modifier),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // Checkbox — 4dp radius, AccentPrimary when checked
@@ -114,11 +116,12 @@ fun NavCustomizeSheet(
                         onCheckedChange = { checked ->
                             selected = if (checked) selected + item.id else selected - item.id
                         },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = SpineColors.AccentPrimary,
-                            checkmarkColor = SpineColors.AccentOnPrimary,
-                            uncheckedColor = SpineColors.Border,
-                        ),
+                        colors =
+                            CheckboxDefaults.colors(
+                                checkedColor = SpineColors.AccentPrimary,
+                                checkmarkColor = SpineColors.AccentOnPrimary,
+                                uncheckedColor = SpineColors.Border,
+                            ),
                     )
                     // Leading icon — AccentPrimary when selected
                     Icon(
@@ -162,10 +165,11 @@ fun NavCustomizeSheet(
                     },
                     modifier = Modifier.weight(1f),
                     shape = ShapeSmall,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SpineColors.AccentPrimary,
-                        contentColor = SpineColors.AccentOnPrimary,
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = SpineColors.AccentPrimary,
+                            contentColor = SpineColors.AccentOnPrimary,
+                        ),
                 ) {
                     Text("Apply")
                 }

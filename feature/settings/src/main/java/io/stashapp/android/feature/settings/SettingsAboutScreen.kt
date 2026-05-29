@@ -56,23 +56,30 @@ fun SettingsAboutScreen(
     val context = LocalContext.current
 
     // Read version info via PackageManager — BuildConfig is not available in feature modules
-    val versionName = remember(context) {
-        try {
-            val pkgInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
-            } else {
-                @Suppress("DEPRECATION")
-                context.packageManager.getPackageInfo(context.packageName, 0)
+    val versionName =
+        remember(context) {
+            try {
+                val pkgInfo =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        context.packageManager.getPackageInfo(context.packageName, PackageManager.PackageInfoFlags.of(0))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        context.packageManager.getPackageInfo(context.packageName, 0)
+                    }
+                pkgInfo.versionName ?: "unknown"
+            } catch (_: PackageManager.NameNotFoundException) {
+                "unknown"
             }
-            pkgInfo.versionName ?: "unknown"
-        } catch (_: PackageManager.NameNotFoundException) {
-            "unknown"
         }
-    }
     // Detect build type from versionName suffix: "-alpha"/"-debug" => debug build, else release
-    val buildType = if (versionName.contains("alpha", ignoreCase = true) ||
-        versionName.contains("debug", ignoreCase = true)
-    ) "debug build" else "release"
+    val buildType =
+        if (versionName.contains("alpha", ignoreCase = true) ||
+            versionName.contains("debug", ignoreCase = true)
+        ) {
+            "debug build"
+        } else {
+            "release"
+        }
 
     LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
         item {
@@ -80,11 +87,12 @@ fun SettingsAboutScreen(
                 title = {
                     Text(
                         "About & Diagnostics",
-                        style = TextStyle(
-                            fontFamily = SpaceGrotesk,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                         color = SpineColors.OnSurface,
                     )
                 },
@@ -107,14 +115,16 @@ fun SettingsAboutScreen(
             val accent = LocalAccentColors.current
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 28.dp, bottom = 18.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 28.dp, bottom = 18.dp),
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(SpineColors.SurfaceHigh, ShapeMedium),
+                    modifier =
+                        Modifier
+                            .size(56.dp)
+                            .background(SpineColors.SurfaceHigh, ShapeMedium),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
@@ -127,11 +137,12 @@ fun SettingsAboutScreen(
                 Spacer(Modifier.height(12.dp))
                 Text(
                     text = "Slopper",
-                    style = TextStyle(
-                        fontFamily = SpaceGrotesk,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                    ),
+                    style =
+                        TextStyle(
+                            fontFamily = SpaceGrotesk,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
                     color = SpineColors.OnSurface,
                 )
                 Spacer(Modifier.height(4.dp))

@@ -1,5 +1,6 @@
 package io.stashapp.android.feature.detail
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,7 +33,6 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.outlined.ChevronRight
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -48,7 +48,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
@@ -151,12 +150,13 @@ private fun SceneBody(
     ) {
         // ---- Card-style hero ----
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp, vertical = 8.dp)
-                .aspectRatio(16f / 10f)
-                .clip(ShapeMedium)
-                .border(1.dp, SpineColors.Border, ShapeMedium),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp, vertical = 8.dp)
+                    .aspectRatio(16f / 10f)
+                    .clip(ShapeMedium)
+                    .border(1.dp, SpineColors.Border, ShapeMedium),
         ) {
             AsyncImage(
                 model = s.screenshotUrl,
@@ -167,13 +167,14 @@ private fun SceneBody(
 
             // Back button — top-left
             Box(
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(10.dp)
-                    .size(30.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.55f))
-                    .clickable { onBack() },
+                modifier =
+                    Modifier
+                        .align(Alignment.TopStart)
+                        .padding(10.dp)
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.55f))
+                        .clickable { onBack() },
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -186,9 +187,10 @@ private fun SceneBody(
 
             // Meta pills — bottom-left
             Row(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(8.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 listOfNotNull(
@@ -200,22 +202,24 @@ private fun SceneBody(
                         label,
                         style = MetaMono,
                         color = Color.White,
-                        modifier = Modifier
-                            .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(4.dp))
-                            .padding(horizontal = 5.dp, vertical = 2.dp),
+                        modifier =
+                            Modifier
+                                .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(4.dp))
+                                .padding(horizontal = 5.dp, vertical = 2.dp),
                     )
                 }
             }
 
             // Play button — bottom-right (44dp AccentPrimary circle)
             Box(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp)
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(SpineColors.AccentPrimary)
-                    .clickable { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(8.dp)
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .background(SpineColors.AccentPrimary)
+                        .clickable { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -243,11 +247,12 @@ private fun SceneBody(
             }
             Text(
                 s.displayTitle,
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontSize = 24.sp,
-                    letterSpacing = (-0.6).sp,
-                    lineHeight = 26.sp,
-                ),
+                style =
+                    MaterialTheme.typography.headlineMedium.copy(
+                        fontSize = 24.sp,
+                        letterSpacing = (-0.6).sp,
+                        lineHeight = 26.sp,
+                    ),
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -271,29 +276,33 @@ private fun SceneBody(
         // ---- Primary CTA ----
         Button(
             onClick = { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = SpineColors.AccentPrimary,
-                contentColor = SpineColors.AccentOnPrimary,
-            ),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = SpineColors.AccentPrimary,
+                    contentColor = SpineColors.AccentOnPrimary,
+                ),
             shape = ShapeSmall,
             contentPadding = PaddingValues(12.dp),
         ) {
             Icon(Icons.Filled.PlayArrow, null, modifier = Modifier.size(14.dp))
             Spacer(Modifier.width(6.dp))
-            val label = s.resumeTimeSeconds
-                ?.takeIf { it > 2 }
-                ?.let { "Resume · ${formatDuration(it)}" }
-                ?: "Play"
+            val label =
+                s.resumeTimeSeconds
+                    ?.takeIf { it > 2 }
+                    ?.let { "Resume · ${formatDuration(it)}" }
+                    ?: "Play"
             Text(
                 label,
-                style = TextStyle(
-                    fontFamily = SpaceGrotesk,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                ),
+                style =
+                    TextStyle(
+                        fontFamily = SpaceGrotesk,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                    ),
             )
         }
 
@@ -315,20 +324,22 @@ private fun SceneBody(
 
         // ---- 2-col technical metadata grid ----
         // SpineColors.Border bg shows through 1dp gaps as hairline dividers (T-05-10: non-lazy, no nested scroll)
-        val meta = listOfNotNull(
-            s.videoCodec?.let { "Codec" to it },
-            s.bitrate?.takeIf { it > 0 }?.let { "Bitrate" to "${it / 1000}kbps" },
-            resolutionLabel(s.width, s.height)?.let { "Resolution" to it },
-            null, // Framerate not in SceneDetail.summary — skip
-            null, // Size not in SceneDetail.summary — skip
-            s.date?.let { "Added" to it },
-        )
+        val meta =
+            listOfNotNull(
+                s.videoCodec?.let { "Codec" to it },
+                s.bitrate?.takeIf { it > 0 }?.let { "Bitrate" to "${it / 1000}kbps" },
+                resolutionLabel(s.width, s.height)?.let { "Resolution" to it },
+                null, // Framerate not in SceneDetail.summary — skip
+                null, // Size not in SceneDetail.summary — skip
+                s.date?.let { "Added" to it },
+            )
         if (meta.isNotEmpty()) {
             MetadataGrid(
                 meta = meta,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 18.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp),
             )
         }
 
@@ -530,9 +541,10 @@ private fun Section(
     content: @Composable () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 18.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
@@ -563,9 +575,10 @@ private fun PerformerRow(performer: PerformerRef) {
                 model = performer.imageUrl,
                 contentDescription = performer.name,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(CircleShape),
+                modifier =
+                    Modifier
+                        .size(36.dp)
+                        .clip(CircleShape),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -646,10 +659,11 @@ private fun TagFlow(tags: List<TagRef>) {
                 tag.name,
                 style = MaterialTheme.typography.bodySmall,
                 color = SpineColors.OnSurface,
-                modifier = Modifier
-                    .background(SpineColors.Surface, CircleShape)
-                    .border(1.dp, SpineColors.Border, CircleShape)
-                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                modifier =
+                    Modifier
+                        .background(SpineColors.Surface, CircleShape)
+                        .border(1.dp, SpineColors.Border, CircleShape)
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
             )
         }
     }

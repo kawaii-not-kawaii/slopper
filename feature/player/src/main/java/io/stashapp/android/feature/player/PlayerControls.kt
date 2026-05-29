@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Forward10
@@ -41,10 +40,10 @@ import androidx.compose.material.icons.filled.RepeatOne
 import androidx.compose.material.icons.filled.Replay10
 import androidx.compose.material.icons.filled.ScreenLockRotation
 import androidx.compose.material.icons.filled.ScreenRotation
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,6 +54,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -325,11 +325,12 @@ private fun PlayPauseFlat(
     // Spine 52dp AccentPrimary play/pause button (SPINE-11, D-transport).
     // ShapeMedium (10dp radius) per design handoff.
     Box(
-        modifier = Modifier
-            .size(52.dp)
-            .clip(ShapeMedium)
-            .background(SpineColors.AccentPrimary)
-            .clickable(onClick = onClick),
+        modifier =
+            Modifier
+                .size(52.dp)
+                .clip(ShapeMedium)
+                .background(SpineColors.AccentPrimary)
+                .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         AnimatedContent(

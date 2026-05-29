@@ -48,30 +48,34 @@ class SettingsScreenSmokeTest {
 
     @Test
     fun `search filter returns matching entries for haptics`() {
-        val results = SettingsSearchIndex.filter { entry ->
-            (entry.label + " " + entry.hint).contains("haptics", ignoreCase = true)
-        }
+        val results =
+            SettingsSearchIndex.filter { entry ->
+                (entry.label + " " + entry.hint).contains("haptics", ignoreCase = true)
+            }
         assertEquals(1, results.size)
         assertEquals("Haptics on seek", results.first().label)
     }
 
     @Test
     fun `search filter is case-insensitive`() {
-        val upper = SettingsSearchIndex.filter { entry ->
-            (entry.label + " " + entry.hint).contains("HAPTICS", ignoreCase = true)
-        }
-        val lower = SettingsSearchIndex.filter { entry ->
-            (entry.label + " " + entry.hint).contains("haptics", ignoreCase = true)
-        }
+        val upper =
+            SettingsSearchIndex.filter { entry ->
+                (entry.label + " " + entry.hint).contains("HAPTICS", ignoreCase = true)
+            }
+        val lower =
+            SettingsSearchIndex.filter { entry ->
+                (entry.label + " " + entry.hint).contains("haptics", ignoreCase = true)
+            }
         assertEquals(upper.size, lower.size)
         assertTrue(upper.size > 0)
     }
 
     @Test
     fun `search filter returns empty list for blank query`() {
-        val results = SettingsSearchIndex.filter { entry ->
-            (entry.label + " " + entry.hint).contains("", ignoreCase = true)
-        }
+        val results =
+            SettingsSearchIndex.filter { entry ->
+                (entry.label + " " + entry.hint).contains("", ignoreCase = true)
+            }
         // blank contains everything — but the ViewModel gates on isBlank(); verify
         // the index itself has no entries with completely empty label+hint
         assertTrue(results.size == SettingsSearchIndex.size)
@@ -79,12 +83,12 @@ class SettingsScreenSmokeTest {
 
     @Test
     fun `resolution badge entry is present in search index`() {
-        val results = SettingsSearchIndex.filter { entry ->
-            (entry.label + " " + entry.hint).contains("resolution badge", ignoreCase = true)
-        }
+        val results =
+            SettingsSearchIndex.filter { entry ->
+                (entry.label + " " + entry.hint).contains("resolution badge", ignoreCase = true)
+            }
         assertEquals(1, results.size)
         assertEquals("Resolution badge", results.first().label)
         assertEquals("Display · Card chrome", results.first().breadcrumb)
     }
-
 }

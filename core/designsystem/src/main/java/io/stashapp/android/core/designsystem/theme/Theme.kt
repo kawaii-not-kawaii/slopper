@@ -13,26 +13,31 @@ import androidx.compose.ui.unit.dp
 
 // ---- Shape tokens (Spine design system) -------------------------------------
 
-val ShapeSmall  = RoundedCornerShape(6.dp)
+val ShapeSmall = RoundedCornerShape(6.dp)
 val ShapeMedium = RoundedCornerShape(10.dp)
-val ShapeLarge  = RoundedCornerShape(16.dp)
+val ShapeLarge = RoundedCornerShape(16.dp)
 val ShapeCircle = CircleShape
 
 // ---- Accent palette data structures (D-05) ----------------------------------
 
-data class AccentColors(val primary: Color, val dim: Color, val onPrimary: Color)
+data class AccentColors(
+    val primary: Color,
+    val dim: Color,
+    val onPrimary: Color,
+)
 
-val SageAccent   = AccentColors(Color(0xFF9DC83C), Color(0xFF6E9028), Color(0xFF0B1402))
-val EmberAccent  = AccentColors(Color(0xFFE5A742), Color(0xFFB07B25), Color(0xFF1A0F00))
+val SageAccent = AccentColors(Color(0xFF9DC83C), Color(0xFF6E9028), Color(0xFF0B1402))
+val EmberAccent = AccentColors(Color(0xFFE5A742), Color(0xFFB07B25), Color(0xFF1A0F00))
 val SignalAccent = AccentColors(Color(0xFF4FD0E6), Color(0xFF2A9DB0), Color(0xFF001218))
 
 val LocalAccentColors = compositionLocalOf { SageAccent }
 
-fun accentForName(name: String): AccentColors = when (name) {
-    "ember"  -> EmberAccent
-    "signal" -> SignalAccent
-    else     -> SageAccent
-}
+fun accentForName(name: String): AccentColors =
+    when (name) {
+        "ember" -> EmberAccent
+        "signal" -> SignalAccent
+        else -> SageAccent
+    }
 
 // ---- M3 color scheme wired to SpineColors -----------------------------------
 
@@ -72,14 +77,15 @@ fun StashTheme(
     content: @Composable () -> Unit,
 ) {
     val accent = remember(accentName) { accentForName(accentName) }
-    val colorScheme = remember(accentName) {
-        StashDarkColorScheme.copy(
-            primary = accent.primary,
-            onPrimary = accent.onPrimary,
-            primaryContainer = accent.dim,
-            onPrimaryContainer = accent.onPrimary,
-        )
-    }
+    val colorScheme =
+        remember(accentName) {
+            StashDarkColorScheme.copy(
+                primary = accent.primary,
+                onPrimary = accent.onPrimary,
+                primaryContainer = accent.dim,
+                onPrimaryContainer = accent.onPrimary,
+            )
+        }
     CompositionLocalProvider(LocalAccentColors provides accent) {
         MaterialTheme(
             colorScheme = colorScheme,

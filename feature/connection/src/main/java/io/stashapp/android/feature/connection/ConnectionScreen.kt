@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.VerifiedUser
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -85,12 +84,13 @@ fun ConnectionScreen(
             // Spine headline — SpaceGrotesk 26sp W600 -0.6sp
             Text(
                 "Connect to Stash",
-                style = TextStyle(
-                    fontFamily = SpaceGrotesk,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.6).sp,
-                ),
+                style =
+                    TextStyle(
+                        fontFamily = SpaceGrotesk,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = (-0.6).sp,
+                    ),
                 color = SpineColors.OnSurface,
             )
             Spacer(Modifier.height(4.dp))
@@ -113,15 +113,16 @@ fun ConnectionScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                 textStyle = TextStyle(fontFamily = JetBrainsMono, fontSize = 12.sp),
                 shape = ShapeSmall,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = SpineColors.AccentPrimary,
-                    unfocusedBorderColor = SpineColors.Border,
-                    focusedContainerColor = SpineColors.Surface,
-                    unfocusedContainerColor = SpineColors.Surface,
-                    focusedTextColor = SpineColors.OnSurface,
-                    unfocusedTextColor = SpineColors.OnSurface,
-                    cursorColor = SpineColors.AccentPrimary,
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = SpineColors.AccentPrimary,
+                        unfocusedBorderColor = SpineColors.Border,
+                        focusedContainerColor = SpineColors.Surface,
+                        unfocusedContainerColor = SpineColors.Surface,
+                        focusedTextColor = SpineColors.OnSurface,
+                        unfocusedTextColor = SpineColors.OnSurface,
+                        cursorColor = SpineColors.AccentPrimary,
+                    ),
             )
             Spacer(Modifier.height(12.dp))
 
@@ -153,15 +154,16 @@ fun ConnectionScreen(
                 },
                 textStyle = TextStyle(fontFamily = JetBrainsMono, fontSize = 12.sp),
                 shape = ShapeSmall,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = SpineColors.AccentPrimary,
-                    unfocusedBorderColor = SpineColors.Border,
-                    focusedContainerColor = SpineColors.Surface,
-                    unfocusedContainerColor = SpineColors.Surface,
-                    focusedTextColor = SpineColors.OnSurface,
-                    unfocusedTextColor = SpineColors.OnSurface,
-                    cursorColor = SpineColors.AccentPrimary,
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = SpineColors.AccentPrimary,
+                        unfocusedBorderColor = SpineColors.Border,
+                        focusedContainerColor = SpineColors.Surface,
+                        unfocusedContainerColor = SpineColors.Surface,
+                        focusedTextColor = SpineColors.OnSurface,
+                        unfocusedTextColor = SpineColors.OnSurface,
+                        cursorColor = SpineColors.AccentPrimary,
+                    ),
             )
             Spacer(Modifier.height(12.dp))
 
@@ -174,15 +176,16 @@ fun ConnectionScreen(
                 modifier = Modifier.fillMaxWidth(),
                 textStyle = TextStyle(fontFamily = JetBrainsMono, fontSize = 12.sp),
                 shape = ShapeSmall,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = SpineColors.AccentPrimary,
-                    unfocusedBorderColor = SpineColors.Border,
-                    focusedContainerColor = SpineColors.Surface,
-                    unfocusedContainerColor = SpineColors.Surface,
-                    focusedTextColor = SpineColors.OnSurface,
-                    unfocusedTextColor = SpineColors.OnSurface,
-                    cursorColor = SpineColors.AccentPrimary,
-                ),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = SpineColors.AccentPrimary,
+                        unfocusedBorderColor = SpineColors.Border,
+                        focusedContainerColor = SpineColors.Surface,
+                        unfocusedContainerColor = SpineColors.Surface,
+                        focusedTextColor = SpineColors.OnSurface,
+                        unfocusedTextColor = SpineColors.OnSurface,
+                        cursorColor = SpineColors.AccentPrimary,
+                    ),
             )
 
             Spacer(Modifier.height(20.dp))
@@ -280,10 +283,11 @@ fun ConnectionScreen(
                     enabled = state.serverInfo != null,
                     modifier = Modifier.weight(1f),
                     shape = ShapeSmall,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SpineColors.AccentPrimary,
-                        contentColor = SpineColors.AccentOnPrimary,
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = SpineColors.AccentPrimary,
+                            contentColor = SpineColors.AccentOnPrimary,
+                        ),
                 ) {
                     Text("Connect", fontWeight = FontWeight.Bold)
                 }

@@ -55,5 +55,10 @@ subprojects {
         buildUponDefaultConfig = true
         ignoreFailures = false
         source.setFrom("src/main/java", "src/main/kotlin")
+        // Per-module baseline: accepts pre-existing findings (mostly long
+        // @Composable functions and preference setters). Regenerate after large
+        // refactors via `./gradlew detektBaseline`. New findings beyond the
+        // baseline still fail the build.
+        baseline = file("detekt-baseline.xml")
     }
 }

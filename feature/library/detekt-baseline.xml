@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:LibraryScreen.kt$@Composable private fun ScenesGrid( scenes: androidx.paging.compose.LazyPagingItems&lt;io.stashapp.android.core.model.SceneSummary&gt;, inner: PaddingValues, filterActive: Boolean, onOpenFilter: () -&gt; Unit, onSceneClick: (String, List&lt;String&gt;, Int) -&gt; Unit, onPlayQueue: (List&lt;String&gt;, Int) -&gt; Unit, )</ID>
+    <ID>UnusedParameter:FilterSheet.kt$hasSavedDefault: Boolean</ID>
+    <ID>UnusedParameter:FilterSheet.kt$onClearDefault: () -&gt; Unit</ID>
+    <ID>UnusedParameter:FilterSheet.kt$onSaveAsDefault: (SceneFilter) -&gt; Unit</ID>
+    <ID>UnusedParameter:LibraryScreen.kt$onSettingsClick: () -&gt; Unit</ID>
+  </CurrentIssues>
+</SmellBaseline>

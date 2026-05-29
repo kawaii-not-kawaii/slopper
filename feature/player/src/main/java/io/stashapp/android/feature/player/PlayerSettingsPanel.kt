@@ -53,20 +53,20 @@ internal fun PlayerSettingsPanel(
         val borderStrong = SpineColors.BorderStrong
 
         Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.40f)
-                .background(Color(0xF20B0F16))
-                .drawBehind {
-                    // Left border only — drawBehind draws a single edge (NOT .border() which adds all 4 sides)
-                    drawLine(
-                        color = borderStrong,
-                        start = Offset(0f, 0f),
-                        end = Offset(0f, size.height),
-                        strokeWidth = 1.dp.toPx(),
-                    )
-                }
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(0.40f)
+                    .background(Color(0xF20B0F16))
+                    .drawBehind {
+                        // Left border only — drawBehind draws a single edge (NOT .border() which adds all 4 sides)
+                        drawLine(
+                            color = borderStrong,
+                            start = Offset(0f, 0f),
+                            end = Offset(0f, size.height),
+                            strokeWidth = 1.dp.toPx(),
+                        )
+                    }.padding(16.dp),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 // Speed section header
@@ -82,21 +82,28 @@ internal fun PlayerSettingsPanel(
                     speeds.forEach { speed ->
                         val isSelected = kotlin.math.abs(speed - playbackSpeed) < 0.01f
                         Box(
-                            modifier = Modifier
-                                .clip(ShapeSmall)
-                                .background(
-                                    if (isSelected) SpineColors.AccentPrimary
-                                    else SpineColors.SurfaceTop,
-                                )
-                                .clickable { onSpeedChange(speed) }
-                                .padding(horizontal = 10.dp, vertical = 4.dp),
+                            modifier =
+                                Modifier
+                                    .clip(ShapeSmall)
+                                    .background(
+                                        if (isSelected) {
+                                            SpineColors.AccentPrimary
+                                        } else {
+                                            SpineColors.SurfaceTop
+                                        },
+                                    ).clickable { onSpeedChange(speed) }
+                                    .padding(horizontal = 10.dp, vertical = 4.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             androidx.compose.material3.Text(
                                 text = PlayerViewModel.formatSpeed(speed),
                                 style = MetaMono,
-                                color = if (isSelected) SpineColors.AccentOnPrimary
-                                        else SpineColors.OnSurface,
+                                color =
+                                    if (isSelected) {
+                                        SpineColors.AccentOnPrimary
+                                    } else {
+                                        SpineColors.OnSurface
+                                    },
                             )
                         }
                     }

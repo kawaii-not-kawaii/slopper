@@ -57,46 +57,51 @@ fun SpineResumeCard(
     Surface(
         color = SpineColors.Surface,
         shape = ShapeMedium,
-        modifier = modifier
-            .fillMaxWidth()
-            .border(1.dp, SpineColors.Border, ShapeMedium)
-            .clip(ShapeMedium)
-            .clickable(onClick = onClick),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .border(1.dp, SpineColors.Border, ShapeMedium)
+                .clip(ShapeMedium)
+                .clickable(onClick = onClick),
     ) {
         Row(
             verticalAlignment = Alignment.Top,
         ) {
             // Thumbnail — 130×88dp
             Box(
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(88.dp),
+                modifier =
+                    Modifier
+                        .width(130.dp)
+                        .height(88.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 AsyncImage(
                     model = thumbnailUrl,
                     contentDescription = title,
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)),
                 )
                 // Frosted glass play button overlay
-                val playBgModifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    Modifier.graphicsLayer {
-                        renderEffect = BlurEffect(12f, 12f, TileMode.Clamp)
+                val playBgModifier =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        Modifier.graphicsLayer {
+                            renderEffect = BlurEffect(12f, 12f, TileMode.Clamp)
+                        }
+                    } else {
+                        Modifier
                     }
-                } else {
-                    Modifier
-                }
                 Box(
-                    modifier = playBgModifier
-                        .size(32.dp)
-                        .background(
-                            color = Color.Black.copy(alpha = 0.60f),
-                            shape = RoundedCornerShape(50),
-                        ),
+                    modifier =
+                        playBgModifier
+                            .size(32.dp)
+                            .background(
+                                color = Color.Black.copy(alpha = 0.60f),
+                                shape = RoundedCornerShape(50),
+                            ),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
@@ -110,18 +115,20 @@ fun SpineResumeCard(
 
             // Metadata column
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(12.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 // "RESUME" label
                 Text(
                     text = "RESUME",
-                    style = MetaMono.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                    ),
+                    style =
+                        MetaMono.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.sp,
+                        ),
                     color = SpineColors.AccentPrimary,
                 )
 
@@ -135,11 +142,12 @@ fun SpineResumeCard(
                 )
 
                 // Studio · remaining
-                val metaText = buildString {
-                    studio?.let { append(it) }
-                    if (!studio.isNullOrBlank()) append(" · ")
-                    append(remainingLabel)
-                }
+                val metaText =
+                    buildString {
+                        studio?.let { append(it) }
+                        if (!studio.isNullOrBlank()) append(" · ")
+                        append(remainingLabel)
+                    }
                 Text(
                     text = metaText,
                     style = MetaMono,
@@ -150,17 +158,19 @@ fun SpineResumeCard(
 
                 // Progress bar — 3dp height, 1.5dp corner radius
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(3.dp)
-                        .clip(RoundedCornerShape(1.5.dp))
-                        .background(Color.White.copy(alpha = 0.08f)),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(3.dp)
+                            .clip(RoundedCornerShape(1.5.dp))
+                            .background(Color.White.copy(alpha = 0.08f)),
                 ) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth(progress.coerceIn(0f, 1f))
-                            .fillMaxHeight()
-                            .background(SpineColors.AccentPrimary),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(progress.coerceIn(0f, 1f))
+                                .fillMaxHeight()
+                                .background(SpineColors.AccentPrimary),
                     )
                 }
             }
@@ -170,4 +180,6 @@ fun SpineResumeCard(
 
 // Bring `sp` in scope as a local extension (avoids top-level import conflict with
 // the MetaMono copy parameter, since MetaMono already carries a TextStyle).
-private val Int.sp get() = androidx.compose.ui.unit.TextUnit(this.toFloat(), androidx.compose.ui.unit.TextUnitType.Sp)
+private val Int.sp get() =
+    androidx.compose.ui.unit
+        .TextUnit(this.toFloat(), androidx.compose.ui.unit.TextUnitType.Sp)

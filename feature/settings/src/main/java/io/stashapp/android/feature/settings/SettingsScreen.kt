@@ -1,9 +1,9 @@
 package io.stashapp.android.feature.settings
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -111,8 +111,8 @@ fun SettingsScreen(
     val imageCacheMb by up.imageCacheSizeMb.collectAsStateWithLifecycle(initialValue = UiPreferences.DEFAULT_IMAGE_CACHE_MB)
 
     // Summary strings
-    val playbackSummary = "${speed}× · ${doubleTapSec}s seek"
-    val codecSummary = "${decoderPref} · $bufferPreset"
+    val playbackSummary = "$speed× · ${doubleTapSec}s seek"
+    val codecSummary = "$decoderPref · $bufferPreset"
     val displaySummary = "$accentPaletteVal · $gridColumns cols"
     val librarySummary = "$imageCacheMb MB cache"
 
@@ -125,11 +125,12 @@ fun SettingsScreen(
                     title = {
                         Text(
                             "Settings",
-                            style = TextStyle(
-                                fontFamily = SpaceGrotesk,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                            ),
+                            style =
+                                TextStyle(
+                                    fontFamily = SpaceGrotesk,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                ),
                             color = SpineColors.OnSurface,
                         )
                     },
@@ -157,12 +158,13 @@ fun SettingsScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Box(
-                                    modifier = Modifier
-                                        .size(6.dp)
-                                        .background(
-                                            if (synced) SpineColors.Success else SpineColors.OnSurfaceMuted,
-                                            CircleShape,
-                                        ),
+                                    modifier =
+                                        Modifier
+                                            .size(6.dp)
+                                            .background(
+                                                if (synced) SpineColors.Success else SpineColors.OnSurfaceMuted,
+                                                CircleShape,
+                                            ),
                                 )
                                 Spacer(Modifier.width(5.dp))
                                 Text(
@@ -173,25 +175,27 @@ fun SettingsScreen(
                             }
                         }
                     },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = SpineColors.Bg,
-                    ),
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = SpineColors.Bg,
+                        ),
                 )
             }
 
             // Server status card
             item {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 8.dp)
-                        .then(
-                            if (activeServer != null) {
-                                Modifier.clickable { onServerClick() }
-                            } else {
-                                Modifier
-                            },
-                        ),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 8.dp)
+                            .then(
+                                if (activeServer != null) {
+                                    Modifier.clickable { onServerClick() }
+                                } else {
+                                    Modifier
+                                },
+                            ),
                     color = SpineColors.Surface,
                     shape = RoundedCornerShape(16.dp),
                     border = BorderStroke(1.dp, SpineColors.Border),
@@ -203,12 +207,13 @@ fun SettingsScreen(
                         // Icon container
                         val accentColors = LocalAccentColors.current
                         Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(
-                                    accentColors.primary.copy(alpha = 0.12f),
-                                    RoundedCornerShape(10.dp),
-                                ),
+                            modifier =
+                                Modifier
+                                    .size(40.dp)
+                                    .background(
+                                        accentColors.primary.copy(alpha = 0.12f),
+                                        RoundedCornerShape(10.dp),
+                                    ),
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
@@ -223,11 +228,12 @@ fun SettingsScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = activeServer?.displayName ?: "Not connected",
-                                    style = TextStyle(
-                                        fontFamily = SpaceGrotesk,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                    ),
+                                    style =
+                                        TextStyle(
+                                            fontFamily = SpaceGrotesk,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                        ),
                                     color = SpineColors.OnSurface,
                                 )
                                 if (serverInfo != null) {
@@ -240,9 +246,10 @@ fun SettingsScreen(
                                 }
                             }
                             if (activeServer != null) {
-                                val subText = serverInfo?.let {
-                                    "Stash v${it.version} · ${it.sceneCount} scenes"
-                                } ?: "Connected · tap to refresh"
+                                val subText =
+                                    serverInfo?.let {
+                                        "Stash v${it.version} · ${it.sceneCount} scenes"
+                                    } ?: "Connected · tap to refresh"
                                 Text(
                                     text = subText,
                                     style = MetaMono,
@@ -265,10 +272,11 @@ fun SettingsScreen(
             // Quick search field — tapping opens search overlay
             item {
                 Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 4.dp)
-                        .clickable { showSearch = true },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 4.dp)
+                            .clickable { showSearch = true },
                     color = SpineColors.Surface,
                     shape = ShapeSmall,
                     border = BorderStroke(1.dp, SpineColors.Border),
@@ -375,11 +383,11 @@ fun SettingsScreen(
                     viewModel.updateSearchQuery("")
                     when (entry.route) {
                         Routes.SettingsPlayback -> onPlaybackClick()
-                        Routes.SettingsCodecs   -> onCodecsClick()
-                        Routes.SettingsDisplay  -> onDisplayClick()
-                        Routes.SettingsLibrary  -> onLibraryClick()
-                        Routes.SettingsServer   -> onServerClick()
-                        Routes.SettingsAbout    -> onAboutClick()
+                        Routes.SettingsCodecs -> onCodecsClick()
+                        Routes.SettingsDisplay -> onDisplayClick()
+                        Routes.SettingsLibrary -> onLibraryClick()
+                        Routes.SettingsServer -> onServerClick()
+                        Routes.SettingsAbout -> onAboutClick()
                     }
                 },
                 onClose = {
@@ -403,10 +411,11 @@ private fun HubGroup(
         if (title != null) {
             Text(
                 text = title.uppercase(),
-                style = MetaMono.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = 1.sp,
-                ),
+                style =
+                    MetaMono.copy(
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 1.sp,
+                    ),
                 color = SpineColors.OnSurfaceMuted,
                 modifier = Modifier.padding(bottom = 8.dp, start = 2.dp),
             )
@@ -431,26 +440,29 @@ private fun HubRow(
     onClick: () -> Unit,
     danger: Boolean = false,
 ) {
-    val iconBg = if (danger) {
-        SpineColors.Error.copy(alpha = 0.08f)
-    } else {
-        SpineColors.SurfaceHigh
-    }
+    val iconBg =
+        if (danger) {
+            SpineColors.Error.copy(alpha = 0.08f)
+        } else {
+            SpineColors.SurfaceHigh
+        }
     val iconTint = if (danger) SpineColors.Error else SpineColors.OnSurfaceVariant
     val labelColor = if (danger) SpineColors.Error else SpineColors.OnSurface
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 12.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Leading icon container
         Box(
-            modifier = Modifier
-                .size(32.dp)
-                .background(iconBg, ShapeSmall),
+            modifier =
+                Modifier
+                    .size(32.dp)
+                    .background(iconBg, ShapeSmall),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
@@ -465,20 +477,22 @@ private fun HubRow(
         Column(Modifier.weight(1f)) {
             Text(
                 text = label,
-                style = TextStyle(
-                    fontFamily = SpaceGrotesk,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
+                style =
+                    TextStyle(
+                        fontFamily = SpaceGrotesk,
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
                 color = labelColor,
             )
             if (value.isNotEmpty()) {
                 Text(
                     text = value,
-                    style = TextStyle(
-                        fontFamily = JetBrainsMono,
-                        fontSize = 11.sp,
-                    ),
+                    style =
+                        TextStyle(
+                            fontFamily = JetBrainsMono,
+                            fontSize = 11.sp,
+                        ),
                     color = LocalAccentColors.current.primary,
                     modifier = Modifier.padding(top = 2.dp),
                 )
@@ -511,9 +525,10 @@ private fun SettingsSearchOverlay(
         Column {
             // Top bar: back arrow + active TextField
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = onClose) {
@@ -526,16 +541,19 @@ private fun SettingsSearchOverlay(
                 BasicTextField(
                     value = query,
                     onValueChange = onQueryChange,
-                    modifier = Modifier
-                        .weight(1f)
-                        .background(SpineColors.Surface, ShapeSmall)
-                        .border(
-                            1.dp,
-                            if (query.isNotEmpty()) LocalAccentColors.current.primary
-                            else SpineColors.Border,
-                            ShapeSmall,
-                        )
-                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .background(SpineColors.Surface, ShapeSmall)
+                            .border(
+                                1.dp,
+                                if (query.isNotEmpty()) {
+                                    LocalAccentColors.current.primary
+                                } else {
+                                    SpineColors.Border
+                                },
+                                ShapeSmall,
+                            ).padding(horizontal = 12.dp, vertical = 10.dp),
                     textStyle = MonoSmall.copy(color = SpineColors.OnSurface),
                     cursorBrush = SolidColor(LocalAccentColors.current.primary),
                     singleLine = true,
@@ -560,9 +578,10 @@ private fun SettingsSearchOverlay(
                     modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
                 )
                 Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 18.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 18.dp),
                     shape = ShapeSmall,
                     border = BorderStroke(1.dp, SpineColors.Border),
                 ) {
@@ -581,9 +600,10 @@ private fun SettingsSearchOverlay(
                 }
             } else if (query.isNotBlank()) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 48.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 48.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
@@ -609,10 +629,11 @@ private fun SearchHit(
     onClick: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(12.dp),
     ) {
         Text(entry.breadcrumb, style = MetaMono, color = SpineColors.OnSurfaceMuted)
         Spacer(Modifier.height(2.dp))
@@ -651,23 +672,24 @@ private fun HighlightedText(
         Text(text, style = style, color = normalColor)
         return
     }
-    val annotated = buildAnnotatedString {
-        withStyle(SpanStyle(color = normalColor)) {
-            append(text.substring(0, idx))
+    val annotated =
+        buildAnnotatedString {
+            withStyle(SpanStyle(color = normalColor)) {
+                append(text.substring(0, idx))
+            }
+            withStyle(
+                SpanStyle(
+                    color = highlightColor,
+                    background = highlightBg,
+                    fontWeight = FontWeight.SemiBold,
+                ),
+            ) {
+                append(text.substring(idx, idx + highlight.length))
+            }
+            withStyle(SpanStyle(color = normalColor)) {
+                append(text.substring(idx + highlight.length))
+            }
         }
-        withStyle(
-            SpanStyle(
-                color = highlightColor,
-                background = highlightBg,
-                fontWeight = FontWeight.SemiBold,
-            ),
-        ) {
-            append(text.substring(idx, idx + highlight.length))
-        }
-        withStyle(SpanStyle(color = normalColor)) {
-            append(text.substring(idx + highlight.length))
-        }
-    }
     Text(annotated, style = style)
 }
 

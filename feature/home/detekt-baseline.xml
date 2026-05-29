@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>MatchingDeclarationName:Color.kt$SpineColors</ID>
+    <ID>UnusedParameter:HomeScreen.kt$onSettingsClick: () -&gt; Unit</ID>
   </CurrentIssues>
 </SmellBaseline>

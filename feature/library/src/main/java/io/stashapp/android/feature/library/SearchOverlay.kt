@@ -50,7 +50,7 @@ import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.SceneSummary
 
-/**
+/*
  * Spine search overlay — SPINE-12 (D-10).
  *
  * Full-screen overlay with AnimatedVisibility, back arrow, scope chips, and
@@ -63,19 +63,24 @@ import io.stashapp.android.core.model.SceneSummary
 
 sealed interface SearchScope {
     data object All : SearchScope
+
     data object Scenes : SearchScope
+
     data object Studios : SearchScope
+
     data object Performers : SearchScope
+
     data object Tags : SearchScope
 
     val label: String
-        get() = when (this) {
-            is All -> "All"
-            is Scenes -> "Scenes"
-            is Studios -> "Studios"
-            is Performers -> "Performers"
-            is Tags -> "Tags"
-        }
+        get() =
+            when (this) {
+                is All -> "All"
+                is Scenes -> "Scenes"
+                is Studios -> "Studios"
+                is Performers -> "Performers"
+                is Tags -> "Tags"
+            }
 }
 
 data class SearchResults(
@@ -103,16 +108,18 @@ internal fun SearchOverlay(
         exit = fadeOut() + slideOutVertically { -it / 4 },
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(SpineColors.Bg),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(SpineColors.Bg),
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 // Top bar: back arrow + search field
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     IconButton(onClick = onDismiss) {
@@ -131,50 +138,59 @@ internal fun SearchOverlay(
                         modifier = Modifier.weight(1f),
                         shape = ShapeSmall,
                         textStyle = TextStyle(fontFamily = JetBrainsMono, fontSize = 12.sp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = SpineColors.AccentPrimary,
-                            unfocusedBorderColor = SpineColors.Border,
-                            focusedContainerColor = SpineColors.Surface,
-                            unfocusedContainerColor = SpineColors.Surface,
-                            focusedTextColor = SpineColors.OnSurface,
-                            unfocusedTextColor = SpineColors.OnSurface,
-                            cursorColor = SpineColors.AccentPrimary,
-                        ),
+                        colors =
+                            OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = SpineColors.AccentPrimary,
+                                unfocusedBorderColor = SpineColors.Border,
+                                focusedContainerColor = SpineColors.Surface,
+                                unfocusedContainerColor = SpineColors.Surface,
+                                focusedTextColor = SpineColors.OnSurface,
+                                unfocusedTextColor = SpineColors.OnSurface,
+                                cursorColor = SpineColors.AccentPrimary,
+                            ),
                     )
                 }
 
                 // Scope chip row
-                val scopes = listOf(
-                    SearchScope.All,
-                    SearchScope.Scenes,
-                    SearchScope.Studios,
-                    SearchScope.Performers,
-                    SearchScope.Tags,
-                )
+                val scopes =
+                    listOf(
+                        SearchScope.All,
+                        SearchScope.Scenes,
+                        SearchScope.Studios,
+                        SearchScope.Performers,
+                        SearchScope.Tags,
+                    )
                 FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     scopes.forEach { s ->
                         val isActive = s == scope
                         Box(
-                            modifier = Modifier
-                                .height(32.dp)
-                                .clip(ShapeSmall)
-                                .background(
-                                    if (isActive) SpineColors.AccentPrimary.copy(alpha = 0.12f)
-                                    else SpineColors.Surface,
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    color = if (isActive) SpineColors.AccentPrimary.copy(alpha = 0.30f)
-                                            else SpineColors.Border,
-                                    shape = ShapeSmall,
-                                )
-                                .clickable { scope = s }
-                                .padding(horizontal = 12.dp),
+                            modifier =
+                                Modifier
+                                    .height(32.dp)
+                                    .clip(ShapeSmall)
+                                    .background(
+                                        if (isActive) {
+                                            SpineColors.AccentPrimary.copy(alpha = 0.12f)
+                                        } else {
+                                            SpineColors.Surface
+                                        },
+                                    ).border(
+                                        width = 1.dp,
+                                        color =
+                                            if (isActive) {
+                                                SpineColors.AccentPrimary.copy(alpha = 0.30f)
+                                            } else {
+                                                SpineColors.Border
+                                            },
+                                        shape = ShapeSmall,
+                                    ).clickable { scope = s }
+                                    .padding(horizontal = 12.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
@@ -189,10 +205,11 @@ internal fun SearchOverlay(
                 Spacer(Modifier.height(8.dp))
 
                 // Results list
-                val visibleScenes = when (scope) {
-                    is SearchScope.All, is SearchScope.Scenes -> results.scenes
-                    else -> emptyList()
-                }
+                val visibleScenes =
+                    when (scope) {
+                        is SearchScope.All, is SearchScope.Scenes -> results.scenes
+                        else -> emptyList()
+                    }
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     // Scenes section
@@ -206,10 +223,11 @@ internal fun SearchOverlay(
                     }
 
                     // Performers section
-                    val visiblePerformers = when (scope) {
-                        is SearchScope.All, is SearchScope.Performers -> results.performerNames
-                        else -> emptyList()
-                    }
+                    val visiblePerformers =
+                        when (scope) {
+                            is SearchScope.All, is SearchScope.Performers -> results.performerNames
+                            else -> emptyList()
+                        }
                     if (visiblePerformers.isNotEmpty()) {
                         item {
                             SectionHeader("Performers · ${visiblePerformers.size}")
@@ -223,9 +241,10 @@ internal fun SearchOverlay(
                     if (query.isNotBlank() && visibleScenes.isEmpty() && visiblePerformers.isEmpty()) {
                         item {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(32.dp),
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(32.dp),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Text(
@@ -255,17 +274,19 @@ private fun SectionHeader(title: String) {
 @Composable
 private fun SceneResultRow(scene: SceneSummary) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 6.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Thumbnail placeholder: 86×50dp (coil AsyncImage wired by feature:library consumer — stub for v1)
         Box(
-            modifier = Modifier
-                .size(width = 86.dp, height = 50.dp)
-                .clip(ShapeSmall)
-                .background(SpineColors.SurfaceHigh),
+            modifier =
+                Modifier
+                    .size(width = 86.dp, height = 50.dp)
+                    .clip(ShapeSmall)
+                    .background(SpineColors.SurfaceHigh),
         )
 
         Spacer(Modifier.width(12.dp))
@@ -292,27 +313,30 @@ private fun SceneResultRow(scene: SceneSummary) {
 @Composable
 private fun PerformerChipRow(performers: List<String>) {
     FlowRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 4.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         performers.forEach { name ->
             Row(
-                modifier = Modifier
-                    .clip(ShapeSmall)
-                    .background(SpineColors.Surface)
-                    .border(BorderStroke(1.dp, SpineColors.Border), ShapeSmall)
-                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                modifier =
+                    Modifier
+                        .clip(ShapeSmall)
+                        .background(SpineColors.Surface)
+                        .border(BorderStroke(1.dp, SpineColors.Border), ShapeSmall)
+                        .padding(horizontal = 10.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // 18dp circle placeholder (real performer thumbnail would need URL)
                 Box(
-                    modifier = Modifier
-                        .size(18.dp)
-                        .clip(androidx.compose.foundation.shape.CircleShape)
-                        .background(SpineColors.SurfaceHigh),
+                    modifier =
+                        Modifier
+                            .size(18.dp)
+                            .clip(androidx.compose.foundation.shape.CircleShape)
+                            .background(SpineColors.SurfaceHigh),
                 )
                 Spacer(Modifier.width(6.dp))
                 Text(text = name, style = MonoSmall, color = SpineColors.OnSurface)

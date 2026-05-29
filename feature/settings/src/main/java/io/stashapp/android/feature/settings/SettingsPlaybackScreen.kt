@@ -68,11 +68,12 @@ fun SettingsPlaybackScreen(
                 title = {
                     Text(
                         "Playback",
-                        style = TextStyle(
-                            fontFamily = SpaceGrotesk,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                         color = SpineColors.OnSurface,
                     )
                 },
@@ -98,14 +99,15 @@ fun SettingsPlaybackScreen(
             ) {
                 DRowStacked(label = "Default speed", hint = "Speed applied when a video starts") {
                     ChipRow(
-                        options = listOf(
-                            "0.5×" to 0.5f,
-                            "0.75×" to 0.75f,
-                            "1×" to 1.0f,
-                            "1.25×" to 1.25f,
-                            "1.5×" to 1.5f,
-                            "2×" to 2.0f,
-                        ),
+                        options =
+                            listOf(
+                                "0.5×" to 0.5f,
+                                "0.75×" to 0.75f,
+                                "1×" to 1.0f,
+                                "1.25×" to 1.25f,
+                                "1.5×" to 1.5f,
+                                "2×" to 2.0f,
+                            ),
                         selected = speed,
                         onSelect = { v -> viewModel.setPlayer { setDefaultPlaybackSpeed(v) } },
                     )
@@ -113,11 +115,12 @@ fun SettingsPlaybackScreen(
                 HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
                 DRowStacked(label = "Aspect ratio") {
                     ChipRow(
-                        options = listOf(
-                            "Fit" to "fit",
-                            "Crop" to "crop",
-                            "Stretch" to "stretch",
-                        ),
+                        options =
+                            listOf(
+                                "Fit" to "fit",
+                                "Crop" to "crop",
+                                "Stretch" to "stretch",
+                            ),
                         selected = aspect,
                         onSelect = { v -> viewModel.setPlayer { setDefaultAspectRatio(v) } },
                     )
@@ -207,7 +210,7 @@ fun SettingsPlaybackScreen(
                         value = completionThreshold.toFloat(),
                         onValueChange = { viewModel.setPlayer { setCompletionThresholdPercent(it.roundToInt()) } },
                         valueRange = 50f..100f,
-                        valueLabel = "${completionThreshold}%",
+                        valueLabel = "$completionThreshold%",
                     )
                 }
                 HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
@@ -290,12 +293,13 @@ internal fun SpineSwitch(
     Switch(
         checked = checked,
         onCheckedChange = onCheckedChange,
-        colors = SwitchDefaults.colors(
-            checkedThumbColor = accent.onPrimary,
-            checkedTrackColor = accent.primary,
-            uncheckedThumbColor = SpineColors.OnSurfaceMuted,
-            uncheckedTrackColor = SpineColors.SurfaceHigh,
-        ),
+        colors =
+            SwitchDefaults.colors(
+                checkedThumbColor = accent.onPrimary,
+                checkedTrackColor = accent.primary,
+                uncheckedThumbColor = SpineColors.OnSurfaceMuted,
+                uncheckedTrackColor = SpineColors.SurfaceHigh,
+            ),
     )
 }
 
@@ -311,7 +315,9 @@ internal fun <T> ChipRow(
 ) {
     val accent = LocalAccentColors.current
     androidx.compose.foundation.lazy.LazyRow(
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(6.dp),
+        horizontalArrangement =
+            androidx.compose.foundation.layout.Arrangement
+                .spacedBy(6.dp),
     ) {
         items(options.size) { i ->
             val (label, value) = options[i]
@@ -320,16 +326,18 @@ internal fun <T> ChipRow(
                 onClick = { onSelect(value) },
                 shape = ShapeSmall,
                 color = if (isActive) accent.primary.copy(alpha = 0.12f) else SpineColors.SurfaceHigh,
-                border = BorderStroke(
-                    1.dp,
-                    if (isActive) accent.primary else SpineColors.Border,
-                ),
+                border =
+                    BorderStroke(
+                        1.dp,
+                        if (isActive) accent.primary else SpineColors.Border,
+                    ),
             ) {
                 Text(
                     text = label,
-                    style = MetaMono.copy(
-                        fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
-                    ),
+                    style =
+                        MetaMono.copy(
+                            fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
+                        ),
                     color = if (isActive) accent.primary else SpineColors.OnSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
                 )
@@ -359,10 +367,11 @@ internal fun DetailGroup(
                 if (title != null) {
                     Text(
                         text = title.uppercase(),
-                        style = MetaMono.copy(
-                            fontWeight = FontWeight.SemiBold,
-                            letterSpacing = 1.sp,
-                        ),
+                        style =
+                            MetaMono.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = 1.sp,
+                            ),
                         color = SpineColors.OnSurfaceMuted,
                     )
                 }
@@ -374,12 +383,12 @@ internal fun DetailGroup(
                         text = badge,
                         style = MetaMono,
                         color = accent.primary,
-                        modifier = Modifier
-                            .background(
-                                color = accent.primary.copy(alpha = 0.10f),
-                                shape = ShapeSmall,
-                            )
-                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                        modifier =
+                            Modifier
+                                .background(
+                                    color = accent.primary.copy(alpha = 0.10f),
+                                    shape = ShapeSmall,
+                                ).padding(horizontal = 6.dp, vertical = 2.dp),
                     )
                 }
             }

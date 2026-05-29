@@ -286,13 +286,14 @@ internal fun ChapterStrip(
         val playedFraction = (positionMs.toFloat() / durationMs).coerceIn(0f, 1f)
 
         val sortedMarkers = markers.sortedBy { it.seconds }
-        val boundaries = buildList {
-            add(0f)
-            sortedMarkers.forEach { m ->
-                add((m.seconds / (durationMs / 1000.0)).toFloat().coerceIn(0f, 1f))
+        val boundaries =
+            buildList {
+                add(0f)
+                sortedMarkers.forEach { m ->
+                    add((m.seconds / (durationMs / 1000.0)).toFloat().coerceIn(0f, 1f))
+                }
+                add(1f)
             }
-            add(1f)
-        }
 
         boundaries.zipWithNext().forEach { (start, end) ->
             val segStart = size.width * start + if (start > 0f) segmentGap / 2 else 0f
@@ -302,8 +303,12 @@ internal fun ChapterStrip(
 
             drawRect(
                 color = if (isPlayed) SpineColors.AccentPrimary else Color.White.copy(alpha = 0.18f),
-                topLeft = androidx.compose.ui.geometry.Offset(segStart, centerY - trackH / 2),
-                size = androidx.compose.ui.geometry.Size(segW, trackH),
+                topLeft =
+                    androidx.compose.ui.geometry
+                        .Offset(segStart, centerY - trackH / 2),
+                size =
+                    androidx.compose.ui.geometry
+                        .Size(segW, trackH),
             )
         }
     }

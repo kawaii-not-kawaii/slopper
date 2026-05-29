@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>MatchingDeclarationName:Color.kt$SpineColors</ID>
+    <ID>TooManyFunctions:PlayerSettings.kt$PlayerSettings</ID>
+    <ID>TooManyFunctions:UiSettings.kt$UiSettings</ID>
   </CurrentIssues>
 </SmellBaseline>

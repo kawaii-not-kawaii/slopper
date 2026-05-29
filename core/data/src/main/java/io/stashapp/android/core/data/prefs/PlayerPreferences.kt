@@ -77,38 +77,49 @@ class PlayerPreferences
         // ---- Player chrome (SETTINGS-06) -----------------------------------------
 
         override val showChapterThumbnails: Flow<Boolean> = flow(KEY_SHOW_CHAPTER_THUMBNAILS, DEFAULT_SHOW_CHAPTER_THUMBNAILS)
+
         override suspend fun setShowChapterThumbnails(v: Boolean) = put(KEY_SHOW_CHAPTER_THUMBNAILS, v)
 
         override val lockControlsOnIdle: Flow<Boolean> = flow(KEY_LOCK_CONTROLS_ON_IDLE, DEFAULT_LOCK_CONTROLS_ON_IDLE)
+
         override suspend fun setLockControlsOnIdle(v: Boolean) = put(KEY_LOCK_CONTROLS_ON_IDLE, v)
 
         override val showCodecBadge: Flow<Boolean> = flow(KEY_SHOW_CODEC_BADGE, DEFAULT_SHOW_CODEC_BADGE)
+
         override suspend fun setShowCodecBadge(v: Boolean) = put(KEY_SHOW_CODEC_BADGE, v)
 
         override val showQueuePosition: Flow<Boolean> = flow(KEY_SHOW_QUEUE_POSITION, DEFAULT_SHOW_QUEUE_POSITION)
+
         override suspend fun setShowQueuePosition(v: Boolean) = put(KEY_SHOW_QUEUE_POSITION, v)
 
         override val hapticsOnSeek: Flow<Boolean> = flow(KEY_HAPTICS_ON_SEEK, DEFAULT_HAPTICS_ON_SEEK)
+
         override suspend fun setHapticsOnSeek(v: Boolean) = put(KEY_HAPTICS_ON_SEEK, v)
 
         // ---- Codecs / HDR (SETTINGS-07) ------------------------------------------
 
         override val hdrPassthrough: Flow<Boolean> = flow(KEY_HDR_PASSTHROUGH, DEFAULT_HDR_PASSTHROUGH)
+
         override suspend fun setHdrPassthrough(v: Boolean) = put(KEY_HDR_PASSTHROUGH, v)
 
         override val matchRefreshRate: Flow<Boolean> = flow(KEY_MATCH_REFRESH_RATE, DEFAULT_MATCH_REFRESH_RATE)
+
         override suspend fun setMatchRefreshRate(v: Boolean) = put(KEY_MATCH_REFRESH_RATE, v)
 
         override val matchResolution: Flow<Boolean> = flow(KEY_MATCH_RESOLUTION, DEFAULT_MATCH_RESOLUTION)
+
         override suspend fun setMatchResolution(v: Boolean) = put(KEY_MATCH_RESOLUTION, v)
 
         override val fallbackOnDecoderError: Flow<Boolean> = flow(KEY_FALLBACK_ON_DECODER_ERROR, DEFAULT_FALLBACK_ON_DECODER_ERROR)
+
         override suspend fun setFallbackOnDecoderError(v: Boolean) = put(KEY_FALLBACK_ON_DECODER_ERROR, v)
 
         override val tunneling: Flow<Boolean> = flow(KEY_TUNNELING, DEFAULT_TUNNELING)
+
         override suspend fun setTunneling(v: Boolean) = put(KEY_TUNNELING, v)
 
         override val preBufferOnHover: Flow<Boolean> = flow(KEY_PRE_BUFFER_ON_HOVER, DEFAULT_PRE_BUFFER_ON_HOVER)
+
         override suspend fun setPreBufferOnHover(v: Boolean) = put(KEY_PRE_BUFFER_ON_HOVER, v)
 
         // ---- Helpers (reduce boilerplate) ----------------------------------------

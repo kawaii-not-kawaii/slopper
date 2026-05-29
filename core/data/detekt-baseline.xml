@@ -8,5 +8,7 @@
     <ID>TooGenericExceptionCaught:DefaultConnectionRepository.kt$DefaultConnectionRepository$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DefaultSceneRepository.kt$DefaultSceneRepository$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ScenePagingSource.kt$ScenePagingSource$e: Exception</ID>
+    <ID>TooManyFunctions:PlayerPreferences.kt$PlayerPreferences : PlayerSettings</ID>
+    <ID>TooManyFunctions:UiPreferences.kt$UiPreferences : UiSettings</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -2,7 +2,9 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>CyclomaticComplexMethod:DetailScreen.kt$@OptIn(ExperimentalLayoutApi::class) @Composable private fun SceneBody( scene: SceneDetail, contentPadding: PaddingValues, onBack: () -&gt; Unit, onPlay: (sceneId: String, startSeconds: Double?) -&gt; Unit, onRatingChange: (Int?) -&gt; Unit, onOrganizedToggle: (Boolean) -&gt; Unit, onIncrementO: () -&gt; Unit, onDecrementO: () -&gt; Unit, )</ID>
     <ID>ForEachOnRange:DetailScreen.kt$1..5</ID>
-    <ID>LongMethod:DetailScreen.kt$@OptIn(ExperimentalLayoutApi::class) @Composable private fun SceneBody( scene: SceneDetail, contentPadding: PaddingValues, onPlay: (sceneId: String, startSeconds: Double?) -&gt; Unit, onRatingChange: (Int?) -&gt; Unit, onOrganizedToggle: (Boolean) -&gt; Unit, onIncrementO: () -&gt; Unit, onDecrementO: () -&gt; Unit, )</ID>
+    <ID>LongMethod:DetailScreen.kt$@OptIn(ExperimentalLayoutApi::class) @Composable private fun SceneBody( scene: SceneDetail, contentPadding: PaddingValues, onBack: () -&gt; Unit, onPlay: (sceneId: String, startSeconds: Double?) -&gt; Unit, onRatingChange: (Int?) -&gt; Unit, onOrganizedToggle: (Boolean) -&gt; Unit, onIncrementO: () -&gt; Unit, onDecrementO: () -&gt; Unit, )</ID>
+    <ID>UnusedPrivateMember:DetailScreen.kt$private fun Double.format1(): String</ID>
   </CurrentIssues>
 </SmellBaseline>

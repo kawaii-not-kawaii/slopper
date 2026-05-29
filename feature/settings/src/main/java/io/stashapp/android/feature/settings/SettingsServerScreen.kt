@@ -65,11 +65,12 @@ fun SettingsServerScreen(
                 title = {
                     Text(
                         "Server",
-                        style = TextStyle(
-                            fontFamily = SpaceGrotesk,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                         color = SpineColors.OnSurface,
                     )
                 },
@@ -199,24 +200,27 @@ fun SettingsServerScreen(
         // Danger zone — Disconnect
         item {
             Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 8.dp),
                 shape = ShapeSmall,
                 border = BorderStroke(1.dp, SpineColors.Border),
                 color = SpineColors.Surface,
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { viewModel.disconnect(onDisconnected) }
-                        .padding(horizontal = 12.dp, vertical = 14.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable { viewModel.disconnect(onDisconnected) }
+                            .padding(horizontal = 12.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .background(SpineColors.Error.copy(alpha = 0.08f), ShapeSmall),
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .background(SpineColors.Error.copy(alpha = 0.08f), ShapeSmall),
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
@@ -229,11 +233,12 @@ fun SettingsServerScreen(
                     Spacer(Modifier.width(12.dp))
                     Text(
                         text = "Disconnect server",
-                        style = TextStyle(
-                            fontFamily = SpaceGrotesk,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium,
-                        ),
+                        style =
+                            TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                            ),
                         color = SpineColors.Error,
                     )
                 }
@@ -258,28 +263,31 @@ private fun ConnectedInfoPanel(
             // Status row
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .background(SpineColors.Success, CircleShape),
+                    modifier =
+                        Modifier
+                            .size(8.dp)
+                            .background(SpineColors.Success, CircleShape),
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = "CONNECTED",
-                    style = MetaMono.copy(
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.4.sp,
-                    ),
+                    style =
+                        MetaMono.copy(
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 1.4.sp,
+                        ),
                     color = SpineColors.Success,
                 )
             }
             Spacer(Modifier.height(6.dp))
             Text(
                 text = server?.baseUrl ?: "",
-                style = TextStyle(
-                    fontFamily = JetBrainsMono,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
+                style =
+                    TextStyle(
+                        fontFamily = JetBrainsMono,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
                 color = SpineColors.OnSurface,
             )
             Spacer(Modifier.height(4.dp))
@@ -301,26 +309,29 @@ private fun ConnectedInfoPanel(
                 ).forEachIndexed { idx, (label, count) ->
                     if (idx > 0) {
                         Spacer(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .fillMaxHeight()
-                                .background(SpineColors.Border),
+                            modifier =
+                                Modifier
+                                    .width(1.dp)
+                                    .fillMaxHeight()
+                                    .background(SpineColors.Border),
                         )
                     }
                     Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .background(SpineColors.Bg)
-                            .padding(8.dp),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .background(SpineColors.Bg)
+                                .padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
                             text = count.toString(),
-                            style = TextStyle(
-                                fontFamily = JetBrainsMono,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                            ),
+                            style =
+                                TextStyle(
+                                    fontFamily = JetBrainsMono,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Medium,
+                                ),
                             color = SpineColors.OnSurface,
                         )
                         Text(
@@ -349,11 +360,12 @@ private fun ConnectedStubPanel(
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = server?.displayName ?: "Not connected",
-                style = TextStyle(
-                    fontFamily = SpaceGrotesk,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                style =
+                    TextStyle(
+                        fontFamily = SpaceGrotesk,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 color = SpineColors.OnSurface,
             )
             if (server?.baseUrl != null) {

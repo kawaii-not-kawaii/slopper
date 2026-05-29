@@ -46,9 +46,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -170,16 +170,18 @@ fun PlayerScreen(
     }
 
     // D-06: pre-compute scrim brushes once per composition (stable reference)
-    val topScrimBrush = remember {
-        Brush.verticalGradient(
-            colors = listOf(Color.Black.copy(alpha = 0.7f), Color.Transparent),
-        )
-    }
-    val bottomScrimBrush = remember {
-        Brush.verticalGradient(
-            colors = listOf(Color.Transparent, Color(0xEB000000)),
-        )
-    }
+    val topScrimBrush =
+        remember {
+            Brush.verticalGradient(
+                colors = listOf(Color.Black.copy(alpha = 0.7f), Color.Transparent),
+            )
+        }
+    val bottomScrimBrush =
+        remember {
+            Brush.verticalGradient(
+                colors = listOf(Color.Transparent, Color(0xEB000000)),
+            )
+        }
 
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         // Media surface — drives `Surface.setFrameRate()` when the video
@@ -207,20 +209,22 @@ fun PlayerScreen(
 
         // D-06 top scrim (90dp) — behind controls, above the media surface
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(90.dp)
-                .background(topScrimBrush)
-                .align(Alignment.TopCenter),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(90.dp)
+                    .background(topScrimBrush)
+                    .align(Alignment.TopCenter),
         )
 
         // D-06 bottom scrim (160dp) — behind controls, above the media surface
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp)
-                .background(bottomScrimBrush)
-                .align(Alignment.BottomCenter),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .background(bottomScrimBrush)
+                    .align(Alignment.BottomCenter),
         )
 
         if (!locked) {
@@ -358,21 +362,34 @@ fun PlayerScreen(
             // Bottom area: ChapterStrip + PlayerControls, anchored to bottom
             // D-05/SPINE-11: ChapterStrip sits above the transport controls as a sibling.
             Column(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
                 verticalArrangement = androidx.compose.foundation.layout.Arrangement.Bottom,
             ) {
                 // ChapterStrip — only visible when controls are visible (same guard as PlayerControls)
-                if (!locked && controlsVisible && state.current?.markers.orEmpty().isNotEmpty()) {
+                if (!locked &&
+                    controlsVisible &&
+                    state.current
+                        ?.markers
+                        .orEmpty()
+                        .isNotEmpty()
+                ) {
                     ChapterStrip(
-                        markers = state.current?.markers.orEmpty().toPersistentList(),
-                        positionMs = position.positionMs,   // use already-collected val — do NOT re-collect
+                        markers =
+                            state.current
+                                ?.markers
+                                .orEmpty()
+                                .toPersistentList(),
+                        positionMs = position.positionMs, // use already-collected val — do NOT re-collect
                         durationMs = position.durationMs,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 18.dp)
-                            .navigationBarsPadding(),       // T-05-10 mitigation: avoid nav-bar clipping
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 18.dp)
+                                .navigationBarsPadding(),
+                        // T-05-10 mitigation: avoid nav-bar clipping
                     )
                 }
 

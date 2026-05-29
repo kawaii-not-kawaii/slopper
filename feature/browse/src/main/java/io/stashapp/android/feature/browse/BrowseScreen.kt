@@ -1,6 +1,5 @@
 package io.stashapp.android.feature.browse
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -93,9 +92,10 @@ fun BrowseScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { inner ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = inner.calculateTopPadding()),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = inner.calculateTopPadding()),
         ) {
             // ---- Spine 4-tab segmented control ----
             SpineSegmentedControl(
@@ -148,36 +148,38 @@ private fun SpineSegmentedControl(
     val tabs = listOf("Studios", "Performers", "Tags", "Markers")
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(SpineColors.Surface, ShapeSmall)
-            .border(1.dp, SpineColors.Border, ShapeSmall)
-            .padding(3.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(SpineColors.Surface, ShapeSmall)
+                .border(1.dp, SpineColors.Border, ShapeSmall)
+                .padding(3.dp),
     ) {
         tabs.forEachIndexed { index, label ->
             val isSelected = selectedTab == index
             Text(
                 text = label,
-                style = TextStyle(
-                    fontFamily = SpaceGrotesk,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
+                style =
+                    TextStyle(
+                        fontFamily = SpaceGrotesk,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                    ),
                 color = if (isSelected) SpineColors.OnSurface else SpineColors.OnSurfaceVariant,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .then(
-                        if (isSelected) {
-                            Modifier
-                                .background(SpineColors.SurfaceHigh, ShapeSmall)
-                                .border(1.dp, SpineColors.BorderStrong, ShapeSmall)
-                        } else {
-                            Modifier
-                        },
-                    )
-                    .clickable { onTabSelected(index) }
-                    .padding(vertical = 6.dp),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .then(
+                            if (isSelected) {
+                                Modifier
+                                    .background(SpineColors.SurfaceHigh, ShapeSmall)
+                                    .border(1.dp, SpineColors.BorderStrong, ShapeSmall)
+                            } else {
+                                Modifier
+                            },
+                        ).clickable { onTabSelected(index) }
+                        .padding(vertical = 6.dp),
             )
         }
     }
@@ -210,9 +212,10 @@ private fun PerformersList(
         else -> {
             androidx.compose.foundation.lazy.LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    bottom = inner.calculateBottomPadding() + 12.dp,
-                ),
+                contentPadding =
+                    PaddingValues(
+                        bottom = inner.calculateBottomPadding() + 12.dp,
+                    ),
             ) {
                 items(
                     count = items.itemCount,
@@ -233,10 +236,11 @@ private fun PerformerRow(
     onClick: (String) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick(performer.id) }
-            .padding(horizontal = 18.dp, vertical = 10.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable { onClick(performer.id) }
+                .padding(horizontal = 18.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -244,9 +248,10 @@ private fun PerformerRow(
             model = performer.imageUrl,
             contentDescription = performer.name,
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(44.dp)
-                .clip(CircleShape),
+            modifier =
+                Modifier
+                    .size(44.dp)
+                    .clip(CircleShape),
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -297,11 +302,12 @@ private fun StudiosGrid(
         else -> {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(
-                    start = 18.dp,
-                    end = 18.dp,
-                    bottom = inner.calculateBottomPadding() + 18.dp,
-                ),
+                contentPadding =
+                    PaddingValues(
+                        start = 18.dp,
+                        end = 18.dp,
+                        bottom = inner.calculateBottomPadding() + 18.dp,
+                    ),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxSize(),
@@ -324,11 +330,12 @@ private fun StudioCard(
     onClick: (String) -> Unit,
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(4f / 3f)
-            .clip(ShapeMedium)
-            .clickable { onClick(studio.id) },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(4f / 3f)
+                .clip(ShapeMedium)
+                .clickable { onClick(studio.id) },
     ) {
         AsyncImage(
             model = studio.imageUrl,
@@ -354,11 +361,12 @@ private fun StudioCard(
         ) {
             Text(
                 studio.name,
-                style = TextStyle(
-                    fontFamily = SpaceGrotesk,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                ),
+                style =
+                    TextStyle(
+                        fontFamily = SpaceGrotesk,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    ),
                 color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -399,11 +407,12 @@ private fun TagsGrid(
         else -> {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 140.dp),
-                contentPadding = PaddingValues(
-                    start = 12.dp,
-                    end = 12.dp,
-                    bottom = inner.calculateBottomPadding() + 12.dp,
-                ),
+                contentPadding =
+                    PaddingValues(
+                        start = 12.dp,
+                        end = 12.dp,
+                        bottom = inner.calculateBottomPadding() + 12.dp,
+                    ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize(),

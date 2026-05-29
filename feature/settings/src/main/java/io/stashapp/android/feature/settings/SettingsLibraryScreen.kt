@@ -15,8 +15,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -61,11 +61,12 @@ fun SettingsLibraryScreen(
                 title = {
                     Text(
                         "Library",
-                        style = TextStyle(
-                            fontFamily = SpaceGrotesk,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                         color = SpineColors.OnSurface,
                     )
                 },
@@ -136,10 +137,11 @@ fun SettingsLibraryScreen(
             Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)) {
                 Text(
                     text = "CACHE",
-                    style = MetaMono.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = 1.sp,
-                    ),
+                    style =
+                        MetaMono.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 1.sp,
+                        ),
                     color = SpineColors.OnSurfaceMuted,
                     modifier = Modifier.padding(bottom = 8.dp, start = 2.dp),
                 )
@@ -166,12 +168,13 @@ fun SettingsLibraryScreen(
                             hint = "How long cached data is kept",
                         ) {
                             ChipRow(
-                                options = listOf(
-                                    "1 day" to "1day",
-                                    "1 week" to "1week",
-                                    "30 days" to "30days",
-                                    "Forever" to "forever",
-                                ),
+                                options =
+                                    listOf(
+                                        "1 day" to "1day",
+                                        "1 week" to "1week",
+                                        "30 days" to "30days",
+                                        "Forever" to "forever",
+                                    ),
                                 selected = cacheDuration,
                                 onSelect = { v -> viewModel.setUi { setCacheDuration(v) } },
                             )
@@ -181,9 +184,10 @@ fun SettingsLibraryScreen(
                             onClick = {
                                 Toast.makeText(context, "Cache clear — coming soon", Toast.LENGTH_SHORT).show()
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 14.dp, vertical = 8.dp),
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 14.dp, vertical = 8.dp),
                         ) {
                             Text(
                                 text = "Clear image cache · up to $cacheMb MB",

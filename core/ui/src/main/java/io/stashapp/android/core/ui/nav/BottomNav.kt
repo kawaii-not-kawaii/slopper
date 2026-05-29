@@ -155,39 +155,43 @@ fun MainBottomBar(
     val visibleItems = visibleIds.mapNotNull { id -> MainNavItems.All.find { it.id == id } }
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .navigationBarsPadding()
-            .padding(start = 12.dp, end = 12.dp, bottom = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(start = 12.dp, end = 12.dp, bottom = 14.dp),
         contentAlignment = Alignment.Center,
     ) {
         Row(
-            modifier = Modifier
-                .background(
-                    color = SpineColors.Surface.copy(alpha = 0.92f),
-                    shape = RoundedCornerShape(16.dp),
-                )
-                .border(1.dp, SpineColors.Border, RoundedCornerShape(16.dp))
-                .padding(4.dp),
+            modifier =
+                Modifier
+                    .background(
+                        color = SpineColors.Surface.copy(alpha = 0.92f),
+                        shape = RoundedCornerShape(16.dp),
+                    ).border(1.dp, SpineColors.Border, RoundedCornerShape(16.dp))
+                    .padding(4.dp),
             horizontalArrangement = Arrangement.spacedBy(0.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             visibleItems.forEach { item ->
                 // Browse tab: active for any browse/* route, not just browse/performers
-                val selected = if (item.id == "browse") {
-                    currentRoute?.startsWith("browse/") == true
-                } else {
-                    currentRoute?.startsWith(item.route) == true
-                }
-                val tabBg = if (selected) {
-                    Modifier.background(SpineColors.AccentPrimary, RoundedCornerShape(12.dp))
-                } else {
-                    Modifier
-                }
+                val selected =
+                    if (item.id == "browse") {
+                        currentRoute?.startsWith("browse/") == true
+                    } else {
+                        currentRoute?.startsWith(item.route) == true
+                    }
+                val tabBg =
+                    if (selected) {
+                        Modifier.background(SpineColors.AccentPrimary, RoundedCornerShape(12.dp))
+                    } else {
+                        Modifier
+                    }
                 Row(
-                    modifier = tabBg
-                        .clickable { onNavigate(item.route) }
-                        .padding(horizontal = 12.dp, vertical = 9.dp),
+                    modifier =
+                        tabBg
+                            .clickable { onNavigate(item.route) }
+                            .padding(horizontal = 12.dp, vertical = 9.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
@@ -200,12 +204,13 @@ fun MainBottomBar(
                     if (selected) {
                         Text(
                             text = item.label,
-                            style = TextStyle(
-                                fontFamily = SpaceGrotesk,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                letterSpacing = (-0.1).sp,
-                            ),
+                            style =
+                                TextStyle(
+                                    fontFamily = SpaceGrotesk,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    letterSpacing = (-0.1).sp,
+                                ),
                             color = SpineColors.AccentOnPrimary,
                         )
                     }

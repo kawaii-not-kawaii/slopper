@@ -1,14 +1,13 @@
 package io.stashapp.android.feature.settings
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -72,11 +71,12 @@ fun SettingsDisplayScreen(
                 title = {
                     Text(
                         "Display",
-                        style = TextStyle(
-                            fontFamily = SpaceGrotesk,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        ),
+                        style =
+                            TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                         color = SpineColors.OnSurface,
                     )
                 },
@@ -101,44 +101,48 @@ fun SettingsDisplayScreen(
                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
             ) {
                 // Palette swatch row (D-08)
-                val palettes = listOf(
-                    Triple("sage", "Sage", SageAccent.primary),
-                    Triple("ember", "Ember", EmberAccent.primary),
-                    Triple("signal", "Signal", SignalAccent.primary),
-                )
+                val palettes =
+                    listOf(
+                        Triple("sage", "Sage", SageAccent.primary),
+                        Triple("ember", "Ember", EmberAccent.primary),
+                        Triple("signal", "Signal", SignalAccent.primary),
+                    )
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     palettes.forEach { (id, name, color) ->
                         val isActive = accentPalette == id
                         Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .clip(ShapeSmall)
-                                .background(
-                                    if (isActive) color.copy(alpha = 0.08f) else SpineColors.Bg,
-                                )
-                                .border(1.dp, if (isActive) color else SpineColors.Border, ShapeSmall)
-                                .clickable { viewModel.setAccentPalette(id) }
-                                .padding(10.dp),
+                            modifier =
+                                Modifier
+                                    .weight(1f)
+                                    .clip(ShapeSmall)
+                                    .background(
+                                        if (isActive) color.copy(alpha = 0.08f) else SpineColors.Bg,
+                                    ).border(1.dp, if (isActive) color else SpineColors.Border, ShapeSmall)
+                                    .clickable { viewModel.setAccentPalette(id) }
+                                    .padding(10.dp),
                         ) {
                             Column {
                                 Box(
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .background(color, RoundedCornerShape(6.dp)),
+                                    modifier =
+                                        Modifier
+                                            .size(28.dp)
+                                            .background(color, RoundedCornerShape(6.dp)),
                                 )
                                 Spacer(Modifier.height(6.dp))
                                 Text(
                                     text = name,
-                                    style = TextStyle(
-                                        fontFamily = SpaceGrotesk,
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                    ),
+                                    style =
+                                        TextStyle(
+                                            fontFamily = SpaceGrotesk,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                        ),
                                     color = SpineColors.OnSurface,
                                 )
                             }
@@ -147,9 +151,10 @@ fun SettingsDisplayScreen(
                                     imageVector = Icons.Outlined.Check,
                                     contentDescription = null,
                                     tint = color,
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                        .align(Alignment.TopEnd),
+                                    modifier =
+                                        Modifier
+                                            .size(14.dp)
+                                            .align(Alignment.TopEnd),
                                 )
                             }
                         }
@@ -186,12 +191,13 @@ fun SettingsDisplayScreen(
             ) {
                 DRowStacked(label = "Grid columns") {
                     ChipRow(
-                        options = listOf(
-                            "Auto" to "auto",
-                            "2" to "2",
-                            "3" to "3",
-                            "4" to "4",
-                        ),
+                        options =
+                            listOf(
+                                "Auto" to "auto",
+                                "2" to "2",
+                                "3" to "3",
+                                "4" to "4",
+                            ),
                         selected = gridColumns,
                         onSelect = { v -> viewModel.setUi { setGridColumns(v) } },
                     )
@@ -199,11 +205,12 @@ fun SettingsDisplayScreen(
                 HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
                 DRowStacked(label = "Card density") {
                     ChipRow(
-                        options = listOf(
-                            "Compact" to "compact",
-                            "Comfortable" to "comfortable",
-                            "Spacious" to "spacious",
-                        ),
+                        options =
+                            listOf(
+                                "Compact" to "compact",
+                                "Comfortable" to "comfortable",
+                                "Spacious" to "spacious",
+                            ),
                         selected = cardDensity,
                         onSelect = { v -> viewModel.setUi { setCardDensity(v) } },
                     )
@@ -211,11 +218,12 @@ fun SettingsDisplayScreen(
                 HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
                 DRowStacked(label = "Long-press behavior") {
                     ChipRow(
-                        options = listOf(
-                            "Play queue" to "play_queue",
-                            "Quick menu" to "quick_menu",
-                            "Off" to "off",
-                        ),
+                        options =
+                            listOf(
+                                "Play queue" to "play_queue",
+                                "Quick menu" to "quick_menu",
+                                "Off" to "off",
+                            ),
                         selected = longPress,
                         onSelect = { v -> viewModel.setUi { setLongPressBehavior(v) } },
                     )

@@ -109,20 +109,22 @@ private fun SpineSearchBar(
     onOpenFilter: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         // Always-visible search field (decorative — real search in filter sheet)
         Row(
-            modifier = Modifier
-                .weight(1f)
-                .background(SpineColors.Surface, ShapeSmall)
-                .border(1.dp, SpineColors.Border, ShapeSmall)
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-                .clickable { /* TODO: open search keyboard */ },
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .background(SpineColors.Surface, ShapeSmall)
+                    .border(1.dp, SpineColors.Border, ShapeSmall)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .clickable { /* TODO: open search keyboard */ },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -142,9 +144,10 @@ private fun SpineSearchBar(
                 "⌘K",
                 style = MetaMono,
                 color = SpineColors.OnSurfaceMuted,
-                modifier = Modifier
-                    .background(SpineColors.SurfaceHigh, RoundedCornerShape(3.dp))
-                    .padding(horizontal = 4.dp, vertical = 2.dp),
+                modifier =
+                    Modifier
+                        .background(SpineColors.SurfaceHigh, RoundedCornerShape(3.dp))
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
             )
         }
 
@@ -214,9 +217,10 @@ private fun ScenesGrid(
         }
         else -> {
             // Only recompute the id list when the paged count actually changes
-            val allIds = remember(scenes.itemCount) {
-                (0 until scenes.itemCount).mapNotNull { scenes.peek(it)?.id }
-            }
+            val allIds =
+                remember(scenes.itemCount) {
+                    (0 until scenes.itemCount).mapNotNull { scenes.peek(it)?.id }
+                }
 
             // resultCount / organizedCount: not yet in LibraryUiState — placeholder zeros
             val resultCount = scenes.itemCount
@@ -224,12 +228,13 @@ private fun ScenesGrid(
 
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 180.dp),
-                contentPadding = PaddingValues(
-                    start = 18.dp,
-                    end = 18.dp,
-                    top = inner.calculateTopPadding(),
-                    bottom = inner.calculateBottomPadding() + 100.dp,
-                ),
+                contentPadding =
+                    PaddingValues(
+                        start = 18.dp,
+                        end = 18.dp,
+                        top = inner.calculateTopPadding(),
+                        bottom = inner.calculateBottomPadding() + 100.dp,
+                    ),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxSize(),
@@ -256,23 +261,26 @@ private fun ScenesGrid(
                                         label = {
                                             Text(
                                                 "Filters active",
-                                                style = TextStyle(
-                                                    fontFamily = SpaceGrotesk,
-                                                    fontSize = 11.5.sp,
-                                                    fontWeight = FontWeight.Medium,
-                                                ),
+                                                style =
+                                                    TextStyle(
+                                                        fontFamily = SpaceGrotesk,
+                                                        fontSize = 11.5.sp,
+                                                        fontWeight = FontWeight.Medium,
+                                                    ),
                                             )
                                         },
                                         shape = ShapeSmall,
-                                        colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = SpineColors.AccentPrimary.copy(alpha = 0.12f),
-                                            selectedLabelColor = SpineColors.AccentPrimary,
-                                        ),
-                                        border = FilterChipDefaults.filterChipBorder(
-                                            enabled = true,
-                                            selected = true,
-                                            selectedBorderColor = SpineColors.AccentPrimary.copy(alpha = 0.30f),
-                                        ),
+                                        colors =
+                                            FilterChipDefaults.filterChipColors(
+                                                selectedContainerColor = SpineColors.AccentPrimary.copy(alpha = 0.12f),
+                                                selectedLabelColor = SpineColors.AccentPrimary,
+                                            ),
+                                        border =
+                                            FilterChipDefaults.filterChipBorder(
+                                                enabled = true,
+                                                selected = true,
+                                                selectedBorderColor = SpineColors.AccentPrimary.copy(alpha = 0.30f),
+                                            ),
                                     )
                                 }
                             }
@@ -312,11 +320,12 @@ private fun ScenesGrid(
                         resolution = resolutionLabel(scene.width, scene.height),
                         rating100 = scene.rating100,
                         playCount = scene.playCount,
-                        resumeFraction = run {
-                            val dur = scene.durationSeconds
-                            val pos = scene.resumeTimeSeconds
-                            if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
-                        },
+                        resumeFraction =
+                            run {
+                                val dur = scene.durationSeconds
+                                val pos = scene.resumeTimeSeconds
+                                if (dur != null && dur > 0 && pos != null) (pos / dur).toFloat() else null
+                            },
                         onClick = { onSceneClick(scene.id, allIds, index) },
                         onLongClick = { onPlayQueue(allIds, index) },
                         modifier = Modifier.fillMaxWidth(),

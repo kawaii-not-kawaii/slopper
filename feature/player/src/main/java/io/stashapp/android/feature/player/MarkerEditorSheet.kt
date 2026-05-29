@@ -5,8 +5,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -65,23 +65,25 @@ internal fun MarkerEditorSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = SpineColors.Bg,
-        contentWindowInsets = { WindowInsets.navigationBars },  // COMPLY-01 — do not remove
+        contentWindowInsets = { WindowInsets.navigationBars }, // COMPLY-01 — do not remove
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.84f)
-                .padding(vertical = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.84f)
+                    .padding(vertical = 8.dp),
         ) {
             // Mini timeline — Canvas with 3dp track, AccentPrimary fill, Warning marker dots
             MarkerMiniTimeline(
                 markers = markers,
                 positionMs = positionMs,
                 durationMs = durationMs,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(24.dp)
-                    .padding(horizontal = 18.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(24.dp)
+                        .padding(horizontal = 18.dp),
             )
 
             Spacer(Modifier.height(12.dp))
@@ -90,10 +92,11 @@ internal fun MarkerEditorSheet(
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(6.dp),
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                    horizontal = 18.dp,
-                    vertical = 4.dp,
-                ),
+                contentPadding =
+                    androidx.compose.foundation.layout.PaddingValues(
+                        horizontal = 18.dp,
+                        vertical = 4.dp,
+                    ),
             ) {
                 items(markers, key = { it.id }) { marker ->
                     MarkerRow(marker = marker)
@@ -105,9 +108,10 @@ internal fun MarkerEditorSheet(
             // Footer: full-width outlined "Add marker" button
             OutlinedButton(
                 onClick = onAddMarker,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 18.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp),
                 shape = ShapeSmall,
                 border = BorderStroke(1.dp, SpineColors.Border),
             ) {
@@ -146,11 +150,12 @@ private fun MarkerMiniTimeline(
         )
 
         // AccentPrimary fill for played portion
-        val playedFraction = if (durationMs > 0L) {
-            (positionMs.toFloat() / durationMs.toFloat()).coerceIn(0f, 1f)
-        } else {
-            0f
-        }
+        val playedFraction =
+            if (durationMs > 0L) {
+                (positionMs.toFloat() / durationMs.toFloat()).coerceIn(0f, 1f)
+            } else {
+                0f
+            }
         if (playedFraction > 0f) {
             drawRect(
                 color = accentPrimary,
@@ -162,11 +167,12 @@ private fun MarkerMiniTimeline(
         // Warning marker dots (10dp diameter, 2dp Bg border)
         val dotRadius = 5.dp.toPx()
         markers.forEach { marker ->
-            val frac = if (durationMs > 0L) {
-                (marker.seconds * 1000.0 / durationMs.toDouble()).toFloat().coerceIn(0f, 1f)
-            } else {
-                0f
-            }
+            val frac =
+                if (durationMs > 0L) {
+                    (marker.seconds * 1000.0 / durationMs.toDouble()).toFloat().coerceIn(0f, 1f)
+                } else {
+                    0f
+                }
             val x = size.width * frac
             drawCircle(color = warning, radius = dotRadius, center = Offset(x, centerY))
             drawCircle(
@@ -193,10 +199,11 @@ private fun MarkerRow(marker: Marker) {
         ) {
             // Thumbnail placeholder: 64×36dp (URL not yet wired — future enhancement)
             Box(
-                modifier = Modifier
-                    .size(width = 64.dp, height = 36.dp)
-                    .clip(ShapeSmall)
-                    .background(SpineColors.SurfaceHigh),
+                modifier =
+                    Modifier
+                        .size(width = 64.dp, height = 36.dp)
+                        .clip(ShapeSmall)
+                        .background(SpineColors.SurfaceHigh),
             )
 
             Spacer(Modifier.width(10.dp))

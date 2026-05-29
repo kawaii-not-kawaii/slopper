@@ -52,8 +52,14 @@ jobs:
             -alias androiddebugkey -keypass android -storepass android \
             -keystore ~/.android/debug.keystore -keyalg RSA -keysize 2048 -validity 10000
 
-      - name: Build + Lint + Static analysis
-        run: ./gradlew assembleDebug detekt ktlintCheck --no-daemon --stacktrace
+      # assembleDebug MUST run in its own Gradle invocation. detekt/ktlint bundle
+      # an older BouncyCastle that, in a shared JVM, shadows AGP's (which has the
+      # EdEC class), breaking :app:validateSigningDebug. Separate JVMs avoid it.
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Static analysis (detekt + ktlint)
+        run: ./gradlew detekt ktlintCheck --no-daemon --stacktrace
 
       - name: Unit tests
         run: ./gradlew test --no-daemon --stacktrace

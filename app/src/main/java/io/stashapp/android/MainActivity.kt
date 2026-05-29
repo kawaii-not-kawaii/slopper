@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,6 +28,7 @@ import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -81,8 +81,9 @@ class RootViewModel
         private val _start = MutableStateFlow<String?>(null)
         val start: StateFlow<String?> = _start.asStateFlow()
 
-        val accentPalette: StateFlow<String> = uiPreferences.accentPalette
-            .stateIn(viewModelScope, SharingStarted.Eagerly, "sage")
+        val accentPalette: StateFlow<String> =
+            uiPreferences.accentPalette
+                .stateIn(viewModelScope, SharingStarted.Eagerly, "sage")
 
         init {
             viewModelScope.launch {
@@ -443,11 +444,11 @@ private fun AppNavHost(
                     }
                 },
                 onPlaybackClick = { navController.navigate(Routes.SettingsPlayback) },
-                onCodecsClick   = { navController.navigate(Routes.SettingsCodecs) },
-                onDisplayClick  = { navController.navigate(Routes.SettingsDisplay) },
-                onLibraryClick  = { navController.navigate(Routes.SettingsLibrary) },
-                onServerClick   = { navController.navigate(Routes.SettingsServer) },
-                onAboutClick    = { navController.navigate(Routes.SettingsAbout) },
+                onCodecsClick = { navController.navigate(Routes.SettingsCodecs) },
+                onDisplayClick = { navController.navigate(Routes.SettingsDisplay) },
+                onLibraryClick = { navController.navigate(Routes.SettingsLibrary) },
+                onServerClick = { navController.navigate(Routes.SettingsServer) },
+                onAboutClick = { navController.navigate(Routes.SettingsAbout) },
             )
         }
 

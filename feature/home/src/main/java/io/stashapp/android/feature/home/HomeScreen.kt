@@ -2,7 +2,6 @@ package io.stashapp.android.feature.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,10 +71,11 @@ fun HomeScreen(
     ) { inner ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = inner.calculateTopPadding(),
-                bottom = inner.calculateBottomPadding() + 16.dp,
-            ),
+            contentPadding =
+                PaddingValues(
+                    top = inner.calculateTopPadding(),
+                    bottom = inner.calculateBottomPadding() + 16.dp,
+                ),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             // Inline Spine top bar — replaces TopAppBar
@@ -118,18 +118,20 @@ private fun SpineTopBar(
     onRefreshClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp, start = 18.dp, end = 18.dp, bottom = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp, start = 18.dp, end = 18.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Logo: rotated-diamond accent shape
         Box(
-            modifier = Modifier
-                .size(22.dp)
-                .rotate(45f)
-                .clip(ShapeSmall)
-                .background(SpineColors.AccentPrimary),
+            modifier =
+                Modifier
+                    .size(22.dp)
+                    .rotate(45f)
+                    .clip(ShapeSmall)
+                    .background(SpineColors.AccentPrimary),
         )
         Spacer(Modifier.width(8.dp))
         Text("Slopper", style = MaterialTheme.typography.titleLarge)
@@ -142,10 +144,11 @@ private fun SpineTopBar(
                 text = serverHost,
                 style = MetaMono,
                 color = SpineColors.OnSurfaceVariant,
-                modifier = Modifier
-                    .background(SpineColors.Surface, RoundedCornerShape(4.dp))
-                    .border(1.dp, SpineColors.Border, RoundedCornerShape(4.dp))
-                    .padding(horizontal = 6.dp, vertical = 2.dp),
+                modifier =
+                    Modifier
+                        .background(SpineColors.Surface, RoundedCornerShape(4.dp))
+                        .border(1.dp, SpineColors.Border, RoundedCornerShape(4.dp))
+                        .padding(horizontal = 6.dp, vertical = 2.dp),
             )
         }
 
@@ -189,9 +192,10 @@ private fun HomeRailRow(
     Column {
         // Spine-styled section header: title + count badge + chevron
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -204,9 +208,10 @@ private fun HomeRailRow(
                     text = "${rail.scenes.size}",
                     style = MetaMono,
                     color = SpineColors.OnSurfaceMuted,
-                    modifier = Modifier
-                        .background(SpineColors.Surface, RoundedCornerShape(3.dp))
-                        .padding(horizontal = 5.dp, vertical = 1.dp),
+                    modifier =
+                        Modifier
+                            .background(SpineColors.Surface, RoundedCornerShape(3.dp))
+                            .padding(horizontal = 5.dp, vertical = 1.dp),
                 )
             }
             Spacer(Modifier.weight(1f))
