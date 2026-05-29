@@ -1,0 +1,34 @@
+version: 2
+updates:
+  # Gradle dependencies — reads the version catalog (gradle/libs.versions.toml)
+  # plus any *.gradle.kts build files.
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      # Batch low-risk minor/patch bumps into one PR to cut review noise.
+      gradle-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # AGP 9 / compileSdk 36 upgrade is deferred (DEPS-17, blocked on Hilt
+      # AGP-9 support). Don't let Dependabot keep reopening the major bump.
+      - dependency-name: "com.android.application"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "com.android.library"
+        update-types: ["version-update:semver-major"]
+
+  # Keep the GitHub Actions used in workflows up to date.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore(ci)"
