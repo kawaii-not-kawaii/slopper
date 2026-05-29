@@ -28,5 +28,14 @@ jobs:
           restore-keys: |
             gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp8-
 
+      # Pre-create the debug keystore so AGP's validateSigningDebug doesn't hit
+      # the BouncyCastle EdEC NoClassDefFoundError when generating one itself.
+      - name: Create Android debug keystore
+        run: |
+          mkdir -p ~/.android
+          keytool -genkeypair -dname "CN=Android Debug,O=Android,C=US" \
+            -alias androiddebugkey -keypass android -storepass android \
+            -keystore ~/.android/debug.keystore -keyalg RSA -keysize 2048 -validity 10000
+
       - name: Build + Lint + Static analysis
         run: ./gradlew assembleDebug detekt ktlintCheck
