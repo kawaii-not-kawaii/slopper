@@ -36,10 +36,6 @@ jobs:
           restore-keys: |
             gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp8-
 
-      # gradlew + wrapper jar are not committed (project policy) — bootstrap them.
-      - name: Bootstrap Gradle wrapper
-        run: bash bootstrap.sh
-
       - name: Build + Lint + Static analysis
         run: ./gradlew assembleDebug detekt ktlintCheck --no-daemon --stacktrace
 

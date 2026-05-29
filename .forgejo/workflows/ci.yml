@@ -28,8 +28,5 @@ jobs:
           restore-keys: |
             gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp8-
 
-      - name: Bootstrap wrapper
-        run: bash bootstrap.sh
-
       - name: Build + Lint + Static analysis
         run: ./gradlew assembleDebug detekt ktlintCheck
