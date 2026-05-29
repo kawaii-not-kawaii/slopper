@@ -1060,15 +1060,15 @@ command_manifest:
     threats_open: 0
   - step: 8.5
     cmd: "/gsd-ui-review 5"
-    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-UI-REVIEW.md"
+    output_file: null  # 05-UI-REVIEW.md never produced
     gate_file: "gates/ui-review.md"
-    status: complete
-    gate_passed: true
+    status: deferred
+    gate_passed: false
     tracker_synced: true
-    completed_at: 2026-05-19T11:30:00+09:00
+    completed_at: null
     tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/7#issuecomment-481
     notes:
-      - "UI review deferred to device visual UAT — code-level verification passed (12/12)"
+      - "DEFERRED — formal UI review deferred to device visual UAT; no 05-UI-REVIEW.md produced. Code-level verification passed (12/12). SPINE UI later confirmed rendering on Galaxy S23+ via Phase 6 device UAT (2026-05-29)."
   - step: 9
     cmd: "/gsd-validate-phase 5"
     output_file_glob: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/*VALIDATION*"
@@ -1102,77 +1102,11 @@ command_manifest:
     tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/7#issuecomment-481
     pr_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/pulls/6
     pr_number: 6
-    pr_state: open
-    pr_merged_at: null
+    pr_state: merged
+    pr_merged_at: 2026-05-29
     notes:
-      - "Phase 5 commits bundled in PR #6 (continuous branch); PR title updated to Phases 2+3+4+5"
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
-  - step: 6
-    cmd: "/gsd-verify-work 5"
-    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-UAT.md"
-    gate_file: "gates/verify.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
-  - step: 7
-    cmd: "/gsd-extract-learnings 5"
-    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-LEARNINGS.md"
-    gate_file: "gates/learnings.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
-  - step: 8
-    cmd: "/gsd-secure-phase 5"
-    output_file_glob: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/*SECURITY*"
-    gate_file: "gates/security.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
-  - step: 8.5
-    cmd: "/gsd-ui-review 5"
-    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-UI-REVIEW.md"
-    gate_file: "gates/ui-review.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
-  - step: 9
-    cmd: "/gsd-validate-phase 5"
-    output_file_glob: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/*VALIDATION*"
-    gate_file: "gates/validation.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
-  - step: 10
-    cmd: "/gsd-docs-update 5"
-    output_marker: "docs_updated_at"
-    gate_file: "gates/docs.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
-  - step: 11
-    cmd: "/gsd-ship 5"
-    output_marker: "pr_merged_at"
-    gate_file: "gates/ship.md"
-    status: pending
-    gate_passed: false
-    tracker_synced: false
-    completed_at: null
-    tracker_comment_url: null
+      - "Phase 5 commits bundled in PR #6 (continuous branch); merged to master + tagged v1.0 at milestone close 2026-05-29"
+      - "Removed stale duplicate pending step-set (steps 6-11) during post-milestone cleanup — Phase 5 pipeline already completed in the entries above"
 
 ---
 
@@ -1180,7 +1114,7 @@ command_manifest:
 ui: true
 phase_name: "SETTINGS-V3 — Hub + Drill-Down Settings Redesign"
 phase_dir: .planning/milestones/v1.0-phases/06-settings-redesign
-state: phase_6_active
+state: phase_6_shipped
 assumptions_open: 0
 cc_concerns_cleared: false
 advisory_notes: []
@@ -1218,80 +1152,99 @@ command_manifest:
     cmd: "/gsd-plan-phase 6"
     output_file_glob: ".planning/milestones/v1.0-phases/06-settings-redesign/06*-PLAN.md"
     gate_file: "gates/plan.md"
-    status: pending
-    gate_passed: false
+    status: complete
+    gate_passed: true
     tracker_synced: false
-    completed_at: null
+    completed_at: 2026-05-19T14:10:00+09:00
     tracker_comment_url: null
+    notes:
+      - "3 plans created (06.1/06.2/06.3-PLAN.md) + 06-RESEARCH.md; plan-checker PASS. Manifest reconciled post-milestone (work predated this entry's status flip)."
   - step: 4
     cmd: "/gsd-review --phase 6 --all"
-    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-REVIEWS.md"
+    output_file: null  # 06-REVIEWS.md never produced
     gate_file: "gates/review.md"
-    status: pending
+    status: skipped
     gate_passed: false
     tracker_synced: false
     completed_at: null
     tracker_comment_url: null
+    notes:
+      - "SKIPPED — cross-AI peer review (--all) not run. Standard /gsd-code-review 6 was run instead at execute time, producing 06-REVIEW.md (5 critical + 5 warning, 9/10 fixed)."
   - step: 5
     cmd: "/gsd-execute-phase 6"
-    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/VERIFICATION.md"
+    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-VERIFICATION.md"
     gate_file: "gates/execute.md"
-    status: pending
-    gate_passed: false
+    status: complete
+    gate_passed: true
     tracker_synced: false
-    completed_at: null
+    completed_at: 2026-05-29T22:30:00+09:00
     tracker_comment_url: null
+    notes:
+      - "3 plans executed serially (06.1→06.2→06.3); SUMMARYs + 06-VERIFICATION.md (11/11 must-haves). Code review + fixes applied (9/10). Build green."
   - step: 6
     cmd: "/gsd-verify-work 6"
-    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-UAT.md"
+    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-HUMAN-UAT.md"
     gate_file: "gates/verify.md"
-    status: pending
-    gate_passed: false
+    status: complete
+    gate_passed: true
     tracker_synced: false
-    completed_at: null
+    completed_at: 2026-05-29T23:10:00+09:00
     tracker_comment_url: null
+    notes:
+      - "Device UAT PASSED — all 4 human-verification items confirmed on Galaxy S23+ (06-HUMAN-UAT.md). Actual artifact is 06-HUMAN-UAT.md, not 06-UAT.md."
   - step: 7
     cmd: "/gsd-extract-learnings 6"
-    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-LEARNINGS.md"
+    output_file: null  # 06-LEARNINGS.md never produced
     gate_file: "gates/learnings.md"
-    status: pending
+    status: skipped
     gate_passed: false
     tracker_synced: false
     completed_at: null
     tracker_comment_url: null
+    notes:
+      - "SKIPPED at milestone close — extract-learnings not run for Phase 6. Milestone-level retrospective captured in .planning/RETROSPECTIVE.md instead."
   - step: 8
     cmd: "/gsd-secure-phase 6"
     output_file_glob: ".planning/milestones/v1.0-phases/06-settings-redesign/*SECURITY*"
     gate_file: "gates/security.md"
-    status: pending
+    status: skipped
     gate_passed: false
     tracker_synced: false
     completed_at: null
     tracker_comment_url: null
+    notes:
+      - "SKIPPED at milestone close — no new threat surface (settings UI redesign over existing prefs/DataStore). No SECURITY artifact produced."
   - step: 9
     cmd: "/gsd-validate-phase 6"
     output_file_glob: ".planning/milestones/v1.0-phases/06-settings-redesign/*VALIDATION*"
     gate_file: "gates/validation.md"
-    status: pending
+    status: skipped
     gate_passed: false
     tracker_synced: false
     completed_at: null
     tracker_comment_url: null
+    notes:
+      - "SKIPPED at milestone close — nyquist_validation=false project-wide. 4 search-filter smoke tests added during code review (WR-05)."
   - step: 10
     cmd: "/gsd-docs-update 6"
     output_marker: "docs_updated_at"
     gate_file: "gates/docs.md"
-    status: pending
+    status: skipped
     gate_passed: false
     tracker_synced: false
     completed_at: null
     tracker_comment_url: null
+    notes:
+      - "SKIPPED at milestone close — per-phase docs refresh not run. PROJECT.md + ROADMAP.md + MILESTONES.md + RETROSPECTIVE.md updated at milestone close instead."
   - step: 11
     cmd: "/gsd-ship 6"
     output_marker: "pr_merged_at"
     gate_file: "gates/ship.md"
-    status: pending
+    status: skipped
     gate_passed: false
     tracker_synced: false
     completed_at: null
     tracker_comment_url: null
+    pr_merged_at: 2026-05-29
+    notes:
+      - "SKIPPED as a standalone step — Phase 6 shipped via milestone close: pushed to master, PR #5/#6 merged, tag v1.0, milestone #12 closed, issues #1/#7/#8 closed (2026-05-29)."
