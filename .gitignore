@@ -40,3 +40,6 @@ gradlew.bat
 
 # Misc
 .kotlin/
+
+# claude-mem auto-generated memory context dump (regenerated per session, not a project file)
+AGENTS.md
