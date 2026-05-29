@@ -34,7 +34,7 @@ nextlibMedia3Ext = "1.9.1-0.11.0"
 # apollo-normalized-cache-sqlite to a separate repo and promoted warnings to
 # errors; OkHttp 5 shares the client transitively with Apollo + Media3 + Coil.
 # Both are deferred to NET-01 milestone (see .planning/REQUIREMENTS.md).
-okhttp = "4.12.0"
+okhttp = "5.3.2"
 
 # Image loading
 coil = "3.0.4"
