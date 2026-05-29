@@ -1,9 +1,10 @@
 ---
 phase: 06-settings-redesign
 verified: 2026-05-19T06:30:00Z
-status: human_needed
+status: passed
 score: 11/11
 overrides_applied: 0
+human_verification_result: "All 4 items PASSED on Yunior's S23+ (device UAT, 2026-05-29). See 06-HUMAN-UAT.md."
 human_verification:
   - test: "Navigate to Settings hub on a real device or emulator. Verify: server status card renders with display name, version string, and green dot when connected. Tap the card — confirm it navigates to the Server detail page."
     expected: "Card shows connected server name + 'Stash vX.X.X · N scenes'. Chevron tap routes to settings/server."
