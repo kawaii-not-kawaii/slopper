@@ -33,7 +33,7 @@ accepted_risks: []
 ## Phase 1 — DEPS (Foundation Bump)
 ui: false
 phase_name: "DEPS — Foundation Bump"
-phase_dir: .planning/phases/01-deps-foundation-bump
+phase_dir: .planning/milestones/v1.0-phases/01-deps-foundation-bump
 state: phase_1_shipped
 assumptions_open: 0
 cc_concerns_cleared: false
@@ -45,7 +45,7 @@ issue_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/iss
 command_manifest:
   - step: 1
     cmd: "/gsd-spec-phase 1"
-    output_file: ".planning/phases/01-deps-foundation-bump/01-SPEC.md"
+    output_file: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/01-SPEC.md"
     gate_file: "gates/spec.md"
     status: complete
     gate_passed: true
@@ -54,7 +54,7 @@ command_manifest:
     tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-408
   - step: 2
     cmd: "/gsd-discuss-phase 1"
-    output_file: ".planning/phases/01-deps-foundation-bump/01-CONTEXT.md"
+    output_file: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/01-CONTEXT.md"
     gate_file: "gates/discuss.md"
     status: complete
     gate_passed: true
@@ -63,7 +63,7 @@ command_manifest:
     tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-409
   - step: 3
     cmd: "/gsd-plan-phase 1"
-    output_file_glob: ".planning/phases/01-deps-foundation-bump/01.*-PLAN.md"
+    output_file_glob: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/01.*-PLAN.md"
     gate_file: "gates/plan.md"
     status: complete
     gate_passed: true
@@ -72,7 +72,7 @@ command_manifest:
     tracker_comment_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/issues/1#issuecomment-410
   - step: 4
     cmd: "/gsd-review --phase 1 --all"
-    output_file: ".planning/phases/01-deps-foundation-bump/REVIEWS.md"
+    output_file: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/REVIEWS.md"
     gate_file: "gates/review.md"
     status: complete
     gate_passed: true
@@ -95,7 +95,7 @@ command_manifest:
       replan_commit: 9487c9d
   - step: 5
     cmd: "/gsd-execute-phase 1"
-    output_file: ".planning/phases/01-deps-foundation-bump/VERIFICATION.md"
+    output_file: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/VERIFICATION.md"
     gate_file: "gates/execute.md"
     status: complete
     gate_passed: true
@@ -111,7 +111,7 @@ command_manifest:
       - "Final phase HEAD: e21fa7c on phase-1/deps-bump"
   - step: 6
     cmd: "/gsd-verify-work 1"
-    output_file: ".planning/phases/01-deps-foundation-bump/01-UAT.md"
+    output_file: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/01-UAT.md"
     gate_file: "gates/verify.md"
     status: complete
     gate_passed: true
@@ -124,7 +124,7 @@ command_manifest:
       - "Validates precondition cleanups (orphan code blocks in app/build.gradle.kts, PlayerScreen, SettingsScreen, MainActivity) didn't lose UI surface"
   - step: 7
     cmd: "/gsd-extract-learnings 1"
-    output_file: ".planning/phases/01-deps-foundation-bump/01-LEARNINGS.md"
+    output_file: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/01-LEARNINGS.md"
     gate_file: "gates/learnings.md"
     status: complete
     gate_passed: true
@@ -136,7 +136,7 @@ command_manifest:
       - "Headline: AGP 9 is not a minor bump (5 distinct breakages); Hilt 2.57.1 doesn't exist; bf01b34 restore had 7 invisible corruptions; lockstep tightened from plan's DEPS-03+04 to executed DEPS-05+08"
   - step: 8
     cmd: "/gsd-secure-phase 1"
-    output_file_glob: ".planning/phases/01-deps-foundation-bump/*SECURITY*"
+    output_file_glob: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/*SECURITY*"
     gate_file: "gates/security.md"
     status: complete
     gate_passed: true
@@ -151,7 +151,7 @@ command_manifest:
       - "T-T-02 dep verification metadata deferred to AGP-9 phase (SEC-VERIFY-01)"
   - step: 9
     cmd: "/gsd-validate-phase 1"
-    output_file_glob: ".planning/phases/01-deps-foundation-bump/*VALIDATION*"
+    output_file_glob: ".planning/milestones/v1.0-phases/01-deps-foundation-bump/*VALIDATION*"
     gate_file: "gates/validation.md"
     status: complete
     gate_passed: true
@@ -201,7 +201,7 @@ command_manifest:
 ## Phase 2 — COMPLY (Platform Compliance)
 ui: false
 phase_name: "COMPLY — Platform Compliance"
-phase_dir: .planning/phases/02-comply-platform-compliance
+phase_dir: .planning/milestones/v1.0-phases/02-comply-platform-compliance
 state: pending
 assumptions_open: 0
 cc_concerns_cleared: false
@@ -212,7 +212,7 @@ issue_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/iss
 command_manifest:
   - step: 1
     cmd: "/gsd-spec-phase 2"
-    output_file: ".planning/phases/02-comply-platform-compliance/02-SPEC.md"
+    output_file: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/02-SPEC.md"
     gate_file: "gates/spec.md"
     status: complete
     gate_passed: true
@@ -232,7 +232,7 @@ command_manifest:
       - "Commit b5b51f0 moved off phase-1/deps-bump (PR #5 branch) onto fresh phase-2/comply-platform-compliance branch to prevent PR ballooning"
   - step: 2
     cmd: "/gsd-discuss-phase 2 --auto"
-    output_file: ".planning/phases/02-comply-platform-compliance/02-CONTEXT.md"
+    output_file: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/02-CONTEXT.md"
     gate_file: "gates/discuss.md"
     status: complete
     gate_passed: true
@@ -250,7 +250,7 @@ command_manifest:
       - "Companion DISCUSSION-LOG.md committed for audit trail"
   - step: 3
     cmd: "/gsd-plan-phase 2 --auto"
-    output_file_glob: ".planning/phases/02-comply-platform-compliance/02*-PLAN.md"
+    output_file_glob: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/02*-PLAN.md"
     gate_file: "gates/plan.md"
     status: complete
     gate_passed: true
@@ -291,7 +291,7 @@ command_manifest:
       - "Plan 2.2 NOT autonomous (Task 4 = checkpoint:human-verify for S23+ screenshot capture); execute-phase pauses on `approved` signal"
   - step: 4
     cmd: "/gsd-review --phase 2 --all"
-    output_file: ".planning/phases/02-comply-platform-compliance/02-REVIEWS.md"
+    output_file: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/02-REVIEWS.md"
     gate_file: "gates/review.md"
     status: complete
     gate_passed: true
@@ -325,7 +325,7 @@ command_manifest:
       - "Plan-checker NOT re-run for the surgical revision (narrow scope: wave field + 4 small task additions; no structural changes that would alter the original PASS_WITH_NOTES verdict)"
   - step: 5
     cmd: "/gsd-execute-phase 2"
-    output_file: ".planning/phases/02-comply-platform-compliance/VERIFICATION.md"
+    output_file: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/VERIFICATION.md"
     gate_file: "gates/execute.md"
     status: complete
     gate_passed: true
@@ -373,7 +373,7 @@ command_manifest:
       - "Mid-phase recovery: Plan 02.1 surfaced 2 deviations (Pattern A Case B path; safeDrawingPadding scope); Plan 02.2 surfaced 3 (R-class location; resources.properties hard-error; PNG pack skip)"
   - step: 6
     cmd: "/gsd-verify-work 2"
-    output_file: ".planning/phases/02-comply-platform-compliance/02-UAT.md"
+    output_file: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/02-UAT.md"
     gate_file: "gates/verify.md"
     status: complete
     gate_passed: true
@@ -392,7 +392,7 @@ command_manifest:
       - "VERIFICATION.md @ 4df8e62 (step 5 verifier) corroborated 17/18 SPEC bullets met"
   - step: 7
     cmd: "/gsd-extract-learnings 2"
-    output_file: ".planning/phases/02-comply-platform-compliance/02-LEARNINGS.md"
+    output_file: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/02-LEARNINGS.md"
     gate_file: "gates/learnings.md"
     status: complete
     gate_passed: true
@@ -410,7 +410,7 @@ command_manifest:
       - "30 learnings: AGP 8.7.3 resources.properties hard-error; feature R-class module-graph direction; cross-AI wave-sequencing 3/3 HIGH; Pattern A Case B splash; REVIEWS-C4 ACCEPT; _generated_res_locale_config naming; PredictiveBackHandler no enabled= param; verbal-verdict UAT 4-artifact hygiene"
   - step: 8
     cmd: "/gsd-secure-phase 2"
-    output_file_glob: ".planning/phases/02-comply-platform-compliance/*SECURITY*"
+    output_file_glob: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/*SECURITY*"
     gate_file: "gates/security.md"
     status: complete
     gate_passed: true
@@ -427,7 +427,7 @@ command_manifest:
       - "All mitigations verified in codebase: MainActivity.kt:182-191 + AndroidManifest.xml grep counts = 0"
   - step: 9
     cmd: "/gsd-validate-phase 2"
-    output_file_glob: ".planning/phases/02-comply-platform-compliance/*VALIDATION*"
+    output_file_glob: ".planning/milestones/v1.0-phases/02-comply-platform-compliance/*VALIDATION*"
     gate_file: "gates/validation.md"
     status: complete
     gate_passed: true
@@ -478,7 +478,7 @@ command_manifest:
 ## Phase 3 — PERF (Measured Wins)
 ui: false
 phase_name: "PERF — Measured Wins"
-phase_dir: .planning/phases/03-perf-measured-wins
+phase_dir: .planning/milestones/v1.0-phases/03-perf-measured-wins
 state: phase_3_active
 assumptions_open: 0
 cc_concerns_cleared: false
@@ -489,7 +489,7 @@ issue_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/iss
 command_manifest:
   - step: 1
     cmd: "/gsd-spec-phase 3"
-    output_file: ".planning/phases/03-perf-measured-wins/03-SPEC.md"
+    output_file: ".planning/milestones/v1.0-phases/03-perf-measured-wins/03-SPEC.md"
     gate_file: "gates/spec.md"
     status: complete
     gate_passed: true
@@ -507,7 +507,7 @@ command_manifest:
       - "PERF-08 investigative — diagnosis artifact mandatory; fix conditional"
   - step: 2
     cmd: "/gsd-discuss-phase 3 --auto"
-    output_file: ".planning/phases/03-perf-measured-wins/03-CONTEXT.md"
+    output_file: ".planning/milestones/v1.0-phases/03-perf-measured-wins/03-CONTEXT.md"
     gate_file: "gates/discuss.md"
     status: complete
     gate_passed: true
@@ -521,7 +521,7 @@ command_manifest:
       - "Human testing deferred to end-of-milestone per user instruction"
   - step: 3
     cmd: "/gsd-plan-phase 3 --auto"
-    output_file_glob: ".planning/phases/03-perf-measured-wins/03*-PLAN.md"
+    output_file_glob: ".planning/milestones/v1.0-phases/03-perf-measured-wins/03*-PLAN.md"
     gate_file: "gates/plan.md"
     status: complete
     gate_passed: true
@@ -556,7 +556,7 @@ command_manifest:
       - "Human testing deferred to end-of-milestone per user instruction"
   - step: 4
     cmd: "/gsd-review --phase 3 --all"
-    output_file: ".planning/phases/03-perf-measured-wins/03-REVIEWS.md"
+    output_file: ".planning/milestones/v1.0-phases/03-perf-measured-wins/03-REVIEWS.md"
     gate_file: "gates/review.md"
     status: complete
     gate_passed: true
@@ -574,7 +574,7 @@ command_manifest:
       - "3 advisory items deferred per executor responsibility"
   - step: 5
     cmd: "/gsd-execute-phase 3"
-    output_file: ".planning/phases/03-perf-measured-wins/VERIFICATION.md"
+    output_file: ".planning/milestones/v1.0-phases/03-perf-measured-wins/VERIFICATION.md"
     gate_file: "gates/execute.md"
     status: complete
     gate_passed: true
@@ -612,7 +612,7 @@ command_manifest:
       - "Wave 1: Plans 03.1 green; Wave 2: Plans 03.2 + 03.3 parallel, disjoint files confirmed"
   - step: 6
     cmd: "/gsd-verify-work 3"
-    output_file: ".planning/phases/03-perf-measured-wins/03-UAT.md"
+    output_file: ".planning/milestones/v1.0-phases/03-perf-measured-wins/03-UAT.md"
     gate_file: "gates/verify.md"
     status: complete
     gate_passed: true
@@ -628,7 +628,7 @@ command_manifest:
       - "03-UAT-DEFERRED.md committed with exact commands and acceptance criteria"
   - step: 7
     cmd: "/gsd-extract-learnings 3"
-    output_file: ".planning/phases/03-perf-measured-wins/03-LEARNINGS.md"
+    output_file: ".planning/milestones/v1.0-phases/03-perf-measured-wins/03-LEARNINGS.md"
     gate_file: "gates/learnings.md"
     status: complete
     gate_passed: true
@@ -644,7 +644,7 @@ command_manifest:
       total: 27
   - step: 8
     cmd: "/gsd-secure-phase 3"
-    output_file_glob: ".planning/phases/03-perf-measured-wins/*SECURITY*"
+    output_file_glob: ".planning/milestones/v1.0-phases/03-perf-measured-wins/*SECURITY*"
     gate_file: "gates/security.md"
     status: complete
     gate_passed: true
@@ -660,7 +660,7 @@ command_manifest:
       - "10 threats: 5 mitigated (T-03-02/04/05/06/07 via build+grep), 3 accepted (T-03-01/03/09), 2 mitigated+deferred (T-03-08/10 via UAT-DEFERRED)"
   - step: 9
     cmd: "/gsd-validate-phase 3"
-    output_file_glob: ".planning/phases/03-perf-measured-wins/*VALIDATION*"
+    output_file_glob: ".planning/milestones/v1.0-phases/03-perf-measured-wins/*VALIDATION*"
     gate_file: "gates/validation.md"
     status: complete
     gate_passed: true
@@ -707,7 +707,7 @@ command_manifest:
 ## Phase 4 — POLISH (Test Pyramid & Cleanup)
 ui: false
 phase_name: "POLISH — Test Pyramid & Cleanup"
-phase_dir: .planning/phases/04-polish-test-pyramid
+phase_dir: .planning/milestones/v1.0-phases/04-polish-test-pyramid
 state: phase_4_active
 assumptions_open: 0
 cc_concerns_cleared: false
@@ -718,7 +718,7 @@ issue_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/iss
 command_manifest:
   - step: 1
     cmd: "/gsd-spec-phase 4"
-    output_file: ".planning/phases/04-polish-test-pyramid/04-SPEC.md"
+    output_file: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/04-SPEC.md"
     gate_file: "gates/spec.md"
     status: complete
     gate_passed: true
@@ -737,7 +737,7 @@ command_manifest:
       - "local.properties confirmed tracked in git (POLISH-10 scope)"
   - step: 2
     cmd: "/gsd-discuss-phase 4 --auto"
-    output_file: ".planning/phases/04-polish-test-pyramid/04-CONTEXT.md"
+    output_file: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/04-CONTEXT.md"
     gate_file: "gates/discuss.md"
     status: complete
     gate_passed: true
@@ -752,7 +752,7 @@ command_manifest:
       - "ConnectionResult.InvalidUrl → AppError.Unknown (no new variant)"
   - step: 3
     cmd: "/gsd-plan-phase 4 --auto"
-    output_file_glob: ".planning/phases/04-polish-test-pyramid/04*-PLAN.md"
+    output_file_glob: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/04*-PLAN.md"
     gate_file: "gates/plan.md"
     status: complete
     gate_passed: true
@@ -785,7 +785,7 @@ command_manifest:
       - "All 3 plans wave 1 parallel-safe; Plan 4.3 Task 1 (detekt) must follow Plan 4.1 by prose ordering"
   - step: 4
     cmd: "/gsd-review --phase 4 --all"
-    output_file: ".planning/phases/04-polish-test-pyramid/04-REVIEWS.md"
+    output_file: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/04-REVIEWS.md"
     gate_file: "gates/review.md"
     status: complete
     gate_passed: true
@@ -799,7 +799,7 @@ command_manifest:
       - "0 HIGH, all advisory; SceneFilter confirmed in core/domain (non-issue); no replan"
   - step: 5
     cmd: "/gsd-execute-phase 4"
-    output_file: ".planning/phases/04-polish-test-pyramid/VERIFICATION.md"
+    output_file: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/VERIFICATION.md"
     gate_file: "gates/execute.md"
     status: complete
     gate_passed: true
@@ -817,7 +817,7 @@ command_manifest:
       - "PlayerControls.kt (544L) + PlayerTimeline.kt (274L) both < 600L"
   - step: 6
     cmd: "/gsd-verify-work 4"
-    output_file: ".planning/phases/04-polish-test-pyramid/04-UAT.md"
+    output_file: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/04-UAT.md"
     gate_file: "gates/verify.md"
     status: complete
     gate_passed: true
@@ -828,7 +828,7 @@ command_manifest:
     verdict: PASS-WITH-NOTES
   - step: 7
     cmd: "/gsd-extract-learnings 4"
-    output_file: ".planning/phases/04-polish-test-pyramid/04-LEARNINGS.md"
+    output_file: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/04-LEARNINGS.md"
     gate_file: "gates/learnings.md"
     status: complete
     gate_passed: true
@@ -839,7 +839,7 @@ command_manifest:
     counts: {decisions: 6, lessons: 7, patterns: 4, surprises: 5, total: 22}
   - step: 8
     cmd: "/gsd-secure-phase 4"
-    output_file_glob: ".planning/phases/04-polish-test-pyramid/*SECURITY*"
+    output_file_glob: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/*SECURITY*"
     gate_file: "gates/security.md"
     status: complete
     gate_passed: true
@@ -850,7 +850,7 @@ command_manifest:
     threats_open: 0
   - step: 9
     cmd: "/gsd-validate-phase 4"
-    output_file_glob: ".planning/phases/04-polish-test-pyramid/*VALIDATION*"
+    output_file_glob: ".planning/milestones/v1.0-phases/04-polish-test-pyramid/*VALIDATION*"
     gate_file: "gates/validation.md"
     status: complete
     gate_passed: true
@@ -892,7 +892,7 @@ command_manifest:
 ## Phase 5 — SPINE (Compose UI Redesign)
 ui: true
 phase_name: "SPINE — Compose UI Redesign"
-phase_dir: .planning/phases/05-spine-compose-ui-redesign
+phase_dir: .planning/milestones/v1.0-phases/05-spine-compose-ui-redesign
 state: phase_5_active
 assumptions_open: 0
 cc_concerns_cleared: false
@@ -903,7 +903,7 @@ issue_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/iss
 command_manifest:
   - step: 0
     cmd: "/gsd-ui-phase 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-UI-SPEC.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-UI-SPEC.md"
     gate_file: "gates/ui-spec.md"
     status: complete
     gate_passed: true
@@ -916,7 +916,7 @@ command_manifest:
       - "5 open questions logged; Q6 (edge-to-edge) resolved by Phase 2 COMPLY-01"
   - step: 1
     cmd: "/gsd-spec-phase 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-SPEC.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-SPEC.md"
     gate_file: "gates/spec.md"
     status: complete
     gate_passed: true
@@ -931,7 +931,7 @@ command_manifest:
       - "6 open questions resolved: Sage default, Google Fonts, More-sheet replaces NavCustomizeSheet, Save view deferred, chapter strip uses markers, edge-to-edge resolved by Phase 2"
   - step: 2
     cmd: "/gsd-discuss-phase 5 --auto"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-CONTEXT.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-CONTEXT.md"
     gate_file: "gates/discuss.md"
     status: complete
     gate_passed: true
@@ -948,7 +948,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 3
     cmd: "/gsd-plan-phase 5 --auto"
-    output_file_glob: ".planning/phases/05-spine-compose-ui-redesign/05*-PLAN.md"
+    output_file_glob: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05*-PLAN.md"
     gate_file: "gates/plan.md"
     status: complete
     gate_passed: true
@@ -987,7 +987,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 4
     cmd: "/gsd-review --phase 5 --all"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-REVIEWS.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-REVIEWS.md"
     gate_file: "gates/review.md"
     status: complete
     gate_passed: true
@@ -1009,7 +1009,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 5
     cmd: "/gsd-execute-phase 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/VERIFICATION.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/VERIFICATION.md"
     gate_file: "gates/execute.md"
     status: complete
     gate_passed: true
@@ -1027,7 +1027,7 @@ command_manifest:
       - "Phase 3 preservation confirmed: PredictiveBackHandler, safeDrawingPadding, ImmutableList, videoFrameRate"
   - step: 6
     cmd: "/gsd-verify-work 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-UAT.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-UAT.md"
     gate_file: "gates/verify.md"
     status: complete
     gate_passed: true
@@ -1038,7 +1038,7 @@ command_manifest:
     verdict: PASS-WITH-NOTES
   - step: 7
     cmd: "/gsd-extract-learnings 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-LEARNINGS.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-LEARNINGS.md"
     gate_file: "gates/learnings.md"
     status: complete
     gate_passed: true
@@ -1049,7 +1049,7 @@ command_manifest:
     counts: {decisions: 6, lessons: 6, patterns: 5, surprises: 5, total: 22}
   - step: 8
     cmd: "/gsd-secure-phase 5"
-    output_file_glob: ".planning/phases/05-spine-compose-ui-redesign/*SECURITY*"
+    output_file_glob: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/*SECURITY*"
     gate_file: "gates/security.md"
     status: complete
     gate_passed: true
@@ -1060,7 +1060,7 @@ command_manifest:
     threats_open: 0
   - step: 8.5
     cmd: "/gsd-ui-review 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-UI-REVIEW.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-UI-REVIEW.md"
     gate_file: "gates/ui-review.md"
     status: complete
     gate_passed: true
@@ -1071,7 +1071,7 @@ command_manifest:
       - "UI review deferred to device visual UAT — code-level verification passed (12/12)"
   - step: 9
     cmd: "/gsd-validate-phase 5"
-    output_file_glob: ".planning/phases/05-spine-compose-ui-redesign/*VALIDATION*"
+    output_file_glob: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/*VALIDATION*"
     gate_file: "gates/validation.md"
     status: complete
     gate_passed: true
@@ -1112,7 +1112,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 6
     cmd: "/gsd-verify-work 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-UAT.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-UAT.md"
     gate_file: "gates/verify.md"
     status: pending
     gate_passed: false
@@ -1121,7 +1121,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 7
     cmd: "/gsd-extract-learnings 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-LEARNINGS.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-LEARNINGS.md"
     gate_file: "gates/learnings.md"
     status: pending
     gate_passed: false
@@ -1130,7 +1130,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 8
     cmd: "/gsd-secure-phase 5"
-    output_file_glob: ".planning/phases/05-spine-compose-ui-redesign/*SECURITY*"
+    output_file_glob: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/*SECURITY*"
     gate_file: "gates/security.md"
     status: pending
     gate_passed: false
@@ -1139,7 +1139,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 8.5
     cmd: "/gsd-ui-review 5"
-    output_file: ".planning/phases/05-spine-compose-ui-redesign/05-UI-REVIEW.md"
+    output_file: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/05-UI-REVIEW.md"
     gate_file: "gates/ui-review.md"
     status: pending
     gate_passed: false
@@ -1148,7 +1148,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 9
     cmd: "/gsd-validate-phase 5"
-    output_file_glob: ".planning/phases/05-spine-compose-ui-redesign/*VALIDATION*"
+    output_file_glob: ".planning/milestones/v1.0-phases/05-spine-compose-ui-redesign/*VALIDATION*"
     gate_file: "gates/validation.md"
     status: pending
     gate_passed: false
@@ -1179,7 +1179,7 @@ command_manifest:
 ## Phase 6 — SETTINGS-V3 (Hub + Drill-Down Settings Redesign)
 ui: true
 phase_name: "SETTINGS-V3 — Hub + Drill-Down Settings Redesign"
-phase_dir: .planning/phases/06-settings-redesign
+phase_dir: .planning/milestones/v1.0-phases/06-settings-redesign
 state: phase_6_active
 assumptions_open: 0
 cc_concerns_cleared: false
@@ -1190,7 +1190,7 @@ issue_url: https://alpine-forgejo.twin-wezen.ts.net/chibicoffeelover/slopper/iss
 command_manifest:
   - step: 1
     cmd: "/gsd-spec-phase 6"
-    output_file: ".planning/phases/06-settings-redesign/06-SPEC.md"
+    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-SPEC.md"
     gate_file: "gates/spec.md"
     status: complete
     gate_passed: true
@@ -1206,7 +1206,7 @@ command_manifest:
       - "New: CSlider, DRow, HubRow components; 6 sub-routes; palette picker; settings search"
   - step: 2
     cmd: "/gsd-discuss-phase 6 --auto"
-    output_file: ".planning/phases/06-settings-redesign/06-CONTEXT.md"
+    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-CONTEXT.md"
     gate_file: "gates/discuss.md"
     status: complete
     gate_passed: true
@@ -1216,7 +1216,7 @@ command_manifest:
     commit: 8d16895
   - step: 3
     cmd: "/gsd-plan-phase 6"
-    output_file_glob: ".planning/phases/06-settings-redesign/06*-PLAN.md"
+    output_file_glob: ".planning/milestones/v1.0-phases/06-settings-redesign/06*-PLAN.md"
     gate_file: "gates/plan.md"
     status: pending
     gate_passed: false
@@ -1225,7 +1225,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 4
     cmd: "/gsd-review --phase 6 --all"
-    output_file: ".planning/phases/06-settings-redesign/06-REVIEWS.md"
+    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-REVIEWS.md"
     gate_file: "gates/review.md"
     status: pending
     gate_passed: false
@@ -1234,7 +1234,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 5
     cmd: "/gsd-execute-phase 6"
-    output_file: ".planning/phases/06-settings-redesign/VERIFICATION.md"
+    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/VERIFICATION.md"
     gate_file: "gates/execute.md"
     status: pending
     gate_passed: false
@@ -1243,7 +1243,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 6
     cmd: "/gsd-verify-work 6"
-    output_file: ".planning/phases/06-settings-redesign/06-UAT.md"
+    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-UAT.md"
     gate_file: "gates/verify.md"
     status: pending
     gate_passed: false
@@ -1252,7 +1252,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 7
     cmd: "/gsd-extract-learnings 6"
-    output_file: ".planning/phases/06-settings-redesign/06-LEARNINGS.md"
+    output_file: ".planning/milestones/v1.0-phases/06-settings-redesign/06-LEARNINGS.md"
     gate_file: "gates/learnings.md"
     status: pending
     gate_passed: false
@@ -1261,7 +1261,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 8
     cmd: "/gsd-secure-phase 6"
-    output_file_glob: ".planning/phases/06-settings-redesign/*SECURITY*"
+    output_file_glob: ".planning/milestones/v1.0-phases/06-settings-redesign/*SECURITY*"
     gate_file: "gates/security.md"
     status: pending
     gate_passed: false
@@ -1270,7 +1270,7 @@ command_manifest:
     tracker_comment_url: null
   - step: 9
     cmd: "/gsd-validate-phase 6"
-    output_file_glob: ".planning/phases/06-settings-redesign/*VALIDATION*"
+    output_file_glob: ".planning/milestones/v1.0-phases/06-settings-redesign/*VALIDATION*"
     gate_file: "gates/validation.md"
     status: pending
     gate_passed: false
