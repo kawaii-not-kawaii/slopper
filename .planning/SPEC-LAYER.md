@@ -1,10 +1,10 @@
 # Spec-Layer State
 
 project: slopper
-current_phase: 5
-state: phase_5_active
+current_phase: 6
+state: milestone_v1.0_shipped
 brownfield: true
-last_updated: 2026-05-19
+last_updated: 2026-05-29
 
 tracker:
   enabled: true
