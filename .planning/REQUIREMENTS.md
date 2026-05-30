@@ -10,12 +10,12 @@
 ### Toolchain Core — the atomic critical path
 
 - [ ] **AGP9-01**: Gradle wrapper upgraded to the AGP-9.2 floor (target 9.4.1) with `distributionSha256Sum` re-pinned; the build runs green on Gradle 9 with every plugin (detekt, ktlint, OWASP dependency-check, baseline-profile) confirmed compatible — Gradle-9 deprecations enumerated (`./gradlew help --warning-mode=all`) and resolved.
-- [ ] **AGP9-02**: AGP upgraded to 9.2.1 with the `build-logic/convention` migration complete — `org.jetbrains.kotlin.android` removed from all application sites (built-in Kotlin), `CommonExtension<*,…>` generics removed, and `kotlinOptions{}` migrated to `kotlin{compilerOptions{}}`; all ~14 modules configure and `compileDebugSources` is green.
-- [ ] **AGP9-03**: Hilt/Dagger upgraded to 2.59.2 (never bare "2.59+") with Kotlin 2.2.20 / KSP 2.2.20-2.0.4 confirmed satisfying AGP 9's KGP floor; Hilt + Apollo KSP codegen produces a working DI graph (no Kotlin/KSP bump).
+- [x] **AGP9-02**: AGP upgraded to 9.2.1 with the `build-logic/convention` migration complete — `org.jetbrains.kotlin.android` removed from all application sites (built-in Kotlin), `CommonExtension<*,…>` generics removed, and `kotlinOptions{}` migrated to `kotlin{compilerOptions{}}`; all ~14 modules configure and `compileDebugSources` is green.
+- [x] **AGP9-03**: Hilt/Dagger upgraded to 2.59.2 (never bare "2.59+") with Kotlin 2.2.20 / KSP 2.2.20-2.0.4 confirmed satisfying AGP 9's KGP floor; Hilt + Apollo KSP codegen produces a working DI graph (no Kotlin/KSP bump).
 
 ### Compile SDK
 
-- [ ] **SDK-01**: `compileSdk` raised 35 → 36 in all 3 touchpoints (`KotlinAndroid.kt` + `baselineprofile`), with `targetSdk = 35` preserved explicit in every site so AGP 9's `defaultTargetSdkToCompileSdkIfUnset` does not silently opt the app into Android-16 runtime behavior; build green.
+- [x] **SDK-01**: `compileSdk` raised 35 → 36 in all 3 touchpoints (`KotlinAndroid.kt` + `baselineprofile`), with `targetSdk = 35` preserved explicit in every site so AGP 9's `defaultTargetSdkToCompileSdkIfUnset` does not silently opt the app into Android-16 runtime behavior; build green.
 
 ### Library Bumps — separable, green-gated follow-ups
 
@@ -62,9 +62,9 @@ Which phases cover which requirements. Filled by the roadmapper.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | AGP9-01 | Phase 7 | Readiness done (07.1 sweep + 07.2 ADR: pinned 9.4.1, plugin verdicts, detekt decision, KGP floor); green-on-Gradle-9 folds to Phase 8 |
-| AGP9-02 | Phase 8 | Pending |
-| AGP9-03 | Phase 8 | Pending |
-| SDK-01 | Phase 8 | Pending |
+| AGP9-02 | Phase 8 | Complete |
+| AGP9-03 | Phase 8 | Complete |
+| SDK-01 | Phase 8 | Complete |
 | LIB-01 | Phase 9 | Pending |
 | LIB-02 | Phase 9 | Pending |
 | CI-01 | Phase 10 | Pending |

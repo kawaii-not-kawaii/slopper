@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: AGP-9 Toolchain Modernization
 current_phase: 08
-status: HALT — Phase 08 plan 08.1 blocked on B-08-04 (architectural decision needed)
+status: Phase 08 COMPLETE — AGP-9 landed green (Kotlin 2.3.20 + KSP 2.3.9 + built-in Kotlin); ready for Phase 09
 last_updated: "2026-05-31T15:45:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 3
-  completed_plans: 2
-  percent: 25
+  completed_plans: 3
+  percent: 50
 ---
 
 # Project State
@@ -24,16 +24,16 @@ progress:
 - **Milestone defined:** YES (`PROJECT.md`, `REQUIREMENTS.md` updated for v1.1)
 - **Research complete:** YES (`.planning/research/` — STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY; HIGH confidence)
 - **Roadmap created:** YES (Phases 7–10 appended to `ROADMAP.md`)
-- **Current phase:** 08
-- **Plans created:** 2
-- **Plans executed:** 2 (07.1 — deprecation sweep; 07.2 — Gradle-9 readiness ADR + fold-forward)
+- **Current phase:** 08 (COMPLETE) → next 09
+- **Plans created:** 3
+- **Plans executed:** 3 (07.1 — deprecation sweep; 07.2 — Gradle-9 readiness ADR + fold-forward; 08.1 — AGP-9 atomic build-logic migration, GREEN)
 
 ## Roadmap Snapshot (v1.1)
 
 | # | Phase | Status | Plans | Requirements |
 |---|-------|--------|-------|--------------|
 | 7 | **GRADLE-9** — Core Version Bump + Deprecation Sweep | Complete | 2/2 | AGP9-01 |
-| 8 | **AGP-9** — Atomic Build-Logic Migration + compileSdk 36 (the indivisible core) | Not started | 0/? | AGP9-02, AGP9-03, SDK-01 |
+| 8 | **AGP-9** — Atomic Build-Logic Migration + compileSdk 36 (the indivisible core) | Complete | 1/1 | AGP9-02, AGP9-03, SDK-01 |
 | 9 | **LIBS** — Green-Gated Library Bumps (Media3/nextlib pair + leaf libs) | Not started | 0/? | LIB-01, LIB-02 |
 | 10 | **CI-SIGNING** — Isolated Assemble/Signing Probe (last, non-gating) | Not started | 0/? | CI-01 |
 
@@ -123,7 +123,9 @@ progress:
 
 ## Next Step
 
-**Phase 08 plan 08.1 RESUMING — B-08-04 resolved (option a, research-verified VIABLE): full Kotlin 2.3.20 + KSP 2.3.9 + AGP-9 built-in Kotlin + detekt 2.0.0-alpha.3.** Execution from current HEAD (`6c311f5`, holds the falsified KSP1 commits `35748ff`+`cbf9689`): (1) reverse those two — re-drop `kotlin.android` ×5, remove `android.builtInKotlin=false`; (2) bump catalog Kotlin 2.2.20→**2.3.20**, KSP 2.2.20-2.0.4→**2.3.9**; (3) migrate detekt 1.23.8→**2.0.0-alpha.3** (catalog version + plugin-id `io.gitlab.arturbosch.detekt`→`dev.detekt`, root `build.gradle.kts` plugin block + `subprojects{}` `toolVersion`/config); (4) re-run `:core:common:compileDebugKotlin` smoke (KSP2 clears the collision); (5) verify Hilt 2.59.2 KSP2 codegen early (`:feature:*:kspDebugKotlin`); (6) Task 6 baselineprofile compilerOptions; (7) Task 8 compileSdk 36 ×2; (8) Task 9 CI cache-key agp8→agp9 + guards (targetSdk×2, compileSdk×2, forbidden = enableLegacyVariantApi/newDsl only, builtInKotlin REMOVED); (9) Task 10 full gate `compileDebugSources detekt ktlintCheck test`. **Active goal: fix all Dependabot toolchain debt properly — this lands AGP/Gradle/Kotlin/KSP/Hilt/benchmark/compileSdk; then Phase 9 (Media3/nextlib/activity/core) and prune dependabot.yml ignores.**
+**Phase 08 COMPLETE (08.1 landed GREEN 2026-05-31).** The full phase gate `compileDebugSources detekt ktlintCheck test` is BUILD SUCCESSFUL across all ~14 modules on **Gradle 9.4.1 + AGP 9.2.1 + Kotlin 2.3.20 + KSP 2.3.9 (KSP2) + built-in Kotlin + Hilt 2.59.2 + Apollo 5.0.0 + compileSdk 36/targetSdk 35 + detekt 2.0.0-alpha.3 (`dev.detekt`)**, all crutch flags ABSENT. B-08-04 resolved via option (a); the B-08-03 KSP1 commits were reversed. Hilt 2.59.2 KSP2 codegen empirically confirmed (assumption A1 PASS). Two gate-fix deviations: detekt 2.0 config-key migration (`a3e6568`) + baseline regeneration for the new 2.0 ID format (`7f6c0df`). See `08-01-SUMMARY.md`.
+
+**Next: Phase 09 — LIBS (green-gated library bumps).** Media3/nextlib pair (1.10.0-0.12.1, HARD CAP), activity-compose 1.13, core-ktx 1.18, leaf libs; then prune dependabot.yml ignores. Run `/gsd-plan-phase 09` (or research-first). **Active goal: fix all Dependabot toolchain debt properly — AGP/Gradle/Kotlin/KSP/Hilt/benchmark/compileSdk now landed.**
 
 ## Decisions (accumulated)
 
@@ -135,6 +137,10 @@ progress:
 - **07.2** — detekt 1.23.8 kept (stable); accept/track Gradle-9 warnings, defer empirical run-vs-fail test to Phase 8, reject 2.0.0-alpha (stable-only policy).
 - **07.2** — KGP 2.2.20 / KSP 2.2.20-2.0.4 confirmed ≥ AGP-9's 2.2.10 floor — no Kotlin/KSP bump in Phase 8.
 - **07.2** — AGP 8.7.3 hard-fails on Gradle 9 → wrapper flip folds forward to Phase 8 commit 1; AGP9-01 PARTIALLY delivered (green-on-Gradle-9 asserted at the Phase-8 gate). `docs/adr/` ADR convention established.
+- **08.1** — AGP-9 landed green via B-08-04 option (a): Kotlin 2.3.20 + KSP 2.3.9 (KSP2, bare scheme) + AGP-9 built-in Kotlin (`kotlin.android` dropped ×5, `builtInKotlin=false` removed). D-04b ceiling and D-BIK deferral both VOIDED (2.2.x proven dead under AGP 9).
+- **08.1** — detekt migrated to 2.0.0-alpha.3 (`dev.detekt`) per AR-08-02; required 2.0-schema config-key migration (`allowed*` keys) + baseline regeneration for the new ID format. detekt runs GATING (the AR-08-02 non-gating fallback was NOT needed).
+- **08.1** — Hilt/Dagger 2.59.2 KSP2 codegen confirmed working (assumption A1, the only MEDIUM-risk item) — `:feature:connection:kspDebugKotlin` + full gate green.
+- **08.1** — AGP 9 removed `targetSdk` from the library DSL → targetSdk guard is 2 app/test sites (not 3 in build scripts); compileSdk 36 ×2, targetSdk 35 explicit, no silent Android-16 opt-in.
 
 ---
-*Last updated: 2026-05-30 — plan 07.2 executed (Gradle-9 readiness ADR + fold-forward); Phase 7 COMPLETE at 2/2.*
+*Last updated: 2026-05-31 — plan 08.1 executed (AGP-9 atomic migration, full gate GREEN); Phase 8 COMPLETE at 1/1.*
