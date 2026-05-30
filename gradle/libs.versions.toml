@@ -19,7 +19,7 @@ navigationCompose = "2.8.5"
 hiltNavigationCompose = "1.2.0"
 paging = "3.3.5"
 pagingCompose = "3.3.5"
-datastore = "1.1.1"
+datastore = "1.2.1"
 securityCrypto = "1.1.0"
 
 # Media3 — kept in sync with nextlib for the FFmpeg extension.
