@@ -1,8 +1,9 @@
 # Project detekt config — loosens a few rules that conflict with Compose
 # idioms and keeps the focus on real quality issues.
-
-build:
-  maxIssues: 0
+#
+# detekt 2.0 (dev.detekt): the legacy `build: maxIssues:` key was removed —
+# gate severity is now driven by the Gradle extension `failOnSeverity` (default
+# Error) + `ignoreFailures=false`. Rule sections below are unchanged.
 
 complexity:
   LongMethod:

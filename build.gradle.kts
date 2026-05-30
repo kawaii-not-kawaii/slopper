@@ -34,7 +34,7 @@ dependencyCheck {
 // feature module opting in by hand.
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
-    apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "dev.detekt")
 
     configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
         version.set("1.6.0")
@@ -47,9 +47,9 @@ subprojects {
         }
     }
 
-    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+    configure<dev.detekt.gradle.extensions.DetektExtension> {
         // Keep in sync with gradle/libs.versions.toml :: detekt
-        toolVersion = "1.23.8"
+        toolVersion = "2.0.0-alpha.3"
         config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
         ignoreFailures = false
