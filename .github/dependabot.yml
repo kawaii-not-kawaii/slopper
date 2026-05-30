@@ -30,6 +30,10 @@ updates:
       - dependency-name: "gradle"                 # Gradle distribution (wrapper)
       - dependency-name: "org.jetbrains.kotlin*"  # Kotlin (KSP version-locked to it)
       - dependency-name: "com.google.devtools.ksp*"
+      # Coupled build plugins — version-tied to the AGP/KSP/Kotlin toolchain;
+      # minor bumps fail plugin application (e.g. Hilt). Manage with the toolchain.
+      - dependency-name: "com.google.dagger*"          # Hilt / Dagger (KSP-coupled)
+      - dependency-name: "androidx.benchmark*"         # baseline-profile plugin (AGP-coupled)
 
   # Keep the GitHub Actions used in workflows up to date.
   - package-ecosystem: "github-actions"
