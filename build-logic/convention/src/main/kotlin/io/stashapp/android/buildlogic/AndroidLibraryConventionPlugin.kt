@@ -14,7 +14,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
-                defaultConfig.targetSdk = 35
+                // AGP 9 removed `targetSdk` from the library DSL (LibraryBaseFlavor) —
+                // libraries have no runtime targetSdk; it is resolved from the consuming
+                // app at manifest merge. The silent-opt-in guard (D-05a) only concerns
+                // app + test modules, which still set targetSdk = 35 explicitly.
                 defaultConfig.consumerProguardFiles("consumer-rules.pro")
                 testOptions {
                     unitTests {
