@@ -33,7 +33,9 @@ nextlibMedia3Ext = "1.9.1-0.11.0"
 # Apollo 5 (May 2026) split the normalized-cache artifacts to a separate repo
 # (com.apollographql.cache:*). We never wired a normalized cache, so the unused
 # apollo-normalized-cache-sqlite dependency was dropped rather than re-pointed.
-okhttp = "4.12.0"
+# OkHttp 5 keeps the TimeUnit timeout overloads + Interceptor/Response/HttpUrl
+# APIs we use; it dropped only KMP support and obsolete shims (no impact here).
+okhttp = "5.3.2"
 
 # Image loading
 coil = "3.0.4"
