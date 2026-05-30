@@ -1,8 +1,8 @@
 [versions]
 # Plugins
 agp = "9.2.1"
-kotlin = "2.2.21"
-ksp = "2.2.21-2.0.5"
+kotlin = "2.2.20"
+ksp = "2.2.20-2.0.4"
 hilt = "2.59.2"
 apollo = "5.0.0"
 ktlint = "14.2.0"
