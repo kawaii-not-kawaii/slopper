@@ -3,6 +3,7 @@
 ## Milestones
 
 - ✅ **v1.0 Modernization** — Phases 1–6 (shipped 2026-05-29) — full detail in [`milestones/v1.0-ROADMAP.md`](milestones/v1.0-ROADMAP.md)
+- 🔄 **v1.1 AGP-9 Toolchain Modernization (DEPS-17)** — Phases 7–10 (started 2026-05-30)
 
 ## Phases
 
@@ -20,6 +21,63 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
 
 </details>
 
+### 🔄 v1.1 AGP-9 Toolchain Modernization (DEPS-17)
+
+- [ ] **Phase 7: GRADLE-9 — Core Version Bump + Deprecation Sweep** - Gradle wrapper to 9.4.1 and every plugin confirmed Gradle-9-compatible, deprecations resolved
+- [ ] **Phase 8: AGP-9 — Atomic Build-Logic Migration + compileSdk 36** - The indivisible core: AGP 9.2.1 + built-in Kotlin + `CommonExtension` fix + `compilerOptions` + Hilt 2.59.2 + compileSdk 36, build green across all ~14 modules
+- [ ] **Phase 9: LIBS — Green-Gated Library Bumps** - Media3/nextlib 1.10.0 locked pair + activity-compose 1.13 + core-ktx 1.18, device software-codec playback verified
+- [ ] **Phase 10: CI-SIGNING — Isolated Assemble/Signing Probe** - Non-gating `assembleDebug` probe on AGP-9 runners; promote a real gate or document the EdEC blocker persisting
+
+## Phase Details
+
+### Phase 7: GRADLE-9 — Core Version Bump + Deprecation Sweep
+**Goal**: The build runs green on Gradle 9 with the wrapper at the AGP-9.2 floor and every plugin in the toolchain confirmed compatible — isolating version-resolution breakage from the AGP-9 DSL surgery that follows.
+**Depends on**: Nothing (first phase of v1.1; builds on the shipped v1.0 state)
+**Requirements**: AGP9-01
+**Success Criteria** (what must be TRUE):
+  1. `gradle-wrapper.properties` resolves Gradle 9.4.1 with a freshly re-pinned `distributionSha256Sum`, and `./gradlew --version` reports Gradle 9.
+  2. `./gradlew help --warning-mode=all` enumerates every Gradle-9 deprecation, and each is resolved (or explicitly accepted with a documented reason).
+  3. detekt, ktlint, OWASP dependency-check, and the baseline-profile plugin all configure and run green on Gradle 9 (or dependency-check runs green under the documented `--no-configuration-cache` fallback).
+  4. Kotlin 2.2.20 / KSP 2.2.20-2.0.4 are confirmed to already satisfy AGP 9's KGP floor — no Kotlin/KSP bump is needed.
+**Plans**: TBD
+**Research flag**: OWASP **dependency-check 12.2.2 Gradle-9 compatibility is unknown** — confirm a compatible release exists at plan time, or budget the `--no-configuration-cache` workaround. Note: may run AGP 8.7.3 on Gradle 9 for one isolating commit; if AGP 8.7.3 is not Gradle-9-compatible, this phase folds forward into Phase 8.
+
+### Phase 8: AGP-9 — Atomic Build-Logic Migration + compileSdk 36
+**Goal**: The atomic critical path lands as one indivisible change-set — AGP 9.2.1, built-in Kotlin, the `CommonExtension` generics fix, `kotlinOptions`→`compilerOptions`, Hilt 2.59.2, and compileSdk 36 — so the `build-logic/convention` choke point configures all ~14 modules and the build is green again on AGP 9.
+**Depends on**: Phase 7 (Gradle 9 floor must be in place before AGP-9 DSL surgery)
+**Requirements**: AGP9-02, AGP9-03, SDK-01
+**Success Criteria** (what must be TRUE):
+  1. AGP resolves to 9.2.1 and `compileDebugSources` is green across all ~14 modules with the version-isolation opt-out flags REMOVED.
+  2. `org.jetbrains.kotlin.android` is removed from every application site (both convention plugins, root + baselineprofile blocks, catalog alias), `CommonExtension<*,…>` generics are gone, and `kotlinOptions{}` is migrated to `kotlin{compilerOptions{}}` — no "extension already registered" or generics compile error.
+  3. Hilt/Dagger resolves to exactly 2.59.2 (never bare "2.59+"), and Hilt + Apollo KSP codegen produces a working DI graph on Kotlin 2.2.20 / KSP 2.2.20-2.0.4.
+  4. `compileSdk` is 36 in all 3 touchpoints (`KotlinAndroid.kt` + `baselineprofile`) AND `targetSdk = 35` is verifiably still explicit in every site — the app does NOT silently opt into Android-16 runtime behavior.
+  5. The full phase gate passes: `compileDebugSources + detekt + ktlintCheck + test` green, and the CI cache key is bumped `agp8`→`agp9`.
+**Plans**: TBD
+**Research flag**: Confirm the three flagged version disagreements (AGP **9.2.1 vs 9.2.0**, Gradle floor matching the chosen AGP minor, Hilt **2.59.2 vs 2.59.1**) against live Maven metadata at plan time; verify `KotlinAndroidProjectExtension` still resolves under built-in Kotlin and that the `kotlin{compilerOptions{}}` rewrite is exact. Migrate one concern per commit (for `git bisect`); validate `:core:common:compileDebugKotlin` before a full build.
+
+### Phase 9: LIBS — Green-Gated Library Bumps
+**Goal**: The now-unblocked library cluster lands as separable green-gated bumps on top of the AGP-9 build — Media3/nextlib as a single locked pair and the two leaf libs — changing only which versions resolve, not whether the build configures.
+**Depends on**: Phase 8 (compileSdk 36 must precede the Media3/leaf bumps — the AAR `minCompileSdk` consumer rule rejects SDK-35 modules consuming SDK-36 libraries)
+**Requirements**: LIB-01, LIB-02
+**Success Criteria** (what must be TRUE):
+  1. Media3 resolves to 1.10.0 and `nextlib-media3ext` to 1.10.0-0.12.1 as a single locked pair (NOT 1.10.1 — no nextlib pairing exists), and the build is green.
+  2. Software-codec (FFmpeg renderer) playback is verified working on a physical device — no `UnsatisfiedLinkError` at runtime.
+  3. activity-compose resolves to 1.13 and core-ktx to 1.18, with the build green.
+  4. The corresponding `androidx.activity:*` / `androidx.core:core*` entries are removed from the Dependabot ignore list.
+**Plans**: TBD
+**Research flag**: Lighter research — Media3/nextlib lockstep and leaf-lib bumps are well-documented mechanical bumps. The only nuances are the matching version pair (verified `1.10.0-0.12.1`) and the device smoke test (the failure surface is runtime-only).
+
+### Phase 10: CI-SIGNING — Isolated Assemble/Signing Probe
+**Goal**: The deferred CI APK-signing question is re-evaluated under the AGP-9 toolchain in full isolation — a non-gating probe whose outcome is acted on — without ever risking the green toolchain landing.
+**Depends on**: Phase 8 (needs the green AGP-9 build to probe against); intentionally LAST and isolated so it can never gate the toolchain landing
+**Requirements**: CI-01
+**Success Criteria** (what must be TRUE):
+  1. An `assembleDebug`/`validateSigningDebug` probe runs on the AGP-9 CI runners as `continue-on-error` — it cannot fail the pipeline.
+  2. The probe outcome is acted on: EITHER a demonstrated green run promotes a real assemble/signing gate, OR the BouncyCastle EdEC blocker is documented as persisting and the compile-only gate is kept as the contract (with a `bcprov-jdk18on` pin if assembly is forced).
+  3. The compile-only CI gate remains the binding contract throughout — `assembleDebug` is never restored "on faith".
+**Plans**: TBD
+**Research flag**: EdEC/bcprov spike — capture the full stack trace on an AGP-9 runner before deciding on a gate. The toolchain bump does NOT fix this classpath skew and may regress it.
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -30,21 +88,28 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
 | 4. POLISH | v1.0 | 3/3 | Complete | 2026-05-19 |
 | 5. SPINE | v1.0 | 3/3 | Complete | 2026-05-19 |
 | 6. SETTINGS-V3 | v1.0 | 3/3 | Complete | 2026-05-29 |
+| 7. GRADLE-9 | v1.1 | 0/? | Not started | - |
+| 8. AGP-9 | v1.1 | 0/? | Not started | - |
+| 9. LIBS | v1.1 | 0/? | Not started | - |
+| 10. CI-SIGNING | v1.1 | 0/? | Not started | - |
 
 ## Carried Tech Debt (into next milestone)
 
-- **AGP 9 / compileSdk 36 / Media3 1.10** upgrade (DEPS-17) — blocked on Hilt AGP-9 support
-- **Macrobenchmark execution + output capture** (Phase 3) — infrastructure ready, device measurement deferred
+- **Macrobenchmark execution + output capture** (Phase 3) — infrastructure ready, device measurement deferred (tracked as PERF-MB-01)
 - **Formal per-screen visual-fidelity screenshot audit** (Phase 5) — SPINE UI confirmed on S23+ via Phase 6 device UAT
 - **COMPLY-07-3BTN** (3-button-nav re-verification), **COMPLY-02-NAV-EVENT** (NavigationBackHandler migration)
 - **WR-02** (Phase 6 review): SettingsViewModel domain-interface refactor — requires moving companion constants to interfaces
+- **APOLLO-CACHE-01**: Apollo 5 declarative normalized cache — only if a caching need emerges
 
-## Out of Scope (carried from v1.0)
+## Out of Scope (carried)
 
 | Item | Reason |
 |------|--------|
 | New end-user features | Modernization-only milestone |
-| `minSdk` bump | Must stay installable on existing devices |
+| `minSdk` / `targetSdk` bump | Must stay installable + behaviorally unchanged on existing devices (Android-16 opt-ins forbidden) |
+| Kotlin past 2.2.20 / KSP past 2.2.20-2.0.4 | AGP 9 needs only KGP ≥ 2.2.10; bumping re-triggers KSP/Hilt churn for no gain |
+| Media3 1.10.1 | No matching `nextlib-media3ext` 1.10.1 build exists — hard cap at 1.10.0 |
+| `android.enableLegacyVariantApi` / `android.newDsl=false` | No-op / doomed crutches; repo is already clean — must NOT be added |
 | New third-party SDKs | No vendor additions without explicit approval |
 | Module-graph restructure | Frozen — refactors stay within modules |
 | Migrating off Compose / Hilt / Gradle Kotlin DSL | Existing architecture preserved |

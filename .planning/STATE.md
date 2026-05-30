@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: AGP-9 Toolchain Modernization
-status: planning
-last_updated: "2026-05-30T09:15:05.807Z"
+status: roadmapped
+last_updated: "2026-05-30T09:43:00.000Z"
 last_activity: 2026-05-30
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -16,48 +16,70 @@ progress:
 # Project State
 
 **Project:** Slopper (Android Compose multi-module app)
-**Milestone:** v1 — Modernization (revise code state, align with Android guidelines, enhance performance, refresh dependencies)
-**Initialized:** 2026-05-16
+**Milestone:** v1.1 — AGP-9 Toolchain Modernization (DEPS-17) — pure build-toolchain upgrade, no end-user features
+**Initialized:** 2026-05-30 (v1.0 shipped 2026-05-29, tag `v1.0`)
 
 ## Where Things Stand
 
-- **Project initialized:** YES (`PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md` all written)
-- **Codebase mapped:** YES (`.planning/codebase/` — 7 docs, 1483 lines)
-- **Research complete:** YES (`.planning/research/` — STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY)
-- **Current phase:** 06
-- **Plans created:** 3
-- **Plans executed:** 3 (06.1 — Settings Hub Foundation, 06.2 — Settings Detail Pages, 06.3 — Settings Search Overlay)
+- **Milestone defined:** YES (`PROJECT.md`, `REQUIREMENTS.md` updated for v1.1)
+- **Research complete:** YES (`.planning/research/` — STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY; HIGH confidence)
+- **Roadmap created:** YES (Phases 7–10 appended to `ROADMAP.md`)
+- **Current phase:** 7 (not started)
+- **Plans created:** 0
+- **Plans executed:** 0
 
-## Roadmap Snapshot
+## Roadmap Snapshot (v1.1)
 
-| # | Phase | Status | Plans |
-|---|-------|--------|-------|
-| 1 | **DEPS** — Foundation Bump (toolchain + dependency floor) | Pending | 0/3 |
-| 2 | **COMPLY** — Platform Compliance (edge-to-edge, predictive back, Splash, locales, FGS cleanup) | Pending | 0/2 |
-| 3 | **PERF** — Measured Wins (GMD, baseline profile expansion, shuffle-playback fix) | Pending | 0/3 |
-| 4 | **POLISH** — Test Pyramid & Cleanup (PlayerScreen split, lint/detekt re-baseline, JUnit5/Turbine/MockK/Robolectric) | Pending | 0/3 |
-| 5 | **SPINE** — Compose UI Redesign (Spine direction per `design_handoff_slopper_spine/`) | Pending | 0 |
+| # | Phase | Status | Plans | Requirements |
+|---|-------|--------|-------|--------------|
+| 7 | **GRADLE-9** — Core Version Bump + Deprecation Sweep | Not started | 0/? | AGP9-01 |
+| 8 | **AGP-9** — Atomic Build-Logic Migration + compileSdk 36 (the indivisible core) | Not started | 0/? | AGP9-02, AGP9-03, SDK-01 |
+| 9 | **LIBS** — Green-Gated Library Bumps (Media3/nextlib pair + leaf libs) | Not started | 0/? | LIB-01, LIB-02 |
+| 10 | **CI-SIGNING** — Isolated Assemble/Signing Probe (last, non-gating) | Not started | 0/? | CI-01 |
 
-### Roadmap Evolution
+**Coverage:** 7/7 requirements mapped. No orphans.
 
-- Phase 5 added (2026-05-17): SPINE (Compose UI Redesign) — added at end of v1.0 milestone after design handoff drop. Source: `design_handoff_slopper_spine/README.md`.
+### Phase Ordering Rationale
 
-## Key Locked Decisions
+- **Phase 8 is the one atomic phase** — Gradle→AGP→drop-`kotlin.android`→`CommonExtension` fix→`compilerOptions`→Hilt 2.59.2 is an indivisible change-set; the convention plugins fail all ~14 modules until it lands whole. compileSdk 36 rides here.
+- **Versions before DSL** (7 before 8) isolates version-resolution breakage from DSL-migration breakage (enables `git bisect`).
+- **Hilt 2.59.2 strictly after AGP 9** — 2.59 drops AGP 8 entirely.
+- **compileSdk 36 before Media3/leaf libs** — AAR `minCompileSdk` consumer rule rejects SDK-35 modules consuming SDK-36 libs.
+- **CI signing isolated and LAST** — must never gate the toolchain landing; EdEC/bcprov is not AGP-fixed.
 
-- **Phase 06 - 06.1:** Single SettingsViewModel extracted to standalone file; serverInfo/activeServer StateFlows added via connectionRepository.test() in init block
-- **Phase 06 - 06.1:** AccentColors/LocalAccentColors in Theme.kt with remember(accentName) memoization; StashTheme accepts accentName param; RootViewModel exposes accentPalette StateFlow
-- **Phase 06 - 06.1:** Flat composable() entries for 6 sub-routes in AppNavHost; isMainTabRoute exact-match check unchanged; SettingsDetailStubs.kt as temporary compilation bridge for Plan 6.2
-- **Phase 06 - 06.2:** DetailGroup promoted to internal for cross-screen sharing; all 6 detail screens share SpineSwitch/ChipRow/DetailGroup internal composables defined in SettingsPlaybackScreen.kt
-- **Phase 06 - 06.2:** SettingsAboutScreen reads version via PackageManager.getPackageInfo() — BuildConfig not enabled in feature:settings module; buildType derived from versionName suffix
-- **Phase 06 - 06.2:** SettingsDetailStubs.kt deleted after all 6 real screens implemented
-- **Phase 06 - 06.3:** SettingsSearchIndex (44 entries) static compile-time list; filtered via String.contains(ignoreCase=true) in searchResults StateFlow
-- **Phase 06 - 06.3:** Search results routed through existing on*Click callbacks (onPlaybackClick etc.) — no new navController dependency in SettingsScreen
-- **Phase 06 - 06.3:** AnimatedVisibility (fadeIn 150ms / fadeOut 100ms) for overlay; BasicTextField with decorationBox for placeholder; buildAnnotatedString for substring highlighting
-- **MediaSessionService (real background playback)** → OUT OF SCOPE this milestone; orphan `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permission to be removed in Phase 2
-- **`androidx.security:security-crypto` deprecation** → DEFER (pin 1.1.0, TODO in `ConnectionStore.kt`); revisit when stable replacement ships
-- **Apollo Kotlin** → STAY on 4.4.3 (Apollo 5 is its own milestone)
-- **Perf floor** → cold-start p50 ≥ 5% with vs without baseline profile; Library scroll ≥ 95% frames on time at p95 on Gradle-managed `Pixel 6 API 34`
-- **Named bug to fix in Phase 3** → shuffle/random consecutive video playback hang after a few videos (PERF-08)
+### Per-Phase Research Flags
+
+- **Phase 7:** OWASP dependency-check 12.2.2 Gradle-9 compatibility UNKNOWN — confirm or budget `--no-configuration-cache`.
+- **Phase 8:** Confirm 3 version disagreements (AGP 9.2.1/9.2.0, Gradle floor, Hilt 2.59.2/2.59.1) at plan time; verify `KotlinAndroidProjectExtension` resolves under built-in Kotlin.
+- **Phase 9:** Lighter — mechanical bumps; verify the `1.10.0-0.12.1` pair + device software-codec smoke test.
+- **Phase 10:** EdEC/bcprov spike — capture the full stack trace on an AGP-9 runner before deciding the gate.
+
+## Target Version Matrix (from STACK.md — confirm exact patches at plan time)
+
+| Key | FROM | TO |
+|-----|------|----|
+| AGP | 8.7.3 | 9.2.1 |
+| Gradle wrapper | 8.11.1 | 9.4.1 (+ new sha256) |
+| Hilt/Dagger | 2.56.2 | 2.59.2 (never bare "2.59+") |
+| Kotlin (KGP) | 2.2.20 | unchanged |
+| KSP | 2.2.20-2.0.4 | unchanged |
+| compileSdk | 35 | 36 (targetSdk stays 35 explicit) |
+| Media3 | 1.9.1 | 1.10.0 (HARD CAP — not 1.10.1) |
+| nextlib-media3ext | 1.9.1-0.11.0 | 1.10.0-0.12.1 |
+| activity-compose | current | 1.13 |
+| core-ktx | current | 1.18 |
+
+## Key Locked Decisions (v1.1)
+
+- **No Kotlin/KSP bump** — AGP 9 needs only KGP ≥ 2.2.10; 2.2.20 satisfies. Chasing 2.3.x re-triggers KSP/Hilt churn for no gain.
+- **No `targetSdk` bump** — must stay explicit at 35 in all 3 sites or AGP 9 silently flips it via `defaultTargetSdkToCompileSdkIfUnset`. Highest-consequence silent failure.
+- **Do NOT add `android.enableLegacyVariantApi=true` or `newDsl=false`** — no-op/doomed crutches; repo is already clean (zero `applicationVariants`/`buildDir`).
+- **Media3 hard cap at 1.10.0** — nextlib has no 1.10.1 pairing; mismatch causes runtime `UnsatisfiedLinkError`.
+- **CI signing: compile-only gate stays the contract** — `assembleDebug` is a `continue-on-error` probe only; never restored on faith.
+
+## Carried Tech Debt (from v1.0)
+
+- Macrobenchmark execution (PERF-MB-01), formal screenshot audit, COMPLY-07-3BTN, COMPLY-02-NAV-EVENT, WR-02 ViewModel refactor, APOLLO-CACHE-01 — all deferred, none in this milestone.
 
 ## Workflow Config
 
@@ -70,18 +92,7 @@ progress:
 
 ## Next Step
 
-Phase 06 complete. All 3 plans executed. SETTINGS-V3 hub+drill-down redesign done. Proceed to next milestone phase.
+Roadmap for v1.1 created (Phases 7–10). Proceed with `/gsd-plan-phase 7` (GRADLE-9 — Core Version Bump + Deprecation Sweep).
 
 ---
-*Last updated: 2026-05-19 after completing 06.3-PLAN.md (Settings Search Overlay) — Phase 06 fully complete.*
-
-## Current Position
-
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-05-30 — Milestone v1 started
-
-## Operator Next Steps
-
-- Start the next milestone with /gsd-new-milestone
+*Last updated: 2026-05-30 — v1.1 roadmap created; Phases 7–10 appended, 7/7 requirements mapped.*

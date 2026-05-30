@@ -61,10 +61,10 @@ Which phases cover which requirements. Filled by the roadmapper.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AGP9-01 | TBD | Pending |
-| AGP9-02 | TBD | Pending |
-| AGP9-03 | TBD | Pending |
-| SDK-01 | TBD | Pending |
-| LIB-01 | TBD | Pending |
-| LIB-02 | TBD | Pending |
-| CI-01 | TBD | Pending |
+| AGP9-01 | Phase 7 | Pending |
+| AGP9-02 | Phase 8 | Pending |
+| AGP9-03 | Phase 8 | Pending |
+| SDK-01 | Phase 8 | Pending |
+| LIB-01 | Phase 9 | Pending |
+| LIB-02 | Phase 9 | Pending |
+| CI-01 | Phase 10 | Pending |
