@@ -15,34 +15,41 @@ updates:
     # fails on whichever blocked dep it bundles. Individual PRs let safe leaf-
     # library updates flow and merge on their own; a blocked dep fails in isolation.
     ignore:
-      # Build toolchain (AGP / Gradle / Kotlin / KSP) is tightly version-locked
-      # and must be bumped together in a deliberate DEPS pass — never piecemeal
-      # by Dependabot. Each broke CI when bumped alone:
-      #   - AGP 8.13.2 requires Gradle 8.13 (project is on 8.11.1)
-      #   - KSP 2.3.9 requires Kotlin 2.3; KSP is pinned to the EXACT Kotlin
-      #     version (PITFALLS §3), so even a Kotlin patch breaks the lockstep
-      #   - AGP 9 / compileSdk 36 / Gradle 9 are deferred (DEPS-17, Hilt-blocked)
-      # Exclude all update types for the whole cluster. Dependabot still handles
-      # leaf libraries (AndroidX, OkHttp, Coil, Apollo, test libs, etc.).
+      # Build toolchain (AGP / Gradle / Kotlin / KSP / Hilt) is a tightly
+      # version-LOCKSTEP cluster — bumping any one piecemeal breaks the others,
+      # so it is managed deliberately (v1.1 DEPS-17 landed AGP 9.2.1 + Gradle
+      # 9.4.1 + Kotlin 2.3.20 + KSP 2.3.9 + Hilt 2.59.2 together, 2026-05-31).
+      # The lockstep is intrinsic, NOT a temporary block:
+      #   - KSP is published against an EXACT Kotlin version (KSP 2.3.9 ⇒ Kotlin
+      #     2.3.20); a lone Kotlin patch leaves KSP without a matching build.
+      #   - AGP majors set a Gradle floor and remove DSL/extension APIs
+      #     (AGP 9.0 removed BaseExtension → legacy kotlin.android crashes; AGP-9
+      #     built-in Kotlin requires KSP2 ⇒ Kotlin 2.3.x). See ADR-0001 + the
+      #     B-08-0x blocker chain in .planning/STATE.md.
+      #   - Dagger/Hilt is KSP-host-coupled (2.59 drops AGP 8 entirely).
+      # Keep this cluster excluded; bump it as a deliberate toolchain pass.
+      # Leaf libraries (AndroidX activity/core, Media3*, OkHttp, Coil, Apollo,
+      # test libs, etc.) flow through Dependabot normally.
       - dependency-name: "com.android.*"          # AGP (gradle/application/library/test)
       - dependency-name: "gradle"                 # Gradle distribution (wrapper)
       - dependency-name: "org.jetbrains.kotlin*"  # Kotlin (KSP version-locked to it)
       - dependency-name: "com.google.devtools.ksp*"
-      # Coupled build plugins — version-tied to the AGP/KSP/Kotlin toolchain;
-      # minor bumps fail plugin application (e.g. Hilt). Manage with the toolchain.
-      - dependency-name: "com.google.dagger*"          # Hilt / Dagger (KSP-coupled)
-      - dependency-name: "androidx.benchmark*"         # baseline-profile plugin (AGP-coupled)
-      # Media3 1.10+ requires compileSdk 36 (deferred to AGP-9 / DEPS-17), and
-      # nextlib-media3ext is version-locked to Media3 (PITFALLS §16). Bump with
-      # the compileSdk-36 work.
+      - dependency-name: "com.google.dagger*"     # Hilt / Dagger (KSP-host-coupled)
+      # baseline-profile plugin is PINNED to a pre-release for AGP-9 support
+      # (1.5.0-alpha06, accepted-risk AR-08-01 in .planning/STATE.md); the stable
+      # line (1.4.1) hard-rejects AGP 9. Keep excluded until a STABLE AGP-9
+      # baseline-profile ships, then re-point and drop this ignore.
+      - dependency-name: "androidx.benchmark*"
+      # Media3 + nextlib-media3ext are a single LOCKED PAIR (PITFALLS §16): a
+      # version mismatch causes a runtime UnsatisfiedLinkError. HARD CAP at
+      # Media3 1.10.0 — nextlib has no 1.10.1 pairing (1.10.1-0.12.1 = 404).
+      # Dependabot cannot bump Media3 alone safely; bump the pair deliberately.
       - dependency-name: "androidx.media3:*"
       - dependency-name: "io.github.anilbeesetti:*"
-      # androidx.activity 1.10+ requires AGP 8.9.1 + compileSdk 36 (pulls core
-      # 1.18 + navigationevent 1.0 with the same floor). Same deferral as Media3.
-      - dependency-name: "androidx.activity:*"
-      # androidx.core 1.16+ requires AGP 8.9.1 + compileSdk 36. Same deferral.
-      - dependency-name: "androidx.core:core"
-      - dependency-name: "androidx.core:core-ktx"
+      # NOTE (2026-05-31, DEPS-17): androidx.activity (→1.13.0) and androidx.core
+      # / core-ktx (→1.18.0) were UN-IGNORED here — their AGP-8.9.1 / compileSdk-36
+      # floor is now satisfied by the AGP-9 landing, so Dependabot manages them
+      # as normal leaf libraries again.
 
   # Keep the GitHub Actions used in workflows up to date.
   - package-ecosystem: "github-actions"
