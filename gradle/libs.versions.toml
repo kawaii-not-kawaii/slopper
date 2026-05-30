@@ -10,7 +10,7 @@ detekt = "1.23.8"
 dependencyCheck = "12.2.2"
 
 # AndroidX / Compose
-coreKtx = "1.15.0"
+coreKtx = "1.18.0"
 coreSplashscreen = "1.2.0"
 lifecycle = "2.8.7"
 activityCompose = "1.9.3"
