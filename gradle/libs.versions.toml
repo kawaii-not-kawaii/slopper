@@ -22,12 +22,12 @@ pagingCompose = "3.5.0"
 datastore = "1.2.1"
 securityCrypto = "1.1.0"
 
-# Media3 — kept in sync with nextlib for the FFmpeg extension.
-# CASE B (forced 2026-05-16, Phase 1 DEPS, Option A unblock from 01.1-SUMMARY.md):
-# Media3 1.10.0 is deferred along with AGP 9 + compileSdk 36 (DEPS-17 in REQUIREMENTS.md).
-# Revisit once Hilt publishes AGP-9 support and the AGP-9 transition phase ships.
-media3 = "1.9.1"
-nextlibMedia3Ext = "1.9.1-0.11.0"
+# Media3 — kept in sync with nextlib for the FFmpeg extension (LOCKED PAIR).
+# HARD CAP at 1.10.0: nextlib-media3ext has no 1.10.1 pairing (1.10.1-0.12.1 = 404),
+# and a version mismatch causes a runtime UnsatisfiedLinkError (PITFALLS §16).
+# Unblocked 2026-05-31 by the AGP-9 / compileSdk-36 landing (Phase 8, DEPS-17).
+media3 = "1.10.0"
+nextlibMedia3Ext = "1.10.0-0.12.1"
 
 # Networking
 # Apollo 5 (May 2026) split the normalized-cache artifacts to a separate repo
