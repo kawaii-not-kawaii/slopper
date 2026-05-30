@@ -25,7 +25,6 @@ apollo {
 
 dependencies {
     api(libs.apollo.runtime)
-    implementation(libs.apollo.normalized.cache.sqlite)
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
     implementation(project(":core:common"))
