@@ -23,29 +23,32 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
 
 ### 🔄 v1.1 AGP-9 Toolchain Modernization (DEPS-17)
 
-- [ ] **Phase 7: GRADLE-9 — Core Version Bump + Deprecation Sweep** - Gradle wrapper to 9.4.1 and every plugin confirmed Gradle-9-compatible, deprecations resolved
-- [ ] **Phase 8: AGP-9 — Atomic Build-Logic Migration + compileSdk 36** - The indivisible core: AGP 9.2.1 + built-in Kotlin + `CommonExtension` fix + `compilerOptions` + Hilt 2.59.2 + compileSdk 36, build green across all ~14 modules
+- [ ] **Phase 7: GRADLE-9 — Gradle-9 Readiness + Deprecation Sweep (AGP-8.7.3 fold-forward)** - Gradle 9.4.1 target PINNED (not flipped — AGP 8.7.3 hard-fails on Gradle 9), deprecations swept on the current toolchain, every plugin's Gradle-9 verdict recorded, detekt decision made; the live wrapper activation folds forward to Phase 8 commit 1
+- [ ] **Phase 8: AGP-9 — Atomic Build-Logic Migration + compileSdk 36** - The indivisible core: Gradle 9.4.1 activation (commit 1) + AGP 9.2.1 + built-in Kotlin + `CommonExtension` fix + `compilerOptions` + Hilt 2.59.2 + compileSdk 36, build green across all ~14 modules
 - [ ] **Phase 9: LIBS — Green-Gated Library Bumps** - Media3/nextlib 1.10.0 locked pair + activity-compose 1.13 + core-ktx 1.18, device software-codec playback verified
 - [ ] **Phase 10: CI-SIGNING — Isolated Assemble/Signing Probe** - Non-gating `assembleDebug` probe on AGP-9 runners; promote a real gate or document the EdEC blocker persisting
 
 ## Phase Details
 
-### Phase 7: GRADLE-9 — Core Version Bump + Deprecation Sweep
-**Goal**: The build runs green on Gradle 9 with the wrapper at the AGP-9.2 floor and every plugin in the toolchain confirmed compatible — isolating version-resolution breakage from the AGP-9 DSL surgery that follows.
+### Phase 7: GRADLE-9 — Gradle-9 Readiness + Deprecation Sweep
+**Goal**: The Gradle-9 transition is fully DE-RISKED before the AGP-9 surgery: the Gradle 9.4.1 target is pinned, every Gradle-9 deprecation is enumerated and attributed on the current toolchain, every toolchain plugin has a recorded Gradle-9 verdict (incl. the one open detekt decision), and the KGP floor is confirmed — WITHOUT flipping the live wrapper. (Re-scoped 2026-05-30: research proved AGP 8.7.3 hard-fails on Gradle 9.4.1, so a green-on-Gradle-9 build is impossible until AGP 9 lands; the wrapper ACTIVATION folds forward to Phase 8 commit 1. See `07-RESEARCH.md` + `docs/adr/0001-gradle-9-readiness-and-agp8-fold-forward.md`.)
 **Depends on**: Nothing (first phase of v1.1; builds on the shipped v1.0 state)
-**Requirements**: AGP9-01
+**Requirements**: AGP9-01 (PARTIALLY delivered — readiness/pin/sweep/decision here; green-on-Gradle-9 activation asserted at the Phase-8 gate per fold-forward)
 **Success Criteria** (what must be TRUE):
-  1. `gradle-wrapper.properties` resolves Gradle 9.4.1 with a freshly re-pinned `distributionSha256Sum`, and `./gradlew --version` reports Gradle 9.
-  2. `./gradlew help --warning-mode=all` enumerates every Gradle-9 deprecation, and each is resolved (or explicitly accepted with a documented reason).
-  3. detekt, ktlint, OWASP dependency-check, and the baseline-profile plugin all configure and run green on Gradle 9 (or dependency-check runs green under the documented `--no-configuration-cache` fallback).
-  4. Kotlin 2.2.20 / KSP 2.2.20-2.0.4 are confirmed to already satisfy AGP 9's KGP floor — no Kotlin/KSP bump is needed.
-**Plans**: TBD
-**Research flag**: OWASP **dependency-check 12.2.2 Gradle-9 compatibility is unknown** — confirm a compatible release exists at plan time, or budget the `--no-configuration-cache` workaround. Note: may run AGP 8.7.3 on Gradle 9 for one isolating commit; if AGP 8.7.3 is not Gradle-9-compatible, this phase folds forward into Phase 8.
+  1. `docs/adr/0001-gradle-9-readiness-and-agp8-fold-forward.md` records the pinned Gradle 9.4.1 target (distribution URL confirmed live; `distributionSha256Sum` fetched at Phase-8 execution, never hard-coded), and the live `gradle-wrapper.properties` STILL resolves Gradle 8.11.1 (the flip is Phase-8 commit 1).
+  2. `./gradlew help --warning-mode=all` was run on Gradle 8.11.1 and every Gradle-9 deprecation is enumerated + plugin-attributed in `gradle9-deprecations.log` (or an explicit no-finding is recorded); each is resolved or explicitly accepted with a documented reason.
+  3. detekt, ktlint, OWASP dependency-check, and the baseline-profile plugin each have a recorded Gradle-9 verdict in the ADR (ktlint 14.2.0 ready; dependency-check 12.2.2 via `--no-configuration-cache`; baseline-profile 1.4.1 verified/not-exercised; detekt 1.23.8 = keep stable, accept warnings, empirical test deferred to Phase 8, NO alpha).
+  4. Kotlin 2.2.20 / KSP 2.2.20-2.0.4 are recorded as already satisfying AGP 9's KGP ≥ 2.2.10 floor — no Kotlin/KSP bump is needed.
+  5. The repo's own build scripts are confirmed Gradle-9-clean and the CI gate (`compileDebugSources detekt ktlintCheck test`) is still green on Gradle 8.11.1 — zero regression.
+**Plans**: 2 plans
+  - [ ] 07.1-PLAN.md — Deprecation sweep + clean-script audit + no-regression baseline on Gradle 8.11.1 (produces `gradle9-deprecations.log`)
+  - [ ] 07.2-PLAN.md — Gradle-9 readiness ADR: pinned target, plugin verdicts, detekt decision, KGP floor, Phase-8 fold-forward hand-off
+**Research flag (RESOLVED)**: OWASP dependency-check 12.2.2 runs on Gradle 9 via the already-present `--no-configuration-cache` contract. The "AGP 8.7.3 on Gradle 9 for one isolating commit" hypothesis is DISPROVEN — AGP 8.7.3 hard-fails the Gradle-version check; the phase folds forward into Phase 8 as designed by the ROADMAP escape clause.
 
 ### Phase 8: AGP-9 — Atomic Build-Logic Migration + compileSdk 36
-**Goal**: The atomic critical path lands as one indivisible change-set — AGP 9.2.1, built-in Kotlin, the `CommonExtension` generics fix, `kotlinOptions`→`compilerOptions`, Hilt 2.59.2, and compileSdk 36 — so the `build-logic/convention` choke point configures all ~14 modules and the build is green again on AGP 9.
-**Depends on**: Phase 7 (Gradle 9 floor must be in place before AGP-9 DSL surgery)
-**Requirements**: AGP9-02, AGP9-03, SDK-01
+**Goal**: The atomic critical path lands as one indivisible change-set — Gradle 9.4.1 activation (commit 1, folded forward from Phase 7), AGP 9.2.1, built-in Kotlin, the `CommonExtension` generics fix, `kotlinOptions`→`compilerOptions`, Hilt 2.59.2, and compileSdk 36 — so the `build-logic/convention` choke point configures all ~14 modules and the build is green again on AGP 9.
+**Depends on**: Phase 7 (Gradle 9 target pinned + deprecations swept + plugin verdicts recorded before the AGP-9 DSL surgery; the wrapper flip is Phase-8 commit 1)
+**Requirements**: AGP9-02, AGP9-03, SDK-01 (+ the green-on-Gradle-9 assertion of AGP9-01 folded forward from Phase 7)
 **Success Criteria** (what must be TRUE):
   1. AGP resolves to 9.2.1 and `compileDebugSources` is green across all ~14 modules with the version-isolation opt-out flags REMOVED.
   2. `org.jetbrains.kotlin.android` is removed from every application site (both convention plugins, root + baselineprofile blocks, catalog alias), `CommonExtension<*,…>` generics are gone, and `kotlinOptions{}` is migrated to `kotlin{compilerOptions{}}` — no "extension already registered" or generics compile error.
@@ -53,7 +56,7 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
   4. `compileSdk` is 36 in all 3 touchpoints (`KotlinAndroid.kt` + `baselineprofile`) AND `targetSdk = 35` is verifiably still explicit in every site — the app does NOT silently opt into Android-16 runtime behavior.
   5. The full phase gate passes: `compileDebugSources + detekt + ktlintCheck + test` green, and the CI cache key is bumped `agp8`→`agp9`.
 **Plans**: TBD
-**Research flag**: Confirm the three flagged version disagreements (AGP **9.2.1 vs 9.2.0**, Gradle floor matching the chosen AGP minor, Hilt **2.59.2 vs 2.59.1**) against live Maven metadata at plan time; verify `KotlinAndroidProjectExtension` still resolves under built-in Kotlin and that the `kotlin{compilerOptions{}}` rewrite is exact. Migrate one concern per commit (for `git bisect`); validate `:core:common:compileDebugKotlin` before a full build.
+**Research flag**: Confirm the three flagged version disagreements (AGP **9.2.1 vs 9.2.0**, Gradle floor matching the chosen AGP minor, Hilt **2.59.2 vs 2.59.1**) against live Maven metadata at plan time; verify `KotlinAndroidProjectExtension` still resolves under built-in Kotlin and that the `kotlin{compilerOptions{}}` rewrite is exact. Migrate one concern per commit (for `git bisect`); validate `:core:common:compileDebugKotlin` before a full build. The Gradle 9.4.1 wrapper flip + live sha256 fetch is commit 1 (folded forward from Phase 7).
 
 ### Phase 9: LIBS — Green-Gated Library Bumps
 **Goal**: The now-unblocked library cluster lands as separable green-gated bumps on top of the AGP-9 build — Media3/nextlib as a single locked pair and the two leaf libs — changing only which versions resolve, not whether the build configures.
@@ -88,7 +91,7 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
 | 4. POLISH | v1.0 | 3/3 | Complete | 2026-05-19 |
 | 5. SPINE | v1.0 | 3/3 | Complete | 2026-05-19 |
 | 6. SETTINGS-V3 | v1.0 | 3/3 | Complete | 2026-05-29 |
-| 7. GRADLE-9 | v1.1 | 0/? | Not started | - |
+| 7. GRADLE-9 | v1.1 | 0/2 | Planned | - |
 | 8. AGP-9 | v1.1 | 0/? | Not started | - |
 | 9. LIBS | v1.1 | 0/? | Not started | - |
 | 10. CI-SIGNING | v1.1 | 0/? | Not started | - |
