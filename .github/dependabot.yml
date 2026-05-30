@@ -26,6 +26,13 @@ updates:
       # Gradle distribution (wrapper) — major bump pairs with AGP 9, deferred.
       - dependency-name: "gradle"
         update-types: ["version-update:semver-major"]
+      # KSP is version-locked to Kotlin (PITFALLS §3). Dependabot bumped it to
+      # 2.3.9 (needs Kotlin 2.3) and broke compile against Kotlin 2.2.20. Manage
+      # KSP + Kotlin bumps manually in lockstep — ignore all KSP updates and
+      # Kotlin minor/major (patches are still fine).
+      - dependency-name: "com.google.devtools.ksp*"
+      - dependency-name: "org.jetbrains.kotlin*"
+        update-types: ["version-update:semver-minor", "version-update:semver-major"]
 
   # Keep the GitHub Actions used in workflows up to date.
   - package-ecosystem: "github-actions"
