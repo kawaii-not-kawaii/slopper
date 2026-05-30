@@ -40,6 +40,9 @@ updates:
       # androidx.activity 1.10+ requires AGP 8.9.1 + compileSdk 36 (pulls core
       # 1.18 + navigationevent 1.0 with the same floor). Same deferral as Media3.
       - dependency-name: "androidx.activity:*"
+      # androidx.core 1.16+ requires AGP 8.9.1 + compileSdk 36. Same deferral.
+      - dependency-name: "androidx.core:core"
+      - dependency-name: "androidx.core:core-ktx"
 
   # Keep the GitHub Actions used in workflows up to date.
   - package-ecosystem: "github-actions"
