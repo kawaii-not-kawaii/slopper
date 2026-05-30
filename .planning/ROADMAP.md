@@ -55,7 +55,8 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
   3. Hilt/Dagger resolves to exactly 2.59.2 (never bare "2.59+"), and Hilt + Apollo KSP codegen produces a working DI graph on Kotlin 2.2.20 / KSP 2.2.20-2.0.4.
   4. `compileSdk` is 36 in all 3 touchpoints (`KotlinAndroid.kt` + `baselineprofile`) AND `targetSdk = 35` is verifiably still explicit in every site — the app does NOT silently opt into Android-16 runtime behavior.
   5. The full phase gate passes: `compileDebugSources + detekt + ktlintCheck + test` green, and the CI cache key is bumped `agp8`→`agp9`.
-**Plans**: TBD
+**Plans**: 1 plan (1 wave) — strictly sequential, atomic 7-commit change-set
+  - [ ] 08.1-PLAN.md — Atomic AGP-9 migration: Gradle 9.4.1 → AGP 9.2.1 → drop kotlin.android → CommonExtension generics → baselineprofile compilerOptions → Hilt 2.59.2 → compileSdk 36, with targetSdk=35 guards + CI cache-key agp9 + full phase gate (one bisectable commit per task)
 **Research flag**: Confirm the three flagged version disagreements (AGP **9.2.1 vs 9.2.0**, Gradle floor matching the chosen AGP minor, Hilt **2.59.2 vs 2.59.1**) against live Maven metadata at plan time; verify `KotlinAndroidProjectExtension` still resolves under built-in Kotlin and that the `kotlin{compilerOptions{}}` rewrite is exact. Migrate one concern per commit (for `git bisect`); validate `:core:common:compileDebugKotlin` before a full build. The Gradle 9.4.1 wrapper flip + live sha256 fetch is commit 1 (folded forward from Phase 7).
 
 ### Phase 9: LIBS — Green-Gated Library Bumps
