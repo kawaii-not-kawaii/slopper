@@ -8,6 +8,21 @@ Slopper is an existing Android application implemented as a Kotlin/Gradle multi-
 
 The app continues to install and run on every device it currently supports, but is measurably faster, leaner, and aligned with current Android platform guidance — with a dependency tree the team can keep alive.
 
+## Current Milestone: v1.1 AGP-9 Toolchain Modernization (DEPS-17)
+
+**Goal:** Unblock and land the deferred build-toolchain cluster — now viable since Hilt gained AGP-9 support (Dagger 2.59) — without changing app behavior or bumping `minSdk`.
+
+**Target changes:**
+- AGP 8.7.3 → 9.x and Gradle 8.11.1 → 9.1+ (the core bump the whole cluster hangs off)
+- Hilt 2.56.2 → 2.59+ (the unblocker) and KSP realigned to Kotlin
+- compileSdk 35 → 36 (runtime `minSdk`/`targetSdk` behavior unchanged)
+- Media3 1.9.1 → 1.10+ with `nextlib-media3ext` lockstep
+- Now-unblocked leaf libs: activity-compose 1.13, core-ktx 1.18
+- build-logic migration: AGP 9 built-in Kotlin support (drop `org.jetbrains.kotlin.android`) and legacy-variant-API disablement (check baseline-profile / `applicationVariants`)
+- Re-evaluate the CI APK-signing BouncyCastle EdEC blocker under the new toolchain (may now permit restoring a real `assembleDebug` gate)
+
+**Key context:** Blocker cleared — AGP 9.2.0 GA (Apr 2026), Dagger 2.59+ adds Hilt AGP-9 support. Re-activates the entire Dependabot-excluded toolchain cluster. v1.0 constraints carry forward (stable releases only, build green per phase, no `minSdk` bump, module graph frozen).
+
 ## Requirements
 
 ### Validated
@@ -96,8 +111,12 @@ Build green; running on Galaxy S23+ (Android 16). Device UAT passed for Phases 2
 **Carried tech debt:** AGP 9 / compileSdk 36 (DEPS-17, blocked on Hilt), macrobench execution (Phase 3),
 formal visual screenshot audit (Phase 5), COMPLY-07-3BTN, COMPLY-02-NAV-EVENT, WR-02 ViewModel interface refactor.
 
-**Next milestone goals:** TBD — start with `/gsd-new-milestone`. Candidate themes: AGP 9 toolchain
-(once Hilt supports it), background playback (BG-MEDIA / MediaSessionService), measured perf validation pass.
+**Active milestone:** v1.1 AGP-9 Toolchain Modernization (DEPS-17) — started 2026-05-30.
+Unblocks the deferred AGP 9 / Gradle 9 / compileSdk 36 / Media3 1.10 cluster now that Hilt
+supports AGP 9 (Dagger 2.59). Pure toolchain modernization; no user-facing changes.
+
+**Remaining candidate themes (future):** background playback (BG-MEDIA / MediaSessionService),
+measured perf validation pass (macrobench execution), Apollo 5 declarative-cache adoption.
 
 ---
-*Last updated: 2026-05-29 after v1.0 Modernization milestone shipped.*
+*Last updated: 2026-05-30 — started v1.1 AGP-9 Toolchain Modernization milestone.*
