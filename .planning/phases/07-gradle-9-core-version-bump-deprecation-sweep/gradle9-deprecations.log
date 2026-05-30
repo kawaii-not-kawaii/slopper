@@ -1,0 +1,579 @@
+Calculating task graph as no cached configuration is available for tasks: help
+> Task :build-logic:convention:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:convention:compileKotlin UP-TO-DATE
+> Task :build-logic:convention:compileJava NO-SOURCE
+> Task :build-logic:convention:pluginDescriptors UP-TO-DATE
+> Task :build-logic:convention:processResources UP-TO-DATE
+> Task :build-logic:convention:classes UP-TO-DATE
+> Task :build-logic:convention:jar UP-TO-DATE
+
+> Task :help
+
+Welcome to Gradle 8.11.1.
+
+To run a build, run gradlew <task> ...
+
+To see a list of available tasks, run gradlew tasks
+
+To see more detail about a task, run gradlew help --task <task>
+
+To see a list of command-line options, run gradlew --help
+
+For more detail on using Gradle, see https://docs.gradle.org/8.11.1/userguide/command_line_interface.html
+
+For troubleshooting, visit https://help.gradle.org
+
+BUILD SUCCESSFUL in 2s
+5 actionable tasks: 1 executed, 4 up-to-date
+Configuration cache entry stored.
+Calculating task graph as configuration cache cannot be reused because file 'gradle/libs.versions.toml' has changed.
+> Task :build-logic:convention:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :build-logic:convention:compileKotlin UP-TO-DATE
+> Task :build-logic:convention:compileJava NO-SOURCE
+> Task :build-logic:convention:pluginDescriptors UP-TO-DATE
+> Task :build-logic:convention:processResources UP-TO-DATE
+> Task :build-logic:convention:classes UP-TO-DATE
+> Task :build-logic:convention:jar UP-TO-DATE
+:detekt SKIPPED
+:app:detekt SKIPPED
+:baselineprofile:detekt SKIPPED
+:core:detekt SKIPPED
+:feature:detekt SKIPPED
+:core:common:detekt SKIPPED
+:core:data:detekt SKIPPED
+:core:designsystem:detekt SKIPPED
+:core:domain:detekt SKIPPED
+:core:model:detekt SKIPPED
+:core:network:detekt SKIPPED
+:core:ui:detekt SKIPPED
+:feature:browse:detekt SKIPPED
+:feature:connection:detekt SKIPPED
+:feature:detail:detekt SKIPPED
+:feature:home:detekt SKIPPED
+:feature:library:detekt SKIPPED
+:feature:player:detekt SKIPPED
+:feature:settings:detekt SKIPPED
+:loadKtlintReporters SKIPPED
+:runKtlintCheckOverKotlinScripts SKIPPED
+:ktlintKotlinScriptCheck SKIPPED
+:ktlintCheck SKIPPED
+:app:loadKtlintReporters SKIPPED
+:app:runKtlintCheckOverAndroidTestBenchmarkReleaseSourceSet SKIPPED
+:app:ktlintAndroidTestBenchmarkReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverAndroidTestBenchmarkSourceSet SKIPPED
+:app:ktlintAndroidTestBenchmarkSourceSetCheck SKIPPED
+:app:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:app:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:app:runKtlintCheckOverAndroidTestNonMinifiedReleaseSourceSet SKIPPED
+:app:ktlintAndroidTestNonMinifiedReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:app:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:app:ktlintAndroidTestSourceSetCheck SKIPPED
+:app:runKtlintCheckOverBenchmarkReleaseSourceSet SKIPPED
+:app:ktlintBenchmarkReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverBenchmarkSourceSet SKIPPED
+:app:ktlintBenchmarkSourceSetCheck SKIPPED
+:app:runKtlintCheckOverDebugSourceSet SKIPPED
+:app:ktlintDebugSourceSetCheck SKIPPED
+:app:runKtlintCheckOverKotlinScripts SKIPPED
+:app:ktlintKotlinScriptCheck SKIPPED
+:app:runKtlintCheckOverMainSourceSet SKIPPED
+:app:ktlintMainSourceSetCheck SKIPPED
+:app:runKtlintCheckOverNonMinifiedReleaseSourceSet SKIPPED
+:app:ktlintNonMinifiedReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverReleaseSourceSet SKIPPED
+:app:ktlintReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestBenchmarkReleaseSourceSet SKIPPED
+:app:ktlintTestBenchmarkReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestBenchmarkSourceSet SKIPPED
+:app:ktlintTestBenchmarkSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:app:ktlintTestDebugSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestFixturesBenchmarkReleaseSourceSet SKIPPED
+:app:ktlintTestFixturesBenchmarkReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestFixturesBenchmarkSourceSet SKIPPED
+:app:ktlintTestFixturesBenchmarkSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:app:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestFixturesNonMinifiedReleaseSourceSet SKIPPED
+:app:ktlintTestFixturesNonMinifiedReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:app:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:app:ktlintTestFixturesSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestNonMinifiedReleaseSourceSet SKIPPED
+:app:ktlintTestNonMinifiedReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:app:ktlintTestReleaseSourceSetCheck SKIPPED
+:app:runKtlintCheckOverTestSourceSet SKIPPED
+:app:ktlintTestSourceSetCheck SKIPPED
+:app:ktlintCheck SKIPPED
+:baselineprofile:loadKtlintReporters SKIPPED
+:baselineprofile:runKtlintCheckOverBenchmarkReleaseSourceSet SKIPPED
+:baselineprofile:ktlintBenchmarkReleaseSourceSetCheck SKIPPED
+:baselineprofile:runKtlintCheckOverDebugSourceSet SKIPPED
+:baselineprofile:ktlintDebugSourceSetCheck SKIPPED
+:baselineprofile:runKtlintCheckOverKotlinScripts SKIPPED
+:baselineprofile:ktlintKotlinScriptCheck SKIPPED
+:baselineprofile:runKtlintCheckOverMainSourceSet SKIPPED
+:baselineprofile:ktlintMainSourceSetCheck SKIPPED
+:baselineprofile:runKtlintCheckOverNonMinifiedReleaseSourceSet SKIPPED
+:baselineprofile:ktlintNonMinifiedReleaseSourceSetCheck SKIPPED
+:baselineprofile:ktlintCheck SKIPPED
+:core:loadKtlintReporters SKIPPED
+:core:runKtlintCheckOverKotlinScripts SKIPPED
+:core:ktlintKotlinScriptCheck SKIPPED
+:core:ktlintCheck SKIPPED
+:feature:loadKtlintReporters SKIPPED
+:feature:runKtlintCheckOverKotlinScripts SKIPPED
+:feature:ktlintKotlinScriptCheck SKIPPED
+:feature:ktlintCheck SKIPPED
+:core:common:loadKtlintReporters SKIPPED
+:core:common:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:core:common:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:core:common:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:core:common:ktlintAndroidTestSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverDebugSourceSet SKIPPED
+:core:common:ktlintDebugSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverKotlinScripts SKIPPED
+:core:common:ktlintKotlinScriptCheck SKIPPED
+:core:common:runKtlintCheckOverMainSourceSet SKIPPED
+:core:common:ktlintMainSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverReleaseSourceSet SKIPPED
+:core:common:ktlintReleaseSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:core:common:ktlintTestDebugSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:core:common:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:core:common:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:core:common:ktlintTestFixturesSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:core:common:ktlintTestReleaseSourceSetCheck SKIPPED
+:core:common:runKtlintCheckOverTestSourceSet SKIPPED
+:core:common:ktlintTestSourceSetCheck SKIPPED
+:core:common:ktlintCheck SKIPPED
+:core:data:loadKtlintReporters SKIPPED
+:core:data:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:core:data:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:core:data:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:core:data:ktlintAndroidTestSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverDebugSourceSet SKIPPED
+:core:data:ktlintDebugSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverKotlinScripts SKIPPED
+:core:data:ktlintKotlinScriptCheck SKIPPED
+:core:data:runKtlintCheckOverMainSourceSet SKIPPED
+:core:data:ktlintMainSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverReleaseSourceSet SKIPPED
+:core:data:ktlintReleaseSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:core:data:ktlintTestDebugSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:core:data:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:core:data:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:core:data:ktlintTestFixturesSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:core:data:ktlintTestReleaseSourceSetCheck SKIPPED
+:core:data:runKtlintCheckOverTestSourceSet SKIPPED
+:core:data:ktlintTestSourceSetCheck SKIPPED
+:core:data:ktlintCheck SKIPPED
+:core:designsystem:loadKtlintReporters SKIPPED
+:core:designsystem:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:core:designsystem:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:core:designsystem:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:core:designsystem:ktlintAndroidTestSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverDebugSourceSet SKIPPED
+:core:designsystem:ktlintDebugSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverKotlinScripts SKIPPED
+:core:designsystem:ktlintKotlinScriptCheck SKIPPED
+:core:designsystem:runKtlintCheckOverMainSourceSet SKIPPED
+:core:designsystem:ktlintMainSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverReleaseSourceSet SKIPPED
+:core:designsystem:ktlintReleaseSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:core:designsystem:ktlintTestDebugSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:core:designsystem:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:core:designsystem:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:core:designsystem:ktlintTestFixturesSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:core:designsystem:ktlintTestReleaseSourceSetCheck SKIPPED
+:core:designsystem:runKtlintCheckOverTestSourceSet SKIPPED
+:core:designsystem:ktlintTestSourceSetCheck SKIPPED
+:core:designsystem:ktlintCheck SKIPPED
+:core:domain:loadKtlintReporters SKIPPED
+:core:domain:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:core:domain:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:core:domain:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:core:domain:ktlintAndroidTestSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverDebugSourceSet SKIPPED
+:core:domain:ktlintDebugSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverKotlinScripts SKIPPED
+:core:domain:ktlintKotlinScriptCheck SKIPPED
+:core:domain:runKtlintCheckOverMainSourceSet SKIPPED
+:core:domain:ktlintMainSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverReleaseSourceSet SKIPPED
+:core:domain:ktlintReleaseSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:core:domain:ktlintTestDebugSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:core:domain:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:core:domain:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:core:domain:ktlintTestFixturesSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:core:domain:ktlintTestReleaseSourceSetCheck SKIPPED
+:core:domain:runKtlintCheckOverTestSourceSet SKIPPED
+:core:domain:ktlintTestSourceSetCheck SKIPPED
+:core:domain:ktlintCheck SKIPPED
+:core:model:loadKtlintReporters SKIPPED
+:core:model:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:core:model:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:core:model:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:core:model:ktlintAndroidTestSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverDebugSourceSet SKIPPED
+:core:model:ktlintDebugSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverKotlinScripts SKIPPED
+:core:model:ktlintKotlinScriptCheck SKIPPED
+:core:model:runKtlintCheckOverMainSourceSet SKIPPED
+:core:model:ktlintMainSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverReleaseSourceSet SKIPPED
+:core:model:ktlintReleaseSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:core:model:ktlintTestDebugSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:core:model:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:core:model:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:core:model:ktlintTestFixturesSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:core:model:ktlintTestReleaseSourceSetCheck SKIPPED
+:core:model:runKtlintCheckOverTestSourceSet SKIPPED
+:core:model:ktlintTestSourceSetCheck SKIPPED
+:core:model:ktlintCheck SKIPPED
+:core:network:loadKtlintReporters SKIPPED
+:core:network:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:core:network:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:core:network:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:core:network:ktlintAndroidTestSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverDebugSourceSet SKIPPED
+:core:network:ktlintDebugSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverKotlinScripts SKIPPED
+:core:network:ktlintKotlinScriptCheck SKIPPED
+:core:network:runKtlintCheckOverMainSourceSet SKIPPED
+:core:network:ktlintMainSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverReleaseSourceSet SKIPPED
+:core:network:ktlintReleaseSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:core:network:ktlintTestDebugSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:core:network:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:core:network:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:core:network:ktlintTestFixturesSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:core:network:ktlintTestReleaseSourceSetCheck SKIPPED
+:core:network:runKtlintCheckOverTestSourceSet SKIPPED
+:core:network:ktlintTestSourceSetCheck SKIPPED
+:core:network:ktlintCheck SKIPPED
+:core:ui:loadKtlintReporters SKIPPED
+:core:ui:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:core:ui:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:core:ui:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:core:ui:ktlintAndroidTestSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverDebugSourceSet SKIPPED
+:core:ui:ktlintDebugSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverKotlinScripts SKIPPED
+:core:ui:ktlintKotlinScriptCheck SKIPPED
+:core:ui:runKtlintCheckOverMainSourceSet SKIPPED
+:core:ui:ktlintMainSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverReleaseSourceSet SKIPPED
+:core:ui:ktlintReleaseSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:core:ui:ktlintTestDebugSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:core:ui:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:core:ui:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:core:ui:ktlintTestFixturesSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:core:ui:ktlintTestReleaseSourceSetCheck SKIPPED
+:core:ui:runKtlintCheckOverTestSourceSet SKIPPED
+:core:ui:ktlintTestSourceSetCheck SKIPPED
+:core:ui:ktlintCheck SKIPPED
+:feature:browse:loadKtlintReporters SKIPPED
+:feature:browse:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:feature:browse:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:feature:browse:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:feature:browse:ktlintAndroidTestSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverDebugSourceSet SKIPPED
+:feature:browse:ktlintDebugSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverKotlinScripts SKIPPED
+:feature:browse:ktlintKotlinScriptCheck SKIPPED
+:feature:browse:runKtlintCheckOverMainSourceSet SKIPPED
+:feature:browse:ktlintMainSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverReleaseSourceSet SKIPPED
+:feature:browse:ktlintReleaseSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:feature:browse:ktlintTestDebugSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:feature:browse:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:feature:browse:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:feature:browse:ktlintTestFixturesSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:feature:browse:ktlintTestReleaseSourceSetCheck SKIPPED
+:feature:browse:runKtlintCheckOverTestSourceSet SKIPPED
+:feature:browse:ktlintTestSourceSetCheck SKIPPED
+:feature:browse:ktlintCheck SKIPPED
+:feature:connection:loadKtlintReporters SKIPPED
+:feature:connection:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:feature:connection:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:feature:connection:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:feature:connection:ktlintAndroidTestSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverDebugSourceSet SKIPPED
+:feature:connection:ktlintDebugSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverKotlinScripts SKIPPED
+:feature:connection:ktlintKotlinScriptCheck SKIPPED
+:feature:connection:runKtlintCheckOverMainSourceSet SKIPPED
+:feature:connection:ktlintMainSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverReleaseSourceSet SKIPPED
+:feature:connection:ktlintReleaseSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:feature:connection:ktlintTestDebugSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:feature:connection:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:feature:connection:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:feature:connection:ktlintTestFixturesSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:feature:connection:ktlintTestReleaseSourceSetCheck SKIPPED
+:feature:connection:runKtlintCheckOverTestSourceSet SKIPPED
+:feature:connection:ktlintTestSourceSetCheck SKIPPED
+:feature:connection:ktlintCheck SKIPPED
+:feature:detail:loadKtlintReporters SKIPPED
+:feature:detail:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:feature:detail:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:feature:detail:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:feature:detail:ktlintAndroidTestSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverDebugSourceSet SKIPPED
+:feature:detail:ktlintDebugSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverKotlinScripts SKIPPED
+:feature:detail:ktlintKotlinScriptCheck SKIPPED
+:feature:detail:runKtlintCheckOverMainSourceSet SKIPPED
+:feature:detail:ktlintMainSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverReleaseSourceSet SKIPPED
+:feature:detail:ktlintReleaseSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:feature:detail:ktlintTestDebugSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:feature:detail:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:feature:detail:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:feature:detail:ktlintTestFixturesSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:feature:detail:ktlintTestReleaseSourceSetCheck SKIPPED
+:feature:detail:runKtlintCheckOverTestSourceSet SKIPPED
+:feature:detail:ktlintTestSourceSetCheck SKIPPED
+:feature:detail:ktlintCheck SKIPPED
+:feature:home:loadKtlintReporters SKIPPED
+:feature:home:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:feature:home:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:feature:home:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:feature:home:ktlintAndroidTestSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverDebugSourceSet SKIPPED
+:feature:home:ktlintDebugSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverKotlinScripts SKIPPED
+:feature:home:ktlintKotlinScriptCheck SKIPPED
+:feature:home:runKtlintCheckOverMainSourceSet SKIPPED
+:feature:home:ktlintMainSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverReleaseSourceSet SKIPPED
+:feature:home:ktlintReleaseSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:feature:home:ktlintTestDebugSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:feature:home:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:feature:home:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:feature:home:ktlintTestFixturesSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:feature:home:ktlintTestReleaseSourceSetCheck SKIPPED
+:feature:home:runKtlintCheckOverTestSourceSet SKIPPED
+:feature:home:ktlintTestSourceSetCheck SKIPPED
+:feature:home:ktlintCheck SKIPPED
+:feature:library:loadKtlintReporters SKIPPED
+:feature:library:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:feature:library:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:feature:library:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:feature:library:ktlintAndroidTestSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverDebugSourceSet SKIPPED
+:feature:library:ktlintDebugSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverKotlinScripts SKIPPED
+:feature:library:ktlintKotlinScriptCheck SKIPPED
+:feature:library:runKtlintCheckOverMainSourceSet SKIPPED
+:feature:library:ktlintMainSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverReleaseSourceSet SKIPPED
+:feature:library:ktlintReleaseSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:feature:library:ktlintTestDebugSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:feature:library:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:feature:library:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:feature:library:ktlintTestFixturesSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:feature:library:ktlintTestReleaseSourceSetCheck SKIPPED
+:feature:library:runKtlintCheckOverTestSourceSet SKIPPED
+:feature:library:ktlintTestSourceSetCheck SKIPPED
+:feature:library:ktlintCheck SKIPPED
+:feature:player:loadKtlintReporters SKIPPED
+:feature:player:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:feature:player:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:feature:player:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:feature:player:ktlintAndroidTestSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverDebugSourceSet SKIPPED
+:feature:player:ktlintDebugSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverKotlinScripts SKIPPED
+:feature:player:ktlintKotlinScriptCheck SKIPPED
+:feature:player:runKtlintCheckOverMainSourceSet SKIPPED
+:feature:player:ktlintMainSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverReleaseSourceSet SKIPPED
+:feature:player:ktlintReleaseSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:feature:player:ktlintTestDebugSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:feature:player:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:feature:player:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:feature:player:ktlintTestFixturesSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:feature:player:ktlintTestReleaseSourceSetCheck SKIPPED
+:feature:player:runKtlintCheckOverTestSourceSet SKIPPED
+:feature:player:ktlintTestSourceSetCheck SKIPPED
+:feature:player:ktlintCheck SKIPPED
+:feature:settings:loadKtlintReporters SKIPPED
+:feature:settings:runKtlintCheckOverAndroidTestDebugSourceSet SKIPPED
+:feature:settings:ktlintAndroidTestDebugSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverAndroidTestReleaseSourceSet SKIPPED
+:feature:settings:ktlintAndroidTestReleaseSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverAndroidTestSourceSet SKIPPED
+:feature:settings:ktlintAndroidTestSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverDebugSourceSet SKIPPED
+:feature:settings:ktlintDebugSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverKotlinScripts SKIPPED
+:feature:settings:ktlintKotlinScriptCheck SKIPPED
+:feature:settings:runKtlintCheckOverMainSourceSet SKIPPED
+:feature:settings:ktlintMainSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverReleaseSourceSet SKIPPED
+:feature:settings:ktlintReleaseSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverTestDebugSourceSet SKIPPED
+:feature:settings:ktlintTestDebugSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverTestFixturesDebugSourceSet SKIPPED
+:feature:settings:ktlintTestFixturesDebugSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverTestFixturesReleaseSourceSet SKIPPED
+:feature:settings:ktlintTestFixturesReleaseSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverTestFixturesSourceSet SKIPPED
+:feature:settings:ktlintTestFixturesSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverTestReleaseSourceSet SKIPPED
+:feature:settings:ktlintTestReleaseSourceSetCheck SKIPPED
+:feature:settings:runKtlintCheckOverTestSourceSet SKIPPED
+:feature:settings:ktlintTestSourceSetCheck SKIPPED
+:feature:settings:ktlintCheck SKIPPED
+
+BUILD SUCCESSFUL in 1s
+4 actionable tasks: 4 up-to-date
+Configuration cache entry stored.
+
+
+================================================================================
+## Gradle-9 Deprecation Attribution
+================================================================================
+Captured: 2026-05-30T10:06:09Z
+Toolchain: Gradle 8.11.1 + AGP 8.7.3 (the current green state — wrapper UNCHANGED)
+Java: OpenJDK 21.0.9 (daemon)
+Commands run (warning-mode=all):
+  1. ./gradlew help --warning-mode=all --stacktrace
+  2. ./gradlew detekt ktlintCheck --warning-mode=all --dry-run
+     (--dry-run configures every detekt/ktlint task across all ~19 modules,
+      exercising the full plugin-application + quality-task configuration surface
+      where Gradle-9 deprecation warnings would surface if present.)
+
+### Result: NO Gradle-9 deprecations emitted by the current build
+
+Both runs completed BUILD SUCCESSFUL with ZERO deprecation output. A grep of the
+full enumeration log for every Gradle deprecation marker returned no matches:
+  grep -iE 'deprecat|incompatible with Gradle 9|will fail with an error in Gradle 9|has been deprecated'
+  => (no matches)
+
+No "Deprecated Gradle features were used in this build, making it incompatible
+with Gradle 9.0" banner was printed by either invocation.
+
+### Per-plugin attribution (expected deprecation sources → observed)
+
+| Plugin                          | Catalog ver | Expected Gradle-9 risk            | Observed in this enumeration |
+|---------------------------------|-------------|-----------------------------------|------------------------------|
+| detekt (io.gitlab.arturbosch)   | 1.23.8      | Gradle-8.12.1-targeted; potential | NONE emitted on 8.11.1       |
+| ktlint (org.jlleitschuh)        | 14.2.0      | Gradle-9-ready (confirmed)        | NONE emitted                 |
+| OWASP dependency-check          | 12.2.2      | config-cache only (out-of-band)   | not exercised (excluded;     |
+|                                 |             |                                   | needs --no-configuration-cache)|
+| repo's own build scripts        | —           | clean (layout.buildDirectory)     | NONE emitted                 |
+
+### Interpretation (ties to 07-RESEARCH.md Pitfall 2 / Open Question 1)
+
+Per research, detekt 1.23.8's Gradle-9 incompatibility CANNOT be empirically
+observed on Gradle 8.11.1 — detekt applies Kotlin/AGP as compileOnly, so its
+Gradle-8.x-targeted internal API usage does not trip the deprecation reporter
+until the build actually runs on Gradle 9 (which requires AGP 9 — Phase 8).
+This enumeration therefore establishes the CURRENT (Gradle 8.11.1) deprecation
+surface = EMPTY. The detekt-on-Gradle-9 empirical test is deferred to Phase 8's
+first green-on-Gradle-9 build, exactly as the research recommends. The recorded
+decision intent stands: keep detekt 1.23.8, accept/track its Gradle-9 warnings if
+they appear in Phase 8, do NOT pre-emptively adopt the 2.0.0-alpha line.
+
+### Config-cache note
+Neither run required the --no-configuration-cache fallback. `help` stored a config
+cache entry cleanly; the detekt/ktlint dry-run invalidated+restored the cache only
+because gradle/libs.versions.toml mtime differed (benign — no config-cache error).
+The documented --no-configuration-cache fallback for `help` was NOT needed.
