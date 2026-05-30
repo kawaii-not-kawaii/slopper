@@ -577,3 +577,62 @@ Neither run required the --no-configuration-cache fallback. `help` stored a conf
 cache entry cleanly; the detekt/ktlint dry-run invalidated+restored the cache only
 because gradle/libs.versions.toml mtime differed (benign — no config-cache error).
 The documented --no-configuration-cache fallback for `help` was NOT needed.
+
+
+================================================================================
+## Own-Script API Audit
+================================================================================
+Captured: 2026-05-30T10:06:52Z
+Command (run from repo root):
+  grep -rn -E 'buildDir|Project\.exec|getConvention|JavaPluginConvention|archivesBaseName' \
+       --include='*.kts' --include='*.kt' build-logic/ *.kts 2>/dev/null | grep -v 'layout.buildDirectory'
+
+Result: ZERO matching lines (grep exit 1 — no Gradle-9-removed APIs in repo-authored build scripts).
+
+The only buildDir-family token in the codebase is `layout.buildDirectory` — the
+Gradle-9-CORRECT replacement API — at:
+  build-logic/convention/src/main/kotlin/io/stashapp/android/buildlogic/AndroidComposeConventionPlugin.kt:27
+  build-logic/convention/src/main/kotlin/io/stashapp/android/buildlogic/AndroidComposeConventionPlugin.kt:28
+(both use `.set(layout.buildDirectory.dir(...))` on lazy DirectoryProperty — correct.)
+
+No usage of: legacy `buildDir` property, `Project.exec`, `getConvention`,
+`JavaPluginConvention`, or `archivesBaseName`. This independently confirms the
+07-RESEARCH.md "Verified clean" claim — the repo's own scripts are Gradle-9-ready;
+the only Gradle-9 surface is third-party plugins (addressed in the attribution
+section above). NO migration item to flag for Phase 8 from repo-authored scripts.
+
+
+================================================================================
+## No-Regression Baseline
+================================================================================
+Captured: 2026-05-30T10:07:57Z
+Toolchain: Gradle 8.11.1 + AGP 8.7.3 (current green state — wrapper UNCHANGED)
+Gate command (the established CI gate from 07-RESEARCH.md Validation Architecture):
+  ./gradlew compileDebugSources detekt ktlintCheck test
+
+OUTCOME: PASS
+  BUILD SUCCESSFUL in 33s
+  841 actionable tasks: 218 executed, 153 from cache, 470 up-to-date
+
+OWASP dependencyCheckAnalyze was intentionally EXCLUDED from this gate (per plan
+Task 2 + threat T-07.1-03): it is an out-of-band task requiring
+--no-configuration-cache and is not part of the compile/test regression path.
+Its scan config in build.gradle.kts:18-32 was left UNTOUCHED.
+
+Notes:
+- Zero Gradle deprecation warnings printed during the full gate run (compile +
+  detekt + ktlint + test across all modules) — consistent with the enumeration
+  above. No "Deprecated Gradle features were used" banner.
+- One PRE-EXISTING, out-of-scope warning observed (NOT introduced by this phase,
+  NOT a Gradle-9 deprecation): a kotlin-reflect compilation-classpath warning in
+  feature/settings/src/test/.../SettingsViewModelTest.kt:31 — a unit-test reflection
+  warning unrelated to the Gradle toolchain. Logged here for completeness; left
+  unfixed per the executor scope boundary (pre-existing, unrelated file).
+- Config cache stored cleanly; no --no-configuration-cache fallback required.
+
+### Plan 07.1 conclusion
+The Gradle-9 deprecation surface on the current toolchain is EMPTY; the repo's own
+build scripts are independently confirmed Gradle-9-clean; and the v1.0-shipped CI
+gate remains green on Gradle 8.11.1 with zero regression. The wrapper flip to 9.4.1
+is correctly DEFERRED to Phase 8's atomic AGP-9 commit (fold-forward), as the
+research mandates. No live build config was edited in this plan.
