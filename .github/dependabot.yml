@@ -37,6 +37,9 @@ updates:
       # the compileSdk-36 work.
       - dependency-name: "androidx.media3:*"
       - dependency-name: "io.github.anilbeesetti:*"
+      # androidx.activity 1.10+ requires AGP 8.9.1 + compileSdk 36 (pulls core
+      # 1.18 + navigationevent 1.0 with the same floor). Same deferral as Media3.
+      - dependency-name: "androidx.activity:*"
 
   # Keep the GitHub Actions used in workflows up to date.
   - package-ecosystem: "github-actions"
