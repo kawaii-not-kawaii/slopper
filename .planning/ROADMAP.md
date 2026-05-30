@@ -91,7 +91,7 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
 | 4. POLISH | v1.0 | 3/3 | Complete | 2026-05-19 |
 | 5. SPINE | v1.0 | 3/3 | Complete | 2026-05-19 |
 | 6. SETTINGS-V3 | v1.0 | 3/3 | Complete | 2026-05-29 |
-| 7. GRADLE-9 | v1.1 | 0/2 | Planned | - |
+| 7. GRADLE-9 | v1.1 | 1/2 | In progress | - |
 | 8. AGP-9 | v1.1 | 0/? | Not started | - |
 | 9. LIBS | v1.1 | 0/? | Not started | - |
 | 10. CI-SIGNING | v1.1 | 0/? | Not started | - |
