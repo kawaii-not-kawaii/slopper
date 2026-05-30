@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: AGP-9 Toolchain Modernization
-current_phase: 8
-status: Ready to execute
-last_updated: "2026-05-30T11:34:39.219Z"
+current_phase: 08
+status: Executing Phase 08
+last_updated: "2026-05-30T11:45:28.612Z"
 progress:
   total_phases: 4
   completed_phases: 1
@@ -24,7 +24,7 @@ progress:
 - **Milestone defined:** YES (`PROJECT.md`, `REQUIREMENTS.md` updated for v1.1)
 - **Research complete:** YES (`.planning/research/` — STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY; HIGH confidence)
 - **Roadmap created:** YES (Phases 7–10 appended to `ROADMAP.md`)
-- **Current phase:** 8
+- **Current phase:** 08
 - **Plans created:** 2
 - **Plans executed:** 2 (07.1 — deprecation sweep; 07.2 — Gradle-9 readiness ADR + fold-forward)
 
@@ -90,9 +90,13 @@ progress:
 - Model profile: Quality (Opus for research / roadmap)
 - Workflow agents enabled: Research, Plan Check, Verifier
 
+## Blockers (open)
+
+- **B-08-01 (Phase 08 HALT — Rule 4, policy decision required)** — `androidx.baselineprofile` Gradle plugin `1.4.1` (the newest **stable** release, currently pinned via `baselineProfilePlugin = "1.4.1"`) **hard-rejects AGP 9**: applying it to `:app` throws `Module :app is not a supported android module` (`androidx.baselineprofile.gradle.utils.AgpPlugin.configureWithAndroidPlugin`, AgpPlugin.kt:202). The ONLY AGP-9-compatible release is `1.5.0-alpha06` (pre-release). Adopting it violates the ADR-0001 / global **stable-only** policy. This plugin is applied at `:app` AND is the entire `:baselineprofile` module's reason to exist, so it blocks whole-build configuration → blocks the Task-5 `:core:common` smoke and the Task-10 full gate. It is **out of plan 08.1's declared scope** (the 7-commit set never touched the baselineprofile plugin version). **Decision needed (planner/user):** (a) accept `1.5.0-alpha06` as a scoped exception to stable-only for the macrobenchmark toolchain; (b) temporarily remove/disable the `androidx.baselineprofile` plugin + `:baselineprofile` module for this milestone and re-add when a stable AGP-9 release ships; or (c) defer the AGP-9 landing until a stable baselineprofile plugin supports AGP 9. **Last-good commit: `fcd1499`.** Everything else in the migration (Gradle 9.4.1, AGP 9.2.1, built-in Kotlin, bare CommonExtension + AGP-9 DSL forms, Hilt 2.59.2) is landed and bisectable.
+
 ## Next Step
 
-Phase 7 COMPLETE (2/2 plans). Plan 07.2 wrote `docs/adr/0001-gradle-9-readiness-and-agp8-fold-forward.md` — the authoritative Gradle-9 readiness record: pinned 9.4.1 target (sha256 fetched at Phase-8 execution), all four plugin verdicts, the detekt keep-stable/reject-alpha decision, the KGP 2.2.10 floor confirmation, and the AGP-8.7.3 fold-forward hand-off. Live wrapper still 8.11.1; AGP9-01 delivered PARTIALLY (green-on-Gradle-9 asserted at the Phase-8 gate). **Proceed to Phase 8 (AGP-9 atomic migration) — plan it; commit 1 = flip the wrapper to 9.4.1 + fetch the live sha256.**
+**Phase 08 plan 08.1 is HALTED at the Task-5 smoke** — resolve blocker B-08-01 (baselineprofile-plugin × AGP-9 stable-only conflict) before resuming. Commits `888c65a`→`fcd1499` are in place and clean. Once the policy decision is made, resume from the choke-point smoke (`./gradlew --stop && ./gradlew :core:common:compileDebugKotlin`), then continue with the remaining commits (compileSdk 36, CI cache-key agp8→agp9, crutch-flag guard) and the Task-10 full gate.
 
 ## Decisions (accumulated)
 
