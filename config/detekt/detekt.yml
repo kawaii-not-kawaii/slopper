@@ -6,19 +6,21 @@
 # Error) + `ignoreFailures=false`. Rule sections below are unchanged.
 
 complexity:
+  # detekt 2.0 (dev.detekt) renamed every complexity threshold to a descriptive
+  # `allowed*` key (changelog-2.0.0 "Breaking Changes"). 1.x keys are rejected
+  # at config-validation time.
   LongMethod:
-    threshold: 150          # Compose screens routinely hit 100+ lines
+    allowedLines: 150       # Compose screens routinely hit 100+ lines
   LongParameterList:
-    functionThreshold: 12   # Compose components with lots of slots
-    constructorThreshold: 12
+    allowedFunctionParameters: 12      # Compose components with lots of slots
+    allowedConstructorParameters: 12
   TooManyFunctions:
-    # detekt 1.23.8 renamed thresholdInFile→thresholdInFiles and thresholdInClass→thresholdInClasses
-    thresholdInFiles: 30
-    thresholdInClasses: 20
+    allowedFunctionsPerFile: 30
+    allowedFunctionsPerClass: 20
   CyclomaticComplexMethod:
-    threshold: 20
+    allowedComplexity: 20
   LargeClass:
-    threshold: 800
+    allowedLines: 800
 
 naming:
   FunctionNaming:
