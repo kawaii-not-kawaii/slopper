@@ -17,11 +17,14 @@ updates:
           - "minor"
           - "patch"
     ignore:
-      # AGP 9 / compileSdk 36 upgrade is deferred (DEPS-17, blocked on Hilt
-      # AGP-9 support). Don't let Dependabot keep reopening the major bump.
-      - dependency-name: "com.android.application"
+      # AGP 9 / compileSdk 36 and the matching Gradle 9 bump are deferred
+      # (DEPS-17, blocked on Hilt AGP-9 support). Wildcard covers every AGP
+      # artifact Dependabot tracks: com.android.tools.build:gradle,
+      # com.android.application, com.android.library, com.android.test.
+      - dependency-name: "com.android.*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "com.android.library"
+      # Gradle distribution (wrapper) — major bump pairs with AGP 9, deferred.
+      - dependency-name: "gradle"
         update-types: ["version-update:semver-major"]
 
   # Keep the GitHub Actions used in workflows up to date.
