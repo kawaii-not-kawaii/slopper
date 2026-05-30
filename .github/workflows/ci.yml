@@ -23,7 +23,7 @@ jobs:
       # JDK 17 satisfies jvmToolchain(17) for compilation; JDK 21 (listed last,
       # so it becomes JAVA_HOME) runs the Gradle daemon — mirrors local dev.
       - name: Set up JDKs (17 toolchain + 21 runtime)
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: |
