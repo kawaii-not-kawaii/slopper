@@ -36,9 +36,9 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp8-${{ hashFiles('gradle/libs.versions.toml') }}
+          key: gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp9-${{ hashFiles('gradle/libs.versions.toml') }}
           restore-keys: |
-            gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp8-
+            gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp9-
 
       # Compile every module (incl. resource/manifest processing) as the build-
       # breakage gate. We intentionally do NOT assemble/sign an APK in CI: AGP
