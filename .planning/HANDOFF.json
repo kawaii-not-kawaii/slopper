@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-05-30T07:33:54.803Z",
+  "phase": null,
+  "phase_name": "post-milestone (v1.0 shipped)",
+  "phase_dir": null,
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
+  "status": "paused",
+  "context": "default",
+  "milestone": {
+    "version": "v1.0",
+    "name": "Modernization",
+    "state": "shipped_and_closed",
+    "shipped": "2026-05-29",
+    "phases": 6,
+    "tag": "v1.0"
+  },
+  "completed_this_session": [
+    {"item": "Shipped & closed v1.0 milestone", "detail": "MILESTONES.md, RETROSPECTIVE.md, archived ROADMAP/REQUIREMENTS, tag v1.0, Forgejo issues #1-8 + milestone #12 closed, PRs #5/#6 merged"},
+    {"item": "Resolved open-artifact audit before close", "detail": "Phase 3 context Qs marked resolved; deferred UAT files given explicit status frontmatter"},
+    {"item": "Updated SPEC-LAYER manifest", "detail": "paths -> milestones/v1.0-phases/; reconciled phase 5/6 step statuses (skipped/deferred/complete)"},
+    {"item": "Deployed fresh APK to Galaxy S23+", "detail": "arm64 debug via Taildrop; includes 9 code-review fixes; user confirmed installed + working"},
+    {"item": "Cleaned + organized project dir", "detail": "792M->114M; archived 6 phase dirs to milestones/v1.0-phases/; gitignored claude-mem AGENTS.md dump"},
+    {"item": "Pushed to GitHub (private)", "detail": "kawaii-not-kawaii/slopper; dual-push remotes (origin=Forgejo+GitHub, github=GitHub); v1.0 tag pushed"},
+    {"item": "GitHub Actions CI green", "detail": "compile-only gate (compileDebugSources) + detekt + ktlint + tests; committed Gradle wrapper; per-module detekt baselines; ktlintFormat applied"},
+    {"item": "Dependabot configured + triaged", "detail": "6 PRs merged, 2 closed (AGP9/Gradle9 deferred), 3 held (OkHttp5/JUnit5-6/Apollo5); dropped grouping; excluded coupled toolchain cluster"}
+  ],
+  "remaining_tasks": [
+    {"id": 1, "name": "Start next milestone via /gsd-new-milestone", "status": "not_started", "note": "Strong candidate: AGP-9 / DEPS-17 (unblocks Media3 1.10, compileSdk 36, Gradle 9 — all currently deferred). Re-check whether Hilt now supports AGP 9."},
+    {"id": 2, "name": "Review 3 held Dependabot major PRs", "status": "not_started", "note": "OkHttp 5 (#6), JUnit5 6 (#7), Apollo 5 (#8) — each needs a dedicated migration pass (breaking APIs); do NOT merge blind"},
+    {"id": 3, "name": "Merge individual leaf-lib Dependabot PRs as they reopen", "status": "not_started", "note": "Grouping was removed; Dependabot will raise individual leaf PRs (cap 10) that pass CI"},
+    {"id": 4, "name": "WR-02 SettingsViewModel domain-interface refactor", "status": "not_started", "note": "Phase 6 code-review item deferred; move PlayerPreferences/UiPreferences companion constants to PlayerSettings/UiSettings interfaces"}
+  ],
+  "blockers": [
+    {"description": "AGP 9 / compileSdk 36 / Gradle 9 / Media3 1.10 all blocked on Hilt AGP-9 support (DEPS-17)", "type": "external", "workaround": "Deferred; excluded from Dependabot. Verify Hilt AGP-9 status before starting that milestone."}
+  ],
+  "human_actions_pending": [
+    {"action": "Decide whether/when to take on OkHttp 5 / JUnit5 6 / Apollo 5 major migrations", "context": "3 Dependabot PRs held open with review-flag comments", "blocking": false}
+  ],
+  "decisions": [
+    {"decision": "CI uses compile-only gate, no APK signing", "rationale": "AGP 8.7.3 validateSigningDebug throws BouncyCastle EdEC NoClassDefFoundError on GitHub runners; unreproducible locally under any condition. Signed APKs build fine locally."},
+    {"decision": "Dropped Dependabot minor/patch grouping; excluded AGP/Gradle/Kotlin/KSP/Hilt/baseline-profile/Media3/nextlib", "rationale": "Build toolchain + compileSdk-36-gated deps are tightly version-locked; grouped PR perpetually failed on whichever blocked dep it bundled. Individual PRs let safe leaf updates flow."},
+    {"decision": "Committed the Gradle wrapper (was gitignored)", "rationale": "CI couldn't bootstrap the sha256-pinned distribution; committing the wrapper is standard practice and makes CI reproducible."},
+    {"decision": "Kept both remotes (Forgejo origin + GitHub), dual-push", "rationale": "User wants GitHub CI/Dependabot while keeping the self-hosted Forgejo mirror."}
+  ],
+  "uncommitted_files": [],
+  "next_action": "Run /gsd-new-milestone to scope the next cycle (likely AGP-9/DEPS-17 — first verify Hilt now supports AGP 9), OR review the 3 held Dependabot major PRs.",
+  "context_notes": "v1.0 fully shipped, organized, on GitHub with green CI + Dependabot. Repo clean at 5117160, all remotes synced. Nothing in-flight or broken. The trailing commits are dependabot.yml-only config tuning. GitHub auth gotcha: SSH on this host authenticates as VibingForFreedom (no workflow scope) — pushes to kawaii-not-kawaii use HTTPS + gh credential helper (already configured via gh auth setup-git)."
+}
