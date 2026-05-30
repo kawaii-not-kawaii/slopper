@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>UnusedParameter:BrowseScreen.kt$onBack: () -&gt; Unit</ID>
+    <ID>UnusedParameter:BrowseScreen.kt:onBack: () -&gt; Unit</ID>
   </CurrentIssues>
 </SmellBaseline>

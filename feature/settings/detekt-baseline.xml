@@ -2,40 +2,13 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>LongMethod:SettingsAboutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsAboutScreen( onBack: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
-    <ID>LongMethod:SettingsCodecsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsCodecsScreen( onBack: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
-    <ID>LongMethod:SettingsDisplayScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsDisplayScreen( onBack: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
-    <ID>LongMethod:SettingsLibraryScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsLibraryScreen( onBack: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
-    <ID>LongMethod:SettingsPlaybackScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsPlaybackScreen( onBack: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
-    <ID>LongMethod:SettingsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsScreen( onBack: () -&gt; Unit, onDisconnected: () -&gt; Unit, onPlaybackClick: () -&gt; Unit, onCodecsClick: () -&gt; Unit, onDisplayClick: () -&gt; Unit, onLibraryClick: () -&gt; Unit, onServerClick: () -&gt; Unit, onAboutClick: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
-    <ID>LongMethod:SettingsServerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsServerScreen( onBack: () -&gt; Unit, onDisconnected: () -&gt; Unit, viewModel: SettingsViewModel = hiltViewModel(), )</ID>
-    <ID>MatchingDeclarationName:SettingsSearch.kt$SettingsSearchEntry</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Activity tracking", "Send play, resume, and finish events to Stash server", "Library · Sync", Routes.SettingsLibrary)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Auto-rotate on play", "Lock landscape orientation when video starts", "Playback · Defaults", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Buffer size", "ExoPlayer preload buffer: Small 15s / Medium 50s / Large 2min", "Quality &amp; Codecs · Buffer", Routes.SettingsCodecs)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Card density", "Spacing between cards: Compact, Comfortable, or Spacious", "Display · Library layout", Routes.SettingsDisplay)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Chapter strip", "Show proportional chapter markers above the player timeline", "Display · Player", Routes.SettingsDisplay)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Chapter thumbnails", "Show chapter thumbnail when scrubbing the timeline", "Playback · Seeking", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Codec badge", "Show hardware or software codec indicator in player", "Playback · Player chrome", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Completion threshold", "Watch percentage to mark a scene as complete", "Playback · Resume &amp; skip", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Decoder preference", "Choose Auto, Prefer Hardware, or Prefer Software decoder", "Quality &amp; Codecs · Decoder", Routes.SettingsCodecs)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Disconnect server", "Sign out and return to the connection setup screen", "Server · Danger zone", Routes.SettingsServer)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Fallback on failure", "Try software decoder if hardware decoding fails", "Quality &amp; Codecs · Decoder", Routes.SettingsCodecs)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("HDR passthrough", "Pass HDR signal to the display panel", "Quality &amp; Codecs · Display &amp; HDR", Routes.SettingsCodecs)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Haptics on seek", "Vibrate on chapter marks and seek tap events", "Playback · Player chrome", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Keep watch history", "Record scenes you have watched in local history", "Library · History", Routes.SettingsLibrary)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Lock controls", "Hide player controls after a period of inactivity", "Playback · Player chrome", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Match refresh rate", "Switch display refresh rate to match video frame rate", "Quality &amp; Codecs · Display &amp; HDR", Routes.SettingsCodecs)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Match resolution", "Adjust display resolution to match video resolution", "Quality &amp; Codecs · Display &amp; HDR", Routes.SettingsCodecs)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Play count on cards", "Show view count badge on scene thumbnails", "Display · Card chrome", Routes.SettingsDisplay)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Pre-buffer on hover", "Begin loading video before play is tapped", "Quality &amp; Codecs · Buffer", Routes.SettingsCodecs)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Queue position", "Show current position and total count in player top bar", "Playback · Player chrome", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Resolution badge", "Show resolution label on scene thumbnail cards", "Display · Card chrome", Routes.SettingsDisplay)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Resume bar", "Show progress bar at the bottom of watched scene cards", "Display · Card chrome", Routes.SettingsDisplay)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Resume threshold", "Minimum watch time before position is saved for resume", "Playback · Resume &amp; skip", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Scrub sensitivity", "Milliseconds of video per pixel dragged on timeline", "Playback · Seeking", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Skip intro", "Seconds to skip automatically at video start (0 = off)", "Playback · Resume &amp; skip", Routes.SettingsPlayback)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Smart rails", "AI-curated content suggestions based on watch history", "Library · History", Routes.SettingsLibrary)</ID>
-    <ID>MaxLineLength:SettingsSearch.kt$SettingsSearchEntry("Tunneling", "Enable tunneled video rendering for compatible hardware", "Quality &amp; Codecs · Decoder", Routes.SettingsCodecs)</ID>
+    <ID>LongMethod:SettingsAboutScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsAboutScreen</ID>
+    <ID>LongMethod:SettingsCodecsScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsCodecsScreen</ID>
+    <ID>LongMethod:SettingsDisplayScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsDisplayScreen</ID>
+    <ID>LongMethod:SettingsLibraryScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsLibraryScreen</ID>
+    <ID>LongMethod:SettingsPlaybackScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsPlaybackScreen</ID>
+    <ID>LongMethod:SettingsScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsScreen</ID>
+    <ID>LongMethod:SettingsServerScreen.kt:@OptIn(ExperimentalMaterial3Api::class) @Composable fun SettingsServerScreen</ID>
+    <ID>MatchingDeclarationName:SettingsSearch.kt:SettingsSearchEntry</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -2,7 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>TooManyFunctions:PlayerSettings.kt$PlayerSettings</ID>
-    <ID>TooManyFunctions:UiSettings.kt$UiSettings</ID>
+    <ID>TooManyFunctions:PlayerSettings.kt:PlayerSettings</ID>
+    <ID>TooManyFunctions:UiSettings.kt:UiSettings</ID>
   </CurrentIssues>
 </SmellBaseline>

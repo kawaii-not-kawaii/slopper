@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>UnusedParameter:MainActivity.kt$startDestination: String</ID>
+    <ID>UnusedParameter:MainActivity.kt:startDestination: String</ID>
   </CurrentIssues>
 </SmellBaseline>

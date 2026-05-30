@@ -2,8 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>MatchingDeclarationName:StashImageLoader.kt$StashImageLoaderFactory : Factory</ID>
-    <ID>UnusedParameter:BottomNav.kt$onOpenMore: () -&gt; Unit</ID>
-    <ID>UnusedParameter:BottomNav.kt$visibleIds: List&lt;String&gt;</ID>
+    <ID>MatchingDeclarationName:StashImageLoader.kt:StashImageLoaderFactory : Factory</ID>
+    <ID>UnusedParameter:BottomNav.kt:onOpenMore: () -&gt; Unit</ID>
+    <ID>UnusedParameter:BottomNav.kt:visibleIds: List&lt;String&gt;</ID>
   </CurrentIssues>
 </SmellBaseline>

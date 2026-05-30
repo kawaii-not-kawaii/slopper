@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>LongMethod:ConnectionScreen.kt$@Composable fun ConnectionScreen( onConnected: () -&gt; Unit, viewModel: ConnectionViewModel = hiltViewModel(), )</ID>
+    <ID>LongMethod:ConnectionScreen.kt:@Composable fun ConnectionScreen</ID>
   </CurrentIssues>
 </SmellBaseline>
