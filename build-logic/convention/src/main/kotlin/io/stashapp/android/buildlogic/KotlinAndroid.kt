@@ -18,7 +18,7 @@ internal fun Project.configureKotlinAndroid(
     commonExtension: CommonExtension,
 ) {
     commonExtension.apply {
-        compileSdk = 35
+        compileSdk = 36
 
         // AGP 9 removed the Action<T> lambda overloads from the CommonExtension
         // interface, so the block form (defaultConfig { } / compileOptions { } /
