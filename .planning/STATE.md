@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: AGP-9 Toolchain Modernization
 current_phase: 07
-status: Executing Phase 07
-last_updated: "2026-05-30T10:09:00.000Z"
+status: Phase 07 complete
+last_updated: "2026-05-30T10:12:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 13
+  completed_plans: 2
+  percent: 25
 ---
 
 # Project State
@@ -24,15 +24,15 @@ progress:
 - **Milestone defined:** YES (`PROJECT.md`, `REQUIREMENTS.md` updated for v1.1)
 - **Research complete:** YES (`.planning/research/` — STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY; HIGH confidence)
 - **Roadmap created:** YES (Phases 7–10 appended to `ROADMAP.md`)
-- **Current phase:** 07
+- **Current phase:** 07 (COMPLETE — 2/2 plans)
 - **Plans created:** 2
-- **Plans executed:** 1 (07.1 — Gradle-9 readiness + deprecation sweep)
+- **Plans executed:** 2 (07.1 — deprecation sweep; 07.2 — Gradle-9 readiness ADR + fold-forward)
 
 ## Roadmap Snapshot (v1.1)
 
 | # | Phase | Status | Plans | Requirements |
 |---|-------|--------|-------|--------------|
-| 7 | **GRADLE-9** — Core Version Bump + Deprecation Sweep | In progress | 1/2 | AGP9-01 |
+| 7 | **GRADLE-9** — Core Version Bump + Deprecation Sweep | Complete | 2/2 | AGP9-01 |
 | 8 | **AGP-9** — Atomic Build-Logic Migration + compileSdk 36 (the indivisible core) | Not started | 0/? | AGP9-02, AGP9-03, SDK-01 |
 | 9 | **LIBS** — Green-Gated Library Bumps (Media3/nextlib pair + leaf libs) | Not started | 0/? | LIB-01, LIB-02 |
 | 10 | **CI-SIGNING** — Isolated Assemble/Signing Probe (last, non-gating) | Not started | 0/? | CI-01 |
@@ -92,7 +92,7 @@ progress:
 
 ## Next Step
 
-Plan 07.1 (Gradle-9 readiness + deprecation sweep) executed: deprecation inventory captured (ZERO emitted on 8.11.1), own-script audit clean, CI gate green, wrapper unchanged. Proceed with plan 07.2 (detekt-on-Gradle-9 governance decision).
+Phase 7 COMPLETE (2/2 plans). Plan 07.2 wrote `docs/adr/0001-gradle-9-readiness-and-agp8-fold-forward.md` — the authoritative Gradle-9 readiness record: pinned 9.4.1 target (sha256 fetched at Phase-8 execution), all four plugin verdicts, the detekt keep-stable/reject-alpha decision, the KGP 2.2.10 floor confirmation, and the AGP-8.7.3 fold-forward hand-off. Live wrapper still 8.11.1; AGP9-01 delivered PARTIALLY (green-on-Gradle-9 asserted at the Phase-8 gate). **Proceed to Phase 8 (AGP-9 atomic migration) — plan it; commit 1 = flip the wrapper to 9.4.1 + fetch the live sha256.**
 
 ## Decisions (accumulated)
 
@@ -100,6 +100,10 @@ Plan 07.1 (Gradle-9 readiness + deprecation sweep) executed: deprecation invento
 - **07.1** — detekt 1.23.8 retained; its Gradle-9 warn-vs-fail behavior is untestable until AGP 9 (Phase 8). Do NOT adopt the 2.0.0-alpha line.
 - **07.1** — Repo-authored build scripts independently confirmed Gradle-9-clean (only `layout.buildDirectory`; no `buildDir`/`Project.exec`/`getConvention`/`JavaPluginConvention`/`archivesBaseName`).
 - **07.1** — `gradle9-deprecations.log` force-added past the global `*.log` gitignore (scoped single-path `-f`; `.gitignore` untouched).
+- **07.2** — Gradle 9.4.1 target pinned in ADR 0001 with sha256 fetched-at-Phase-8-execution (never hard-coded); live wrapper stays 8.11.1.
+- **07.2** — detekt 1.23.8 kept (stable); accept/track Gradle-9 warnings, defer empirical run-vs-fail test to Phase 8, reject 2.0.0-alpha (stable-only policy).
+- **07.2** — KGP 2.2.20 / KSP 2.2.20-2.0.4 confirmed ≥ AGP-9's 2.2.10 floor — no Kotlin/KSP bump in Phase 8.
+- **07.2** — AGP 8.7.3 hard-fails on Gradle 9 → wrapper flip folds forward to Phase 8 commit 1; AGP9-01 PARTIALLY delivered (green-on-Gradle-9 asserted at the Phase-8 gate). `docs/adr/` ADR convention established.
 
 ---
-*Last updated: 2026-05-30 — plan 07.1 executed (Gradle-9 readiness + deprecation sweep); Phase 7 at 1/2.*
+*Last updated: 2026-05-30 — plan 07.2 executed (Gradle-9 readiness ADR + fold-forward); Phase 7 COMPLETE at 2/2.*

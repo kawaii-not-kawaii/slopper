@@ -61,7 +61,7 @@ Which phases cover which requirements. Filled by the roadmapper.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AGP9-01 | Phase 7 | Readiness done (07.1); green-on-Gradle-9 folds to Phase 8 |
+| AGP9-01 | Phase 7 | Readiness done (07.1 sweep + 07.2 ADR: pinned 9.4.1, plugin verdicts, detekt decision, KGP floor); green-on-Gradle-9 folds to Phase 8 |
 | AGP9-02 | Phase 8 | Pending |
 | AGP9-03 | Phase 8 | Pending |
 | SDK-01 | Phase 8 | Pending |

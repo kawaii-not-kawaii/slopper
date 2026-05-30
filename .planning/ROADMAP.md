@@ -23,7 +23,7 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
 
 ### 🔄 v1.1 AGP-9 Toolchain Modernization (DEPS-17)
 
-- [ ] **Phase 7: GRADLE-9 — Gradle-9 Readiness + Deprecation Sweep (AGP-8.7.3 fold-forward)** - Gradle 9.4.1 target PINNED (not flipped — AGP 8.7.3 hard-fails on Gradle 9), deprecations swept on the current toolchain, every plugin's Gradle-9 verdict recorded, detekt decision made; the live wrapper activation folds forward to Phase 8 commit 1
+- [x] **Phase 7: GRADLE-9 — Gradle-9 Readiness + Deprecation Sweep (AGP-8.7.3 fold-forward)** (2/2 plans, completed 2026-05-30) - Gradle 9.4.1 target PINNED (not flipped — AGP 8.7.3 hard-fails on Gradle 9), deprecations swept on the current toolchain, every plugin's Gradle-9 verdict recorded, detekt decision made; the live wrapper activation folds forward to Phase 8 commit 1
 - [ ] **Phase 8: AGP-9 — Atomic Build-Logic Migration + compileSdk 36** - The indivisible core: Gradle 9.4.1 activation (commit 1) + AGP 9.2.1 + built-in Kotlin + `CommonExtension` fix + `compilerOptions` + Hilt 2.59.2 + compileSdk 36, build green across all ~14 modules
 - [ ] **Phase 9: LIBS — Green-Gated Library Bumps** - Media3/nextlib 1.10.0 locked pair + activity-compose 1.13 + core-ktx 1.18, device software-codec playback verified
 - [ ] **Phase 10: CI-SIGNING — Isolated Assemble/Signing Probe** - Non-gating `assembleDebug` probe on AGP-9 runners; promote a real gate or document the EdEC blocker persisting
@@ -40,9 +40,9 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
   3. detekt, ktlint, OWASP dependency-check, and the baseline-profile plugin each have a recorded Gradle-9 verdict in the ADR (ktlint 14.2.0 ready; dependency-check 12.2.2 via `--no-configuration-cache`; baseline-profile 1.4.1 verified/not-exercised; detekt 1.23.8 = keep stable, accept warnings, empirical test deferred to Phase 8, NO alpha).
   4. Kotlin 2.2.20 / KSP 2.2.20-2.0.4 are recorded as already satisfying AGP 9's KGP ≥ 2.2.10 floor — no Kotlin/KSP bump is needed.
   5. The repo's own build scripts are confirmed Gradle-9-clean and the CI gate (`compileDebugSources detekt ktlintCheck test`) is still green on Gradle 8.11.1 — zero regression.
-**Plans**: 2 plans
-  - [ ] 07.1-PLAN.md — Deprecation sweep + clean-script audit + no-regression baseline on Gradle 8.11.1 (produces `gradle9-deprecations.log`)
-  - [ ] 07.2-PLAN.md — Gradle-9 readiness ADR: pinned target, plugin verdicts, detekt decision, KGP floor, Phase-8 fold-forward hand-off
+**Plans**: 2 plans (2/2 complete)
+  - [x] 07.1-PLAN.md — Deprecation sweep + clean-script audit + no-regression baseline on Gradle 8.11.1 (produces `gradle9-deprecations.log`)
+  - [x] 07.2-PLAN.md — Gradle-9 readiness ADR: pinned target, plugin verdicts, detekt decision, KGP floor, Phase-8 fold-forward hand-off (`docs/adr/0001-…md`)
 **Research flag (RESOLVED)**: OWASP dependency-check 12.2.2 runs on Gradle 9 via the already-present `--no-configuration-cache` contract. The "AGP 8.7.3 on Gradle 9 for one isolating commit" hypothesis is DISPROVEN — AGP 8.7.3 hard-fails the Gradle-version check; the phase folds forward into Phase 8 as designed by the ROADMAP escape clause.
 
 ### Phase 8: AGP-9 — Atomic Build-Logic Migration + compileSdk 36
