@@ -10,12 +10,10 @@ updates:
     open-pull-requests-limit: 10
     commit-message:
       prefix: "chore(deps)"
-    groups:
-      # Batch low-risk minor/patch bumps into one PR to cut review noise.
-      gradle-minor-patch:
-        update-types:
-          - "minor"
-          - "patch"
+    # No grouping: this project's build couples many deps to the AGP/KSP/Kotlin
+    # toolchain and to the deferred compileSdk-36 work, so a grouped PR perpetually
+    # fails on whichever blocked dep it bundles. Individual PRs let safe leaf-
+    # library updates flow and merge on their own; a blocked dep fails in isolation.
     ignore:
       # Build toolchain (AGP / Gradle / Kotlin / KSP) is tightly version-locked
       # and must be bumped together in a deliberate DEPS pass — never piecemeal
@@ -34,6 +32,11 @@ updates:
       # minor bumps fail plugin application (e.g. Hilt). Manage with the toolchain.
       - dependency-name: "com.google.dagger*"          # Hilt / Dagger (KSP-coupled)
       - dependency-name: "androidx.benchmark*"         # baseline-profile plugin (AGP-coupled)
+      # Media3 1.10+ requires compileSdk 36 (deferred to AGP-9 / DEPS-17), and
+      # nextlib-media3ext is version-locked to Media3 (PITFALLS §16). Bump with
+      # the compileSdk-36 work.
+      - dependency-name: "androidx.media3:*"
+      - dependency-name: "io.github.anilbeesetti:*"
 
   # Keep the GitHub Actions used in workflows up to date.
   - package-ecosystem: "github-actions"
