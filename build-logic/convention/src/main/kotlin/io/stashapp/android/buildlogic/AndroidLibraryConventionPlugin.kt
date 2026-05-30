@@ -27,6 +27,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 add("testImplementation", libs.findLibrary("junit5-api").get())
                 add("testImplementation", libs.findLibrary("junit5-params").get())
                 add("testRuntimeOnly",    libs.findLibrary("junit5-engine").get())
+                add("testRuntimeOnly",    libs.findLibrary("junit5-platform-launcher").get())
                 add("testImplementation", libs.findLibrary("mockk").get())
                 add("testImplementation", libs.findLibrary("turbine").get())
                 add("testImplementation", libs.findLibrary("robolectric").get())

@@ -45,7 +45,7 @@ kotlinxCollectionsImmutable = "0.4.0"   # stable; 0.5.0-beta01 excluded by stabl
 
 # Test
 junit = "4.13.2"
-junit5 = "5.11.4"
+junit5 = "6.1.0"
 mockk = "1.14.0"
 turbine = "1.2.0"
 robolectric = "4.14.1"
@@ -124,6 +124,10 @@ junit = { module = "junit:junit", version.ref = "junit" }
 junit5-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }
 junit5-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5" }
 junit5-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5" }
+# JUnit 6 / Platform 6 share one version. Pin the launcher so it overrides the
+# older one Gradle 8.11 injects (avoids the engine/launcher version-skew that
+# breaks test discovery: "OutputDirectoryCreator not available").
+junit5-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit5" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
