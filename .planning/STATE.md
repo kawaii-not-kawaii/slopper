@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: AGP-9 Toolchain Modernization
 current_phase: 08
-status: Phase 08 COMPLETE — AGP-9 landed green (Kotlin 2.3.20 + KSP 2.3.9 + built-in Kotlin); ready for Phase 09
+status: Phases 07-09 COMPLETE — AGP-9 toolchain + leaf libs landed green; Dependabot toolchain debt cleared (Phase 10 CI-signing is out of Dependabot scope)
 last_updated: "2026-05-31T15:45:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 3
   completed_plans: 3
-  percent: 50
+  percent: 75
 ---
 
 # Project State
@@ -34,7 +34,7 @@ progress:
 |---|-------|--------|-------|--------------|
 | 7 | **GRADLE-9** — Core Version Bump + Deprecation Sweep | Complete | 2/2 | AGP9-01 |
 | 8 | **AGP-9** — Atomic Build-Logic Migration + compileSdk 36 (the indivisible core) | Complete | 1/1 | AGP9-02, AGP9-03, SDK-01 |
-| 9 | **LIBS** — Green-Gated Library Bumps (Media3/nextlib pair + leaf libs) | Not started | 0/? | LIB-01, LIB-02 |
+| 9 | **LIBS** — Green-Gated Library Bumps (Media3/nextlib pair + leaf libs) | Complete | direct | LIB-01, LIB-02 |
 | 10 | **CI-SIGNING** — Isolated Assemble/Signing Probe (last, non-gating) | Not started | 0/? | CI-01 |
 
 **Coverage:** 7/7 requirements mapped. No orphans.
