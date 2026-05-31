@@ -9,7 +9,9 @@
 # + yasm/nasm combo that's annoying to get right on arbitrary hosts. Running
 # the build in a container means "it works on my machine" == "it works on CI".
 
-FROM eclipse-temurin:17-jdk-jammy
+# Pinned by digest for reproducibility + supply-chain integrity (Scorecard
+# Pinned-Dependencies). Re-resolve with: docker manifest inspect eclipse-temurin:17-jdk-jammy
+FROM eclipse-temurin:17-jdk-jammy@sha256:beabb759e6f9653c843958d1d1f5cecb881dfb85aa6081e2bef099ab1260344e
 
 ARG ANDROID_SDK_VERSION=11076708
 ARG NDK_VERSION=26.3.11579264

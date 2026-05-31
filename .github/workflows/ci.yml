@@ -18,12 +18,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      # Verify the checked-in gradle-wrapper.jar matches a known-good Gradle
+      # release (supply-chain integrity; also exempts the jar from Scorecard's
+      # Binary-Artifacts check).
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@48b5f213c81028ace310571dc5ec0fbbca0b2947 # v4
 
       # JDK 17 satisfies jvmToolchain(17) for compilation; JDK 21 (listed last,
       # so it becomes JAVA_HOME) runs the Gradle daemon — mirrors local dev.
       - name: Set up JDKs (17 toolchain + 21 runtime)
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
         with:
           distribution: 'temurin'
           java-version: |
@@ -31,7 +37,7 @@ jobs:
             21
 
       - name: Cache Gradle
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         with:
           path: |
             ~/.gradle/caches
@@ -41,10 +47,10 @@ jobs:
             gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp9-
 
       # Compile every module (incl. resource/manifest processing) as the build-
-      # breakage gate. We intentionally do NOT assemble/sign an APK in CI: AGP
-      # 8.7.3's :app:validateSigningDebug hits an environment-specific BouncyCastle
-      # EdEC NoClassDefFoundError on the runners. Signed APKs build fine locally;
-      # a dedicated release workflow (with signing secrets) can handle that later.
+      # breakage gate. We intentionally do NOT assemble/sign an APK in CI:
+      # :app:validateSigningDebug hits an environment-specific BouncyCastle EdEC
+      # NoClassDefFoundError on the runners (re-evaluated in Phase 10). Signed
+      # APKs build fine locally; a dedicated release workflow can handle that.
       - name: Compile (all modules)
         run: ./gradlew compileDebugSources --no-daemon --stacktrace
 
@@ -56,7 +62,7 @@ jobs:
 
       - name: Upload test reports on failure
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: test-reports
           path: |
