@@ -108,15 +108,18 @@ This document evolves at phase transitions and milestone boundaries.
 DEPS → COMPLY → PERF → POLISH → SPINE → SETTINGS-V3 all complete and verified.
 Build green; running on Galaxy S23+ (Android 16). Device UAT passed for Phases 2 & 6.
 
-**Carried tech debt:** AGP 9 / compileSdk 36 (DEPS-17, blocked on Hilt), macrobench execution (Phase 3),
-formal visual screenshot audit (Phase 5), COMPLY-07-3BTN, COMPLY-02-NAV-EVENT, WR-02 ViewModel interface refactor.
+**Carried tech debt:** macrobench execution (Phase 3), formal visual screenshot audit (Phase 5),
+COMPLY-07-3BTN, COMPLY-02-NAV-EVENT, WR-02 ViewModel interface refactor.
 
-**Active milestone:** v1.1 AGP-9 Toolchain Modernization (DEPS-17) — started 2026-05-30.
-Unblocks the deferred AGP 9 / Gradle 9 / compileSdk 36 / Media3 1.10 cluster now that Hilt
-supports AGP 9 (Dagger 2.59). Pure toolchain modernization; no user-facing changes.
+**Active milestone:** v1.1 AGP-9 Toolchain Modernization (DEPS-17) — COMPLETE (2026-05-31).
+Landed the full AGP 9 / Gradle 9 / compileSdk 36 / Media3 1.10 toolchain cluster.
+Kotlin 2.3.20 + KSP 2.3.9 + Hilt 2.59.2 + detekt 2.0.0-alpha.3. assembleDebug
+passes locally (EdEC blocker resolved under AGP 9). Floating navbar fix + lifecycle
+perf fix applied. All 4 phases complete.
 
 **Remaining candidate themes (future):** background playback (BG-MEDIA / MediaSessionService),
-measured perf validation pass (macrobench execution), Apollo 5 declarative-cache adoption.
+measured perf validation pass (macrobench execution), Apollo 5 declarative-cache adoption,
+CI assembleDebug gate promotion (pending CI runner confirmation).
 
 ---
 *Last updated: 2026-05-30 — started v1.1 AGP-9 Toolchain Modernization milestone.*
