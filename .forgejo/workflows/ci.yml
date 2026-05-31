@@ -6,14 +6,24 @@ on:
   pull_request:
     branches: [master]
 
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      # JDK 17 for jvmToolchain(17) compilation; JDK 21 (last = JAVA_HOME) runs
-      # the Gradle daemon — mirrors local dev.
+      # Verify the checked-in gradle-wrapper.jar matches a known-good Gradle
+      # release (supply-chain integrity).
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      # JDK 17 satisfies jvmToolchain(17) for compilation; JDK 21 (listed last,
+      # so it becomes JAVA_HOME) runs the Gradle daemon — mirrors local dev.
       - name: Set up JDKs (17 toolchain + 21 runtime)
         uses: actions/setup-java@v4
         with:
@@ -28,18 +38,36 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp8-${{ hashFiles('gradle/libs.versions.toml') }}
+          key: gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp9-${{ hashFiles('gradle/libs.versions.toml') }}
           restore-keys: |
-            gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp8-
+            gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp9-
 
-      # Compile-only build gate — no APK assembly/signing in CI (AGP 8.7.3's
-      # validateSigningDebug hits an environment-specific BouncyCastle EdEC error
-      # on runners). Signed APKs build fine locally; release signing is separate.
+      # Compile every module (incl. resource/manifest processing) as the build-
+      # breakage gate.
       - name: Compile (all modules)
-        run: ./gradlew compileDebugSources
+        run: ./gradlew compileDebugSources --no-daemon --stacktrace
 
       - name: Static analysis (detekt + ktlint)
-        run: ./gradlew detekt ktlintCheck
+        run: ./gradlew detekt ktlintCheck --no-daemon --stacktrace
 
       - name: Unit tests
-        run: ./gradlew test
+        run: ./gradlew test --no-daemon --stacktrace
+
+      # Phase 10 CI-SIGNING: non-gating assembleDebug probe to re-evaluate the
+      # BouncyCastle EdEC blocker under AGP 9. If this passes, a real
+      # assemble/signing gate can be promoted. If it fails, the compile-only
+      # gate remains the contract.
+      - name: "Probe: assembleDebug (non-gating)"
+        continue-on-error: true
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/tests/
+            **/build/reports/detekt/
+          retention-days: 7
+          if-no-files-found: ignore

@@ -60,6 +60,14 @@ jobs:
       - name: Unit tests
         run: ./gradlew test --no-daemon --stacktrace
 
+      # Phase 10 CI-SIGNING: non-gating assembleDebug probe to re-evaluate the
+      # BouncyCastle EdEC blocker under AGP 9. If this passes, a real
+      # assemble/signing gate can be promoted. If it fails, the compile-only
+      # gate remains the contract.
+      - name: "Probe: assembleDebug (non-gating)"
+        continue-on-error: true
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
       - name: Upload test reports on failure
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
