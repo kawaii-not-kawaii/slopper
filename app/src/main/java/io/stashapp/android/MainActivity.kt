@@ -15,7 +15,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -187,7 +186,7 @@ private fun StashAppContent(
     appReady: AtomicBoolean,
 ) {
     val navController = rememberNavController()
-    val start by rootViewModel.start.collectAsState()
+    val start by rootViewModel.start.collectAsStateWithLifecycle()
     // Pattern A gate-flip (per CONTEXT.md D-05 + REVIEWS SHOULD FIX #2 Case B):
     // reuse the existing `start` collection rather than introducing a duplicate.
     // Keyed on COLLECTED VALUE (String?), NOT the StateFlow object, to defeat
@@ -232,7 +231,7 @@ private fun StashAppContent(
             val showBottomBar = isMainTabRoute(currentRoutePattern)
 
             val visibleIds by rootViewModel.uiPreferences.bottomNavVisibleIds
-                .collectAsState(initial = UiPreferences.DefaultVisible)
+                .collectAsStateWithLifecycle(initialValue = UiPreferences.DefaultVisible)
 
             var showMoreSheet by remember { mutableStateOf(false) }
             var showCustomizeSheet by remember { mutableStateOf(false) }
