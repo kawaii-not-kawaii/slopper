@@ -1,51 +1,56 @@
 {
   "version": "1.0",
-  "timestamp": "2026-05-30T07:33:54.803Z",
-  "phase": null,
-  "phase_name": "post-milestone (v1.0 shipped)",
-  "phase_dir": null,
-  "plan": null,
-  "task": null,
-  "total_tasks": null,
+  "timestamp": "2026-05-31T14:10:35.776Z",
+  "milestone": "v1.1",
+  "milestone_name": "AGP-9 Toolchain Modernization (DEPS-17)",
+  "phase": "10",
+  "phase_name": "CI-SIGNING — Isolated Assemble/Signing Probe",
+  "phase_dir": ".planning/phases (phase 10 not yet created)",
   "status": "paused",
-  "context": "default",
-  "milestone": {
-    "version": "v1.0",
-    "name": "Modernization",
-    "state": "shipped_and_closed",
-    "shipped": "2026-05-29",
-    "phases": 6,
-    "tag": "v1.0"
+  "head_commit": "273a8d3",
+  "remotes_synced": { "github": "273a8d3", "forgejo": "273a8d3" },
+  "completed_phases": [
+    { "phase": "7", "name": "GRADLE-9 — Readiness + Deprecation Sweep", "status": "complete" },
+    { "phase": "8", "name": "AGP-9 — Atomic Build-Logic Migration + compileSdk 36", "status": "complete" },
+    { "phase": "9", "name": "LIBS — Green-Gated Library Bumps", "status": "complete" }
+  ],
+  "remaining_phases": [
+    { "phase": "10", "name": "CI-SIGNING — Isolated Assemble/Signing Probe", "status": "not_started" }
+  ],
+  "off_roadmap_work_this_session": [
+    "Repo made PUBLIC + GPL-3.0 LICENSE + alpha-labeled (description/topics/README)",
+    "OpenSSF Scorecard workflow added (score 6.3/10); SARIF->code-scanning upload later DISABLED (badge/score kept)",
+    "Hardening: SHA-pinned ci.yml actions + Dockerfile digest, CodeQL SAST workflow, SECURITY.md, Gradle wrapper-validation",
+    "GitHub secret scanning + push protection + Dependabot security alerts ENABLED",
+    "dependabot.yml ignore list pruned (androidx.activity + androidx.core un-ignored; toolchain lockstep + media3 pair + benchmark-alpha kept)",
+    "New v3 'Sage' adaptive app icon switched in (15 density PNGs + monochrome themed layer)",
+    "Player UI fixes: scrims gated on controlsVisible + immersive system-bar hide — confirmed clean on device"
+  ],
+  "on_device_verification": {
+    "device": "yuniors-s23 (Galaxy S23, arm64-v8a, on tailnet)",
+    "apk_delivery": "tailscale file cp app-arm64-v8a-debug.apk yuniors-s23:",
+    "confirmed": [
+      "App installs + launches on S23",
+      "Player playback works -> Media3 1.10.0 + nextlib FFmpeg software-codec native libs load at RUNTIME (the biggest carried AGP-9 risk, now VALIDATED)",
+      "Player UI clean after scrim/immersive fixes"
+    ],
+    "not_yet_smoke_tested": ["connect flow", "library grid search/filter", "scene detail (rating/organize/O-counter)", "markers/ChapterStrip", "PiP", "queue/shuffle/repeat"]
   },
-  "completed_this_session": [
-    {"item": "Shipped & closed v1.0 milestone", "detail": "MILESTONES.md, RETROSPECTIVE.md, archived ROADMAP/REQUIREMENTS, tag v1.0, Forgejo issues #1-8 + milestone #12 closed, PRs #5/#6 merged"},
-    {"item": "Resolved open-artifact audit before close", "detail": "Phase 3 context Qs marked resolved; deferred UAT files given explicit status frontmatter"},
-    {"item": "Updated SPEC-LAYER manifest", "detail": "paths -> milestones/v1.0-phases/; reconciled phase 5/6 step statuses (skipped/deferred/complete)"},
-    {"item": "Deployed fresh APK to Galaxy S23+", "detail": "arm64 debug via Taildrop; includes 9 code-review fixes; user confirmed installed + working"},
-    {"item": "Cleaned + organized project dir", "detail": "792M->114M; archived 6 phase dirs to milestones/v1.0-phases/; gitignored claude-mem AGENTS.md dump"},
-    {"item": "Pushed to GitHub (private)", "detail": "kawaii-not-kawaii/slopper; dual-push remotes (origin=Forgejo+GitHub, github=GitHub); v1.0 tag pushed"},
-    {"item": "GitHub Actions CI green", "detail": "compile-only gate (compileDebugSources) + detekt + ktlint + tests; committed Gradle wrapper; per-module detekt baselines; ktlintFormat applied"},
-    {"item": "Dependabot configured + triaged", "detail": "6 PRs merged, 2 closed (AGP9/Gradle9 deferred), 3 held (OkHttp5/JUnit5-6/Apollo5); dropped grouping; excluded coupled toolchain cluster"}
-  ],
-  "remaining_tasks": [
-    {"id": 1, "name": "Start next milestone via /gsd-new-milestone", "status": "not_started", "note": "Strong candidate: AGP-9 / DEPS-17 (unblocks Media3 1.10, compileSdk 36, Gradle 9 — all currently deferred). Re-check whether Hilt now supports AGP 9."},
-    {"id": 2, "name": "Review 3 held Dependabot major PRs", "status": "not_started", "note": "OkHttp 5 (#6), JUnit5 6 (#7), Apollo 5 (#8) — each needs a dedicated migration pass (breaking APIs); do NOT merge blind"},
-    {"id": 3, "name": "Merge individual leaf-lib Dependabot PRs as they reopen", "status": "not_started", "note": "Grouping was removed; Dependabot will raise individual leaf PRs (cap 10) that pass CI"},
-    {"id": 4, "name": "WR-02 SettingsViewModel domain-interface refactor", "status": "not_started", "note": "Phase 6 code-review item deferred; move PlayerPreferences/UiPreferences companion constants to PlayerSettings/UiSettings interfaces"}
-  ],
   "blockers": [
-    {"description": "AGP 9 / compileSdk 36 / Gradle 9 / Media3 1.10 all blocked on Hilt AGP-9 support (DEPS-17)", "type": "external", "workaround": "Deferred; excluded from Dependabot. Verify Hilt AGP-9 status before starting that milestone."}
+    { "description": "GitHub Actions CI was billing-blocked (private-repo free minutes exhausted)", "type": "external", "workaround": "RESOLVED — made repo public; public repos get unlimited free Actions. CI now green on clean runner." },
+    { "description": "Phase 10 EdEC/BouncyCastle: :app:validateSigningDebug fails on CI runners (NoClassDefFoundError); assembleDebug works LOCALLY", "type": "technical", "workaround": "CI stays compile-only; Phase 10 is the isolated non-gating probe to re-evaluate under AGP-9 (capture full stack trace on an AGP-9 runner first)" }
   ],
   "human_actions_pending": [
-    {"action": "Decide whether/when to take on OkHttp 5 / JUnit5 6 / Apollo 5 major migrations", "context": "3 Dependabot PRs held open with review-flag comments", "blocking": false}
+    { "action": "Secret scanning 'non-provider patterns' + 'validity checks' — user confirmed enabled in UI; REST API under-reports them as disabled (cosmetic)", "context": "UI is authoritative", "blocking": false },
+    { "action": "Optionally delete or .gitignore the untracked sl.zip (icon handoff artifact) in repo root", "context": "not committed; clutter only", "blocking": false }
   ],
   "decisions": [
-    {"decision": "CI uses compile-only gate, no APK signing", "rationale": "AGP 8.7.3 validateSigningDebug throws BouncyCastle EdEC NoClassDefFoundError on GitHub runners; unreproducible locally under any condition. Signed APKs build fine locally."},
-    {"decision": "Dropped Dependabot minor/patch grouping; excluded AGP/Gradle/Kotlin/KSP/Hilt/baseline-profile/Media3/nextlib", "rationale": "Build toolchain + compileSdk-36-gated deps are tightly version-locked; grouped PR perpetually failed on whichever blocked dep it bundled. Individual PRs let safe leaf updates flow."},
-    {"decision": "Committed the Gradle wrapper (was gitignored)", "rationale": "CI couldn't bootstrap the sha256-pinned distribution; committing the wrapper is standard practice and makes CI reproducible."},
-    {"decision": "Kept both remotes (Forgejo origin + GitHub), dual-push", "rationale": "User wants GitHub CI/Dependabot while keeping the self-hosted Forgejo mirror."}
+    { "decision": "D-04b LIFTED — adopt Kotlin 2.3.20 + KSP 2.3.9 (KSP2) + AGP-9 built-in Kotlin", "rationale": "Kotlin 2.2.x is empirically incompatible with AGP 9 (both paths crash); 2.3.x is the only path that compiles. Research-verified coherent set.", "phase": "8" },
+    { "decision": "AR-08-01 — baselineprofile 1.5.0-alpha06 (build-time-only stable-only exception)", "rationale": "stable 1.4.1 hard-rejects AGP 9; alpha never ships in APK", "phase": "8" },
+    { "decision": "AR-08-02 — detekt 2.0.0-alpha.3 (dev.detekt) (build-time-only exception)", "rationale": "stable detekt 1.23.8 breaks on Kotlin 2.3.x metadata; only alpha supports 2.3.x", "phase": "8" },
+    { "decision": "Scorecard SARIF NOT uploaded to code scanning (publish_results badge kept)", "rationale": "Scorecard governance flags are not code bugs; were cluttering the Security tab", "phase": "off-roadmap" }
   ],
-  "uncommitted_files": [],
-  "next_action": "Run /gsd-new-milestone to scope the next cycle (likely AGP-9/DEPS-17 — first verify Hilt now supports AGP 9), OR review the 3 held Dependabot major PRs.",
-  "context_notes": "v1.0 fully shipped, organized, on GitHub with green CI + Dependabot. Repo clean at 5117160, all remotes synced. Nothing in-flight or broken. The trailing commits are dependabot.yml-only config tuning. GitHub auth gotcha: SSH on this host authenticates as VibingForFreedom (no workflow scope) — pushes to kawaii-not-kawaii use HTTPS + gh credential helper (already configured via gh auth setup-git)."
+  "uncommitted_files": ["sl.zip (untracked, intentional — not committed)"],
+  "next_action": "Either (A) device-smoke the remaining core flows on the S23 (connect -> library -> scene detail -> markers/PiP/queue), or (B) /gsd-plan-phase 10 for CI-SIGNING (capture the AGP-9-runner EdEC/bcprov stack trace as the first step). Nothing is blocked or mid-edit.",
+  "context_notes": "Everything is committed, pushed to both remotes (HEAD 273a8d3), and CI-green. The AGP-9 toolchain milestone (Phases 7-9) is fully landed AND validated on real hardware. Phase 10 (CI signing) is the only remaining roadmap item and is intentionally isolated/non-gating. Full blocker chain (B-08-01..04) + accepted risks live in .planning/STATE.md."
 }
