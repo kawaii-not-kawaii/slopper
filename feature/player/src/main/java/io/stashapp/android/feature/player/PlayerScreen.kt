@@ -50,6 +50,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
@@ -126,6 +128,21 @@ fun PlayerScreen(
             activity?.requestedOrientation = prior ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
             activity?.window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+    }
+
+    // Fullscreen immersive: hide the system bars for the whole player session.
+    // The app is edge-to-edge, so without this the (still-visible) status bar
+    // overlays the video at the top. Swiping from an edge transiently peeks the
+    // bars back; they are restored on exit.
+    DisposableEffect(activity) {
+        val controller =
+            activity?.window?.let { WindowInsetsControllerCompat(it, it.decorView) }
+        controller?.apply {
+            systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            hide(WindowInsetsCompat.Type.systemBars())
+        }
+        onDispose { controller?.show(WindowInsetsCompat.Type.systemBars()) }
     }
 
     // playerView is a top-level remember ref set once by AndroidView.factory — stable after first frame (PERF-04: STABLE)
@@ -207,25 +224,36 @@ fun PlayerScreen(
             playerView?.let { applyVideoFrameRate(it, state.videoFrameRate) }
         }
 
-        // D-06 top scrim (90dp) — behind controls, above the media surface
-        Box(
-            modifier =
+        // D-06 top scrim (90dp) — only while controls are visible, fading in
+        // sync with them (otherwise it lingers as a dark band over the video).
+        AnimatedVisibility(
+            visible = controlsVisible,
+            enter = fadeIn(tween(220, easing = LinearOutSlowInEasing)),
+            exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
+            modifier = Modifier.align(Alignment.TopCenter),
+        ) {
+            Box(
                 Modifier
                     .fillMaxWidth()
                     .height(90.dp)
-                    .background(topScrimBrush)
-                    .align(Alignment.TopCenter),
-        )
+                    .background(topScrimBrush),
+            )
+        }
 
-        // D-06 bottom scrim (160dp) — behind controls, above the media surface
-        Box(
-            modifier =
+        // D-06 bottom scrim (160dp) — same controls-gated fade.
+        AnimatedVisibility(
+            visible = controlsVisible,
+            enter = fadeIn(tween(220, easing = LinearOutSlowInEasing)),
+            exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
+            modifier = Modifier.align(Alignment.BottomCenter),
+        ) {
+            Box(
                 Modifier
                     .fillMaxWidth()
                     .height(160.dp)
-                    .background(bottomScrimBrush)
-                    .align(Alignment.BottomCenter),
-        )
+                    .background(bottomScrimBrush),
+            )
+        }
 
         if (!locked) {
             // Gesture layer — tap / double-tap / horizontal drag
