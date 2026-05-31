@@ -6,6 +6,8 @@
 > It currently rides pre-release build tooling (AGP 9, Kotlin 2.3.20 / KSP2, detekt 2.0-alpha,
 > androidx baseline-profile 1.5.0-alpha). Use at your own risk.
 
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/kawaii-not-kawaii/slopper/badge)](https://scorecard.dev/viewer/?uri=github.com/kawaii-not-kawaii/slopper)
+
 Native Android client for [Stash](https://github.com/stashapp/stash) — a Kotlin /
 Jetpack Compose multi-module app that talks to a self-hosted Stash GraphQL
 server. Connection flow, paginated library grid with search/filter, scene
