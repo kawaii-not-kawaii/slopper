@@ -1,0 +1,58 @@
+# CodeQL static analysis (SAST) for the Kotlin/Java sources.
+# Results land in Security -> Code scanning. Actions pinned by SHA.
+name: CodeQL
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '41 3 * * 1' # weekly, Monday 03:41 UTC
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (java-kotlin)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write # upload CodeQL results
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      # JDK 17 toolchain + 21 daemon — mirrors ci.yml so the manual build matches.
+      - name: Set up JDKs (17 toolchain + 21 runtime)
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          distribution: 'temurin'
+          java-version: |
+            17
+            21
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@03e4368ac7daa2bd82b3e85262f3bf87ee112f57 # v3
+        with:
+          languages: java-kotlin
+          build-mode: manual
+
+      # Compile every module so CodeQL traces the Kotlin/Java sources. The
+      # Android SDK is preinstalled on ubuntu-latest (ANDROID_SDK_ROOT set);
+      # AGP picks it up exactly as the CI build does.
+      - name: Build (compile all modules)
+        run: ./gradlew compileDebugSources --no-daemon --stacktrace
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@03e4368ac7daa2bd82b3e85262f3bf87ee112f57 # v3
+        with:
+          category: "/language:java-kotlin"
