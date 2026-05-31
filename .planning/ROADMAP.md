@@ -26,7 +26,7 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
 - [x] **Phase 7: GRADLE-9 — Gradle-9 Readiness + Deprecation Sweep (AGP-8.7.3 fold-forward)** (2/2 plans, completed 2026-05-30) - Gradle 9.4.1 target PINNED (not flipped — AGP 8.7.3 hard-fails on Gradle 9), deprecations swept on the current toolchain, every plugin's Gradle-9 verdict recorded, detekt decision made; the live wrapper activation folds forward to Phase 8 commit 1
 - [x] **Phase 8: AGP-9 — Atomic Build-Logic Migration + compileSdk 36** (1/1 plans, completed 2026-05-31) - The indivisible core landed GREEN: Gradle 9.4.1 + AGP 9.2.1 + AGP-9 built-in Kotlin + bare `CommonExtension` + `compilerOptions` + Hilt 2.59.2 + compileSdk 36 (targetSdk 35), full gate `compileDebugSources detekt ktlintCheck test` BUILD SUCCESSFUL across all ~14 modules with all crutch flags ABSENT. **Resolution:** B-08-04 option (a) — the Kotlin-2.2.x line is empirically dead under AGP 9, so D-04b was lifted: adopted **Kotlin 2.3.20 + KSP 2.3.9 (KSP2)** + **detekt 2.0.0-alpha.3 (`dev.detekt`, AR-08-02)** + Apollo 5.0.0 + baselineprofile 1.5.0-alpha06 (AR-08-01). Hilt KSP2 codegen confirmed (assumption A1 PASS). Discharges AGP9-02, AGP9-03, SDK-01. See `08-01-SUMMARY.md`.
 - [x] **Phase 9: LIBS — Green-Gated Library Bumps** (completed 2026-05-31) - Media3/nextlib **1.10.0 / 1.10.0-0.12.1** locked pair (HARD CAP — no 1.10.1 nextlib pairing) + activity-compose **1.13.0** + core-ktx **1.18.0**, all unblocked by the AGP-9/compileSdk-36 landing. Full gate `compileDebugSources detekt ktlintCheck test` GREEN (501 tasks). **Carried:** device software-codec (FFmpeg) playback runtime smoke deferred (needs a physical device — same deferral as PERF-MB-01); compile/link is green, the failure surface is runtime-only. Discharges LIB-01, LIB-02.
-- [ ] **Phase 10: CI-SIGNING — Isolated Assemble/Signing Probe** - Non-gating `assembleDebug` probe on AGP-9 runners; promote a real gate or document the EdEC blocker persisting
+- [x] **Phase 10: CI-SIGNING — Isolated Assemble/Signing Probe** (completed 2026-05-31) - Non-gating `assembleDebug` probe added to both CI workflows (Forgejo + GitHub) as `continue-on-error`. **Local result: BUILD SUCCESSFUL** — the EdEC/BouncyCastle blocker appears resolved under AGP 9 (assembleDebug passes locally). CI runners will confirm. If green on CI, the compile-only gate can be promoted to a real assemble/signing gate. Also fixed: missing `consumer-rules.pro` files in 14 library modules (AGP 9 now enforces their existence). Forgejo CI updated to agp9 cache key + parity with GitHub CI (wrapper validation, concurrency, --no-daemon, test report upload).
 
 ## Phase Details
 
@@ -95,7 +95,7 @@ Full phase detail, success criteria, and risk register archived in [`milestones/
 | 7. GRADLE-9 | v1.1 | 2/2 | Complete | 2026-05-30 |
 | 8. AGP-9 | v1.1 | 1/1 | Complete | 2026-05-31 |
 | 9. LIBS | v1.1 | direct | Complete | 2026-05-31 |
-| 10. CI-SIGNING | v1.1 | 0/? | Not started | - |
+| 10. CI-SIGNING | v1.1 | direct | Complete | 2026-05-31 |
 
 ## Carried Tech Debt (into next milestone)
 

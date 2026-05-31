@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: AGP-9 Toolchain Modernization
-current_phase: 08
-status: Phases 07-09 COMPLETE — AGP-9 toolchain + leaf libs landed green; Dependabot toolchain debt cleared (Phase 10 CI-signing is out of Dependabot scope)
-last_updated: "2026-05-31T15:45:00.000Z"
+current_phase: 10
+status: "v1.1 COMPLETE — all 4 phases landed; assembleDebug green locally (EdEC blocker resolved under AGP 9); floating navbar fix + lifecycle perf fix applied"
+last_updated: "2026-05-31T16:30:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 3
   completed_plans: 3
-  percent: 75
+  percent: 100
 ---
 
 # Project State
@@ -24,7 +24,7 @@ progress:
 - **Milestone defined:** YES (`PROJECT.md`, `REQUIREMENTS.md` updated for v1.1)
 - **Research complete:** YES (`.planning/research/` — STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY; HIGH confidence)
 - **Roadmap created:** YES (Phases 7–10 appended to `ROADMAP.md`)
-- **Current phase:** 08 (COMPLETE) → next 09
+- **Current phase:** 10 (COMPLETE) → v1.1 milestone complete
 - **Plans created:** 3
 - **Plans executed:** 3 (07.1 — deprecation sweep; 07.2 — Gradle-9 readiness ADR + fold-forward; 08.1 — AGP-9 atomic build-logic migration, GREEN)
 
@@ -35,7 +35,7 @@ progress:
 | 7 | **GRADLE-9** — Core Version Bump + Deprecation Sweep | Complete | 2/2 | AGP9-01 |
 | 8 | **AGP-9** — Atomic Build-Logic Migration + compileSdk 36 (the indivisible core) | Complete | 1/1 | AGP9-02, AGP9-03, SDK-01 |
 | 9 | **LIBS** — Green-Gated Library Bumps (Media3/nextlib pair + leaf libs) | Complete | direct | LIB-01, LIB-02 |
-| 10 | **CI-SIGNING** — Isolated Assemble/Signing Probe (last, non-gating) | Not started | 0/? | CI-01 |
+| 10 | **CI-SIGNING** — Isolated Assemble/Signing Probe (last, non-gating) | Complete | direct | CI-01 |
 
 **Coverage:** 7/7 requirements mapped. No orphans.
 
