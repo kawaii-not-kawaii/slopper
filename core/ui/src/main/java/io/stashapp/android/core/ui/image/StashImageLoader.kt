@@ -11,8 +11,6 @@ import coil3.request.crossfade
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.network.StashEndpointProvider
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -30,8 +28,6 @@ class StashImageLoaderFactory
         private val uiPreferences: UiPreferences,
     ) : SingletonImageLoader.Factory {
         override fun newImageLoader(context: PlatformContext): ImageLoader {
-            val cacheMb = runBlocking { uiPreferences.imageCacheSizeMb.first() }
-
             val authClient =
                 OkHttpClient
                     .Builder()
@@ -47,13 +43,17 @@ class StashImageLoaderFactory
                         .maxSizePercent(context, 0.25)
                         .build()
                 }.diskCache {
+                    // Use a reasonable default (256MB). The disk cache is lazily
+                    // initialized on first use (background thread), avoiding
+                    // runBlocking on the main thread during cold start.
+                    val defaultCacheMb = 256
                     DiskCache
                         .Builder()
                         .directory(
                             this.context.cacheDir
                                 .resolve("image_cache")
                                 .toOkioPath(),
-                        ).maxSizeBytes(cacheMb.toLong() * 1024 * 1024)
+                        ).maxSizeBytes(defaultCacheMb.toLong() * 1024 * 1024)
                         .build()
                 }.components {
                     add(OkHttpNetworkFetcherFactory(callFactory = { authClient }))

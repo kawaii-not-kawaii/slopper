@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -82,18 +83,20 @@ class SettingsViewModel
 
         init {
             viewModelScope.launch {
-                connectionRepository.activeServer().collectLatest { server ->
-                    _activeServer.value = server
-                    if (server != null) {
-                        _serverInfo.value = null // show loading/stub state in card
-                        when (val result = connectionRepository.test(server)) {
-                            is AppResult.Success -> _serverInfo.value = result.data
-                            is AppResult.Failure -> _serverInfo.value = null // card shows stub
+                connectionRepository.activeServer()
+                    .distinctUntilChanged()
+                    .collectLatest { server ->
+                        _activeServer.value = server
+                        if (server != null) {
+                            _serverInfo.value = null // show loading/stub state in card
+                            when (val result = connectionRepository.test(server)) {
+                                is AppResult.Success -> _serverInfo.value = result.data
+                                is AppResult.Failure -> _serverInfo.value = null // card shows stub
+                            }
+                        } else {
+                            _serverInfo.value = null
                         }
-                    } else {
-                        _serverInfo.value = null
                     }
-                }
             }
         }
     }
