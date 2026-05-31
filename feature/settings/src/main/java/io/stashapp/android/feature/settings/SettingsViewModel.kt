@@ -83,7 +83,8 @@ class SettingsViewModel
 
         init {
             viewModelScope.launch {
-                connectionRepository.activeServer()
+                connectionRepository
+                    .activeServer()
                     .distinctUntilChanged()
                     .collectLatest { server ->
                         _activeServer.value = server
