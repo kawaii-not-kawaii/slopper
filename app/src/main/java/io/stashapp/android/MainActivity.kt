@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -240,9 +239,24 @@ private fun StashAppContent(
             val moreSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             val customizeSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-            Scaffold(
-                bottomBar = {
-                    if (showBottomBar) {
+            // Floating navbar: overlay the pill bar on top of content instead of
+            // using Scaffold's bottomBar slot (which draws a surface-colored strip
+            // behind the bar, defeating the floating-pill look).
+            Box(Modifier.fillMaxSize()) {
+                // Main screens own their own TopAppBar (which handles status bar
+                // insets via WindowInsets.systemBars). No Scaffold needed — we
+                // pass bottom padding directly to the nav host so content doesn't
+                // draw behind the floating pill.
+                val bottomPad = if (showBottomBar) 80.dp else 0.dp
+                AppNavHost(
+                    navController = navController,
+                    startDestination = startDestination,
+                    contentPadding = PaddingValues(top = 0.dp, bottom = bottomPad),
+                )
+
+                // Floating pill — aligned at the bottom, no Scaffold background.
+                if (showBottomBar) {
+                    Box(modifier = Modifier.align(Alignment.BottomCenter)) {
                         MainBottomBar(
                             currentRoute = currentRoute,
                             visibleIds = visibleIds,
@@ -252,26 +266,7 @@ private fun StashAppContent(
                             onOpenMore = { showMoreSheet = true },
                         )
                     }
-                },
-                // Let the nav host's routes decide their own edge-to-edge behavior.
-                // For main routes, we pad by `inner`; for full-bleed routes
-                // (player), we ignore it.
-            ) { inner ->
-                // Main screens own their own TopAppBar (which handles status bar
-                // insets via WindowInsets.systemBars). Re-applying `inner`'s top
-                // padding here would double it, creating a blank strip above
-                // each screen's app bar — so we only pass the bottom padding
-                // (for the nav bar) through to the nav host.
-                val bottomOnly =
-                    PaddingValues(
-                        top = 0.dp,
-                        bottom = if (showBottomBar) inner.calculateBottomPadding() else 0.dp,
-                    )
-                AppNavHost(
-                    navController = navController,
-                    startDestination = startDestination,
-                    contentPadding = bottomOnly,
-                )
+                }
             }
 
             if (showMoreSheet) {
