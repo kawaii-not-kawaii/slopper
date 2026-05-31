@@ -1,6 +1,7 @@
 # OpenSSF Scorecard — supply-chain security health checks.
-# https://github.com/ossf/scorecard  |  results land in the repo Security tab
-# (code scanning) and publish to https://api.securityscorecards.dev for the badge.
+# https://github.com/ossf/scorecard  |  publishes to https://api.securityscorecards.dev
+# for the score/badge. SARIF is NOT uploaded to code scanning (the governance
+# checks are not code bugs and were cluttering the Security tab).
 # Actions are pinned by commit SHA (Scorecard's Pinned-Dependencies check).
 name: Scorecard supply-chain security
 
@@ -20,8 +21,7 @@ jobs:
     # Only run on the default branch (or PRs); skips fork/feature pushes.
     if: github.event.repository.default_branch == github.ref_name || github.event_name == 'pull_request'
     permissions:
-      security-events: write # upload SARIF to code scanning
-      id-token: write        # publish_results -> OpenSSF API (badge)
+      id-token: write # publish_results -> OpenSSF API (badge)
 
     steps:
       - name: "Checkout code"
@@ -42,8 +42,3 @@ jobs:
           name: SARIF file
           path: results.sarif
           retention-days: 5
-
-      - name: "Upload to code-scanning"
-        uses: github/codeql-action/upload-sarif@03e4368ac7daa2bd82b3e85262f3bf87ee112f57 # v3
-        with:
-          sarif_file: results.sarif
