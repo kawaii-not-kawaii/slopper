@@ -35,7 +35,7 @@ nextlibMedia3Ext = "1.10.0-0.12.1"
 # apollo-normalized-cache-sqlite dependency was dropped rather than re-pointed.
 # OkHttp 5 keeps the TimeUnit timeout overloads + Interceptor/Response/HttpUrl
 # APIs we use; it dropped only KMP support and obsolete shims (no impact here).
-okhttp = "5.3.2"
+okhttp = "5.4.0"
 
 # Image loading
 coil = "3.4.0"
