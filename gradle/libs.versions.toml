@@ -38,7 +38,7 @@ nextlibMedia3Ext = "1.10.0-0.12.1"
 okhttp = "5.3.2"
 
 # Image loading
-coil = "3.4.0"
+coil = "3.5.0"
 
 # Serialization
 kotlinxSerialization = "1.7.3"
