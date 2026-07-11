@@ -84,6 +84,14 @@ progress:
 
 - Macrobenchmark execution (PERF-MB-01), formal screenshot audit, COMPLY-07-3BTN, COMPLY-02-NAV-EVENT, WR-02 ViewModel refactor, APOLLO-CACHE-01 — all deferred, none in this milestone.
 
+## Deferred Dependency Bumps (next toolchain pass)
+
+Surfaced 2026-07-11 during a Dependabot sweep — closed as blocked (not stale CI; each verified to fail against current master AGP 9.2.1 / compileSdk 36 / Kotlin 2.3.20). The 6 safe leaf bumps landed in `c269dd5`; these three need a deliberate toolchain move:
+
+- **DEP-SDK37 — compileSdk 37 cluster.** `androidx.core:core-ktx 1.19.0` (Dependabot #37) + `androidx.lifecycle 2.11.0` (#40) fail `:app:checkDebugAarMetadata` — their AAR metadata requires **compileSdk 37**; project is on 36. **Exit:** bump compileSdk 35→36→37 as a deliberate pass (targetSdk stays explicit), then re-point both. Dependabot re-opens on the next version.
+- **DEP-COIL35 — coil ↔ Hilt/Kotlin-2.4.** `coil 3.5.0` (#39) ships **Kotlin 2.4.0 class metadata**; Hilt 2.59.2's bundled `kotlin-metadata-jvm` caps at 2.3.0 → `:app:hiltJavaCompileDebug` fails (`Provided Metadata instance has version 2.4.0, while maximum supported version is 2.3.0`). **Exit:** unblocks when the toolchain moves to Kotlin 2.4.x + a Hilt release with a 2.4-capable metadata lib. Coupled to the KSP/Kotlin lockstep — a toolchain-pass item, not a leaf.
+- **DEP-GRADLE96 — gradle-wrapper 9.6.1** (#45). The Gradle distribution is part of the deliberately version-LOCKSTEP toolchain (`dependabot.yml` ignores `gradle`); the PR slipped the ignore filter. Kept at 9.4.1 until the next toolchain pass bumps AGP/Gradle/Kotlin/KSP/Hilt together.
+
 ## Workflow Config
 
 - Mode: YOLO
