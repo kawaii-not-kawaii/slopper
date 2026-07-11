@@ -193,13 +193,6 @@ fun PlayerScreen(
                 colors = listOf(Color.Black.copy(alpha = 0.7f), Color.Transparent),
             )
         }
-    val bottomScrimBrush =
-        remember {
-            Brush.verticalGradient(
-                colors = listOf(Color.Transparent, Color(0xEB000000)),
-            )
-        }
-
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         // Media surface — drives `Surface.setFrameRate()` when the video
         // reports its fps, so the display compositor can schedule refresh
@@ -240,20 +233,9 @@ fun PlayerScreen(
             )
         }
 
-        // D-06 bottom scrim (160dp) — same controls-gated fade.
-        AnimatedVisibility(
-            visible = controlsVisible,
-            enter = fadeIn(tween(220, easing = LinearOutSlowInEasing)),
-            exit = fadeOut(tween(340, easing = FastOutLinearInEasing)),
-            modifier = Modifier.align(Alignment.BottomCenter),
-        ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(bottomScrimBrush),
-            )
-        }
+        // Bottom scrim is drawn by PlayerControls' own drawBehind (single,
+        // co-located gradient) — a second Box here stacked into a too-tall,
+        // hard-edged band, so it was removed.
 
         if (!locked) {
             // Gesture layer — tap / double-tap / horizontal drag

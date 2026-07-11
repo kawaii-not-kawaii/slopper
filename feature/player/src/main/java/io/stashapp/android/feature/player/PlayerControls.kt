@@ -122,7 +122,7 @@ internal fun PlayerControls(
             .fillMaxSize()
             .drawBehind {
                 val topH = 260f
-                val bottomH = 320f
+                val bottomH = 260f
                 // F2 = 95% opacity — heavier scrim so controls stay legible
                 // over bright scenes without a full blackout.
                 drawRect(
@@ -139,8 +139,8 @@ internal fun PlayerControls(
                     brush =
                         Brush.verticalGradient(
                             0f to Color.Transparent,
-                            0.3f to Color(0x80000000),
-                            1f to Color(0xF2000000),
+                            0.45f to Color(0x59000000),
+                            1f to Color(0xE6000000),
                             startY = 0f,
                             endY = bottomH,
                         ),
