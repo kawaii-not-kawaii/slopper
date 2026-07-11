@@ -66,7 +66,7 @@ subprojects {
 
     configure<dev.detekt.gradle.extensions.DetektExtension> {
         // Keep in sync with gradle/libs.versions.toml :: detekt
-        toolVersion = "2.0.0-alpha.3"
+        toolVersion = "2.0.0-alpha.5"
         config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
         ignoreFailures = false
