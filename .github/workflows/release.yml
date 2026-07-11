@@ -1,0 +1,90 @@
+name: Release APK
+
+# Dedicated APK build channel, kept separate from ci.yml so the compile-only
+# gate stays clean. Builds a (debug-signed) arm64 APK for sideload review and,
+# on a version tag, attaches it to a GitHub Release.
+#
+# NOTE (Phase 10 CI-SIGNING): AGP 9 signing validation currently throws an EdEC
+# NoClassDefFoundError on CI runners (works locally). This workflow opts into
+# the BouncyCastle build-classpath workaround via CI_SIGNING_BCPROV. If the
+# assemble step still fails, the uploaded stacktrace IS Phase 10's first
+# deliverable (capture the trace on an AGP-9 runner).
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # create/attach the GitHub Release on tag builds
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    env:
+      CI_SIGNING_BCPROV: '1' # opt into the Phase-10 bcprov signing workaround
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@48b5f213c81028ace310571dc5ec0fbbca0b2947 # v4
+
+      - name: Set up JDKs (17 toolchain + 21 runtime)
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          distribution: 'temurin'
+          java-version: |
+            17
+            21
+
+      - name: Cache Gradle
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp9-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: |
+            gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}-jdk17-agp9-
+
+      - name: Assemble debug APK (arm64)
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: app-arm64-v8a-debug
+          path: app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      # On a version tag, publish the APK as a GitHub Release asset. Uses the
+      # preinstalled gh CLI + GITHUB_TOKEN — no external (unpinned) action, so
+      # the SHA-pinned-dependencies posture is preserved.
+      - name: Attach APK to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          APK=app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+          # Create the release if it doesn't exist yet (ignore "already exists").
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "Debug-signed sideload APK (arm64-v8a). Built from ${GITHUB_SHA}." \
+            --verify-tag "$APK" || \
+          gh release upload "${GITHUB_REF_NAME}" "$APK" --clobber
+
+      - name: Upload build reports + stacktrace on failure
+        if: failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: build-failure-reports
+          path: |
+            **/build/reports/
+            **/build/outputs/logs/
+          retention-days: 14
+          if-no-files-found: ignore

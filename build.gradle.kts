@@ -1,4 +1,21 @@
 // Top-level build file
+buildscript {
+    // Phase 10 CI-SIGNING probe: AGP 9's apksigner throws an EdEC
+    // NoClassDefFoundError on some CI runners during signing validation.
+    // Providing BouncyCastle on the build classpath supplies the missing
+    // Ed25519 provider. Opt-in via CI_SIGNING_BCPROV so the normal compile
+    // gate and local builds are completely unaffected (empty deps otherwise).
+    if (System.getenv("CI_SIGNING_BCPROV") != null) {
+        repositories {
+            mavenCentral()
+            google()
+        }
+        dependencies {
+            classpath("org.bouncycastle:bcprov-jdk18on:1.78.1")
+        }
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
