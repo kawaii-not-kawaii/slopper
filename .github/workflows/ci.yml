@@ -18,13 +18,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       # Verify the checked-in gradle-wrapper.jar matches a known-good Gradle
       # release (supply-chain integrity; also exempts the jar from Scorecard's
       # Binary-Artifacts check).
       - name: Validate Gradle wrapper
-        uses: gradle/actions/wrapper-validation@48b5f213c81028ace310571dc5ec0fbbca0b2947 # v4
+        uses: gradle/actions/wrapper-validation@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
 
       # JDK 17 satisfies jvmToolchain(17) for compilation; JDK 21 (listed last,
       # so it becomes JAVA_HOME) runs the Gradle daemon — mirrors local dev.
