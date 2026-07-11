@@ -246,7 +246,7 @@ private fun StashAppContent(
                 // insets via WindowInsets.systemBars). No Scaffold needed — we
                 // pass bottom padding directly to the nav host so content doesn't
                 // draw behind the floating pill.
-                val bottomPad = if (showBottomBar) 80.dp else 0.dp
+                val bottomPad = if (showBottomBar) 96.dp else 0.dp
                 AppNavHost(
                     navController = navController,
                     startDestination = startDestination,

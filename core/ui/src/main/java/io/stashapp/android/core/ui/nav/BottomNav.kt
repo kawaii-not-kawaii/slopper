@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -45,6 +46,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -155,64 +158,87 @@ fun MainBottomBar(
     val visibleItems = visibleIds.mapNotNull { id -> MainNavItems.All.find { it.id == id } }
 
     Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(start = 12.dp, end = 12.dp, bottom = 14.dp),
-        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.BottomCenter,
     ) {
-        Row(
+        // Static gradient footer: grounds the floating pill so it doesn't read as
+        // purely floating. Full-width, ignores nav-bar insets so it reaches the
+        // true bottom edge; transparent at top, fading to Surface at the bottom.
+        Box(
             modifier =
                 Modifier
+                    .fillMaxWidth()
+                    .height(128.dp)
                     .background(
-                        color = SpineColors.Surface.copy(alpha = 0.92f),
-                        shape = RoundedCornerShape(16.dp),
-                    ).border(1.dp, SpineColors.Border, RoundedCornerShape(16.dp))
-                    .padding(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(0.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            visibleItems.forEach { item ->
-                // Browse tab: active for any browse/* route, not just browse/performers
-                val selected =
-                    if (item.id == "browse") {
-                        currentRoute?.startsWith("browse/") == true
-                    } else {
-                        currentRoute?.startsWith(item.route) == true
-                    }
-                val tabBg =
-                    if (selected) {
-                        Modifier.background(SpineColors.AccentPrimary, RoundedCornerShape(12.dp))
-                    } else {
-                        Modifier
-                    }
-                Row(
-                    modifier =
-                        tabBg
-                            .clickable { onNavigate(item.route) }
-                            .padding(horizontal = 12.dp, vertical = 9.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Icon(
-                        imageVector = if (selected) item.iconFilled else item.iconOutlined,
-                        contentDescription = item.label,
-                        tint = if (selected) SpineColors.AccentOnPrimary else SpineColors.OnSurfaceVariant,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    if (selected) {
-                        Text(
-                            text = item.label,
-                            style =
-                                TextStyle(
-                                    fontFamily = SpaceGrotesk,
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    letterSpacing = (-0.1).sp,
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    Color.Transparent,
+                                    SpineColors.Surface.copy(alpha = 0.95f),
                                 ),
-                            color = SpineColors.AccentOnPrimary,
+                        ),
+                    ),
+        )
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(start = 12.dp, end = 12.dp, bottom = 14.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Row(
+                modifier =
+                    Modifier
+                        .background(
+                            color = SpineColors.Surface.copy(alpha = 0.92f),
+                            shape = RoundedCornerShape(20.dp),
+                        ).border(1.dp, SpineColors.Border, RoundedCornerShape(20.dp))
+                        .padding(5.dp),
+                horizontalArrangement = Arrangement.spacedBy(0.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                visibleItems.forEach { item ->
+                    // Browse tab: active for any browse/* route, not just browse/performers
+                    val selected =
+                        if (item.id == "browse") {
+                            currentRoute?.startsWith("browse/") == true
+                        } else {
+                            currentRoute?.startsWith(item.route) == true
+                        }
+                    val tabBg =
+                        if (selected) {
+                            Modifier.background(SpineColors.AccentPrimary, RoundedCornerShape(15.dp))
+                        } else {
+                            Modifier
+                        }
+                    Row(
+                        modifier =
+                            tabBg
+                                .clickable { onNavigate(item.route) }
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Icon(
+                            imageVector = if (selected) item.iconFilled else item.iconOutlined,
+                            contentDescription = item.label,
+                            tint = if (selected) SpineColors.AccentOnPrimary else SpineColors.OnSurfaceVariant,
+                            modifier = Modifier.size(24.dp),
                         )
+                        if (selected) {
+                            Text(
+                                text = item.label,
+                                style =
+                                    TextStyle(
+                                        fontFamily = SpaceGrotesk,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        letterSpacing = (-0.1).sp,
+                                    ),
+                                color = SpineColors.AccentOnPrimary,
+                            )
+                        }
                     }
                 }
             }
