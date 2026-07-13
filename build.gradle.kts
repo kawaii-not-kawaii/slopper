@@ -11,7 +11,7 @@ buildscript {
             google()
         }
         dependencies {
-            classpath("org.bouncycastle:bcprov-jdk18on:1.78.1")
+            classpath("org.bouncycastle:bcprov-jdk18on:1.85")
         }
     }
 }
