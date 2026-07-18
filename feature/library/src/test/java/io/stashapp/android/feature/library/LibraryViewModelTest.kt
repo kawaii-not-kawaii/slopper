@@ -12,11 +12,6 @@ class LibraryViewModelTest {
         assertEquals("", state.searchText)
     }
 
-    @Test
-    fun `initial LibraryUiState has search collapsed`() {
-        val state = LibraryUiState()
-        assertFalse(state.searchExpanded)
-    }
 
     @Test
     fun `initial LibraryUiState has no saved default`() {
@@ -29,10 +24,4 @@ class LibraryViewModelTest {
         assertNotNull(LibraryUiState())
     }
 
-    @Test
-    fun `state copy with searchExpanded true preserves searchText`() {
-        val state = LibraryUiState(searchText = "comedy")
-        val updated = state.copy(searchExpanded = true)
-        assertEquals("comedy", updated.searchText)
-    }
 }

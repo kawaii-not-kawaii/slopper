@@ -75,13 +75,6 @@ class PlayerQueue private constructor(
         return activeOrder[prevIdx]
     }
 
-    /** Jumps to a specific id — no-op if not in queue. */
-    fun jumpTo(id: String): String? {
-        val idx = activeOrder.indexOf(id)
-        if (idx < 0) return null
-        currentIndex = idx
-        return id
-    }
 
     companion object {
         fun from(

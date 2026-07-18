@@ -48,6 +48,7 @@ import io.stashapp.android.core.designsystem.theme.MonoSmall
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.model.SceneSummary
 
 /*
@@ -100,6 +101,7 @@ internal fun SearchOverlay(
     results: SearchResults,
     onDismiss: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     var scope by remember { mutableStateOf<SearchScope>(SearchScope.All) }
 
     AnimatedVisibility(
@@ -140,13 +142,13 @@ internal fun SearchOverlay(
                         textStyle = TextStyle(fontFamily = JetBrainsMono, fontSize = 12.sp),
                         colors =
                             OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = SpineColors.AccentPrimary,
+                                focusedBorderColor = accent.primary,
                                 unfocusedBorderColor = SpineColors.Border,
                                 focusedContainerColor = SpineColors.Surface,
                                 unfocusedContainerColor = SpineColors.Surface,
                                 focusedTextColor = SpineColors.OnSurface,
                                 unfocusedTextColor = SpineColors.OnSurface,
-                                cursorColor = SpineColors.AccentPrimary,
+                                cursorColor = accent.primary,
                             ),
                     )
                 }
@@ -176,7 +178,7 @@ internal fun SearchOverlay(
                                     .clip(ShapeSmall)
                                     .background(
                                         if (isActive) {
-                                            SpineColors.AccentPrimary.copy(alpha = 0.12f)
+                                            accent.primary.copy(alpha = 0.12f)
                                         } else {
                                             SpineColors.Surface
                                         },
@@ -184,7 +186,7 @@ internal fun SearchOverlay(
                                         width = 1.dp,
                                         color =
                                             if (isActive) {
-                                                SpineColors.AccentPrimary.copy(alpha = 0.30f)
+                                                accent.primary.copy(alpha = 0.30f)
                                             } else {
                                                 SpineColors.Border
                                             },
@@ -196,7 +198,7 @@ internal fun SearchOverlay(
                             Text(
                                 text = s.label,
                                 style = MetaMono,
-                                color = if (isActive) SpineColors.AccentPrimary else SpineColors.OnSurfaceVariant,
+                                color = if (isActive) accent.primary else SpineColors.OnSurfaceVariant,
                             )
                         }
                     }
@@ -273,6 +275,7 @@ private fun SectionHeader(title: String) {
 
 @Composable
 private fun SceneResultRow(scene: SceneSummary) {
+    val accent = LocalAccentColors.current
     Row(
         modifier =
             Modifier
@@ -302,7 +305,7 @@ private fun SceneResultRow(scene: SceneSummary) {
                 Text(
                     text = studio.name,
                     style = MonoSmall,
-                    color = SpineColors.AccentPrimary,
+                    color = accent.primary,
                     maxLines = 1,
                 )
             }

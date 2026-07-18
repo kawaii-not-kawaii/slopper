@@ -32,15 +32,15 @@ class DefaultBrowseRepository
         override fun performers(
             search: String?,
             sort: EntitySort,
-        ): Flow<PagingData<PerformerBrowseItem>> = Pager(config) { PerformersPagingSource(apollo, endpointProvider, search, sort) }.flow
+        ): Flow<PagingData<PerformerBrowseItem>> = Pager(config) { performersPagingSource(apollo, endpointProvider, search, sort) }.flow
 
         override fun studios(
             search: String?,
             sort: EntitySort,
-        ): Flow<PagingData<StudioBrowseItem>> = Pager(config) { StudiosPagingSource(apollo, endpointProvider, search, sort) }.flow
+        ): Flow<PagingData<StudioBrowseItem>> = Pager(config) { studiosPagingSource(apollo, endpointProvider, search, sort) }.flow
 
         override fun tags(
             search: String?,
             sort: EntitySort,
-        ): Flow<PagingData<TagBrowseItem>> = Pager(config) { TagsPagingSource(apollo, endpointProvider, search, sort) }.flow
+        ): Flow<PagingData<TagBrowseItem>> = Pager(config) { tagsPagingSource(apollo, endpointProvider, search, sort) }.flow
     }

@@ -52,6 +52,7 @@ import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 
 @Composable
 fun ConnectionScreen(
@@ -59,6 +60,7 @@ fun ConnectionScreen(
     viewModel: ConnectionViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val accent = LocalAccentColors.current
 
     Box(
         Modifier
@@ -77,7 +79,7 @@ fun ConnectionScreen(
             Icon(
                 imageVector = Icons.Filled.Cloud,
                 contentDescription = null,
-                tint = SpineColors.AccentPrimary,
+                tint = accent.primary,
                 modifier = Modifier.size(56.dp),
             )
             Spacer(Modifier.height(12.dp))
@@ -115,13 +117,13 @@ fun ConnectionScreen(
                 shape = ShapeSmall,
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = SpineColors.AccentPrimary,
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = SpineColors.Border,
                         focusedContainerColor = SpineColors.Surface,
                         unfocusedContainerColor = SpineColors.Surface,
                         focusedTextColor = SpineColors.OnSurface,
                         unfocusedTextColor = SpineColors.OnSurface,
-                        cursorColor = SpineColors.AccentPrimary,
+                        cursorColor = accent.primary,
                     ),
             )
             Spacer(Modifier.height(12.dp))
@@ -156,13 +158,13 @@ fun ConnectionScreen(
                 shape = ShapeSmall,
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = SpineColors.AccentPrimary,
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = SpineColors.Border,
                         focusedContainerColor = SpineColors.Surface,
                         unfocusedContainerColor = SpineColors.Surface,
                         focusedTextColor = SpineColors.OnSurface,
                         unfocusedTextColor = SpineColors.OnSurface,
-                        cursorColor = SpineColors.AccentPrimary,
+                        cursorColor = accent.primary,
                     ),
             )
             Spacer(Modifier.height(12.dp))
@@ -178,13 +180,13 @@ fun ConnectionScreen(
                 shape = ShapeSmall,
                 colors =
                     OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = SpineColors.AccentPrimary,
+                        focusedBorderColor = accent.primary,
                         unfocusedBorderColor = SpineColors.Border,
                         focusedContainerColor = SpineColors.Surface,
                         unfocusedContainerColor = SpineColors.Surface,
                         focusedTextColor = SpineColors.OnSurface,
                         unfocusedTextColor = SpineColors.OnSurface,
-                        cursorColor = SpineColors.AccentPrimary,
+                        cursorColor = accent.primary,
                     ),
             )
 
@@ -194,8 +196,8 @@ fun ConnectionScreen(
             state.serverInfo?.let { info ->
                 Surface(
                     shape = ShapeSmall,
-                    color = SpineColors.AccentPrimary.copy(alpha = 0.08f),
-                    border = BorderStroke(1.dp, SpineColors.AccentPrimary.copy(alpha = 0.25f)),
+                    color = accent.primary.copy(alpha = 0.08f),
+                    border = BorderStroke(1.dp, accent.primary.copy(alpha = 0.25f)),
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Column(Modifier.padding(16.dp)) {
@@ -203,7 +205,7 @@ fun ConnectionScreen(
                             Icon(
                                 Icons.Filled.Check,
                                 contentDescription = null,
-                                tint = SpineColors.AccentPrimary,
+                                tint = accent.primary,
                                 modifier = Modifier.size(20.dp),
                             )
                             Spacer(Modifier.size(8.dp))
@@ -271,7 +273,7 @@ fun ConnectionScreen(
                         CircularProgressIndicator(
                             strokeWidth = 2.dp,
                             modifier = Modifier.size(16.dp),
-                            color = SpineColors.AccentPrimary,
+                            color = accent.primary,
                         )
                     } else {
                         Text("Test", color = SpineColors.OnSurface)
@@ -285,8 +287,8 @@ fun ConnectionScreen(
                     shape = ShapeSmall,
                     colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = SpineColors.AccentPrimary,
-                            contentColor = SpineColors.AccentOnPrimary,
+                            containerColor = accent.primary,
+                            contentColor = accent.onPrimary,
                         ),
                 ) {
                     Text("Connect", fontWeight = FontWeight.Bold)

@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.model.Marker
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.StateFlow
@@ -49,6 +50,7 @@ internal fun TimelineBar(
     onSeek: (Long) -> Unit,
     onToggleRightLabel: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     // Subscribe to position here — this keeps the 250ms tick's recomposition
     // scoped to just this subtree.
     val pos by positionFlow.collectAsStateWithLifecycle()
@@ -75,7 +77,7 @@ internal fun TimelineBar(
         Text(
             formatDuration(if (dragFraction != null) (dragFraction!! * durationMs).toLong() else positionMs),
             style = MaterialTheme.typography.labelSmall,
-            color = if (dragging) SpineColors.AccentPrimary else SpineColors.OnSurfaceVariant,
+            color = if (dragging) accent.primary else SpineColors.OnSurfaceVariant,
             modifier = Modifier.size(width = 44.dp, height = 14.dp),
         )
         Box(
@@ -132,7 +134,7 @@ internal fun TimelineBar(
                 }
                 if (displayFraction > 0f) {
                     drawRoundRect(
-                        color = SpineColors.AccentPrimary,
+                        color = accent.primary,
                         size = Size(size.width * displayFraction, th),
                         cornerRadius =
                             androidx.compose.ui.geometry
@@ -150,7 +152,7 @@ internal fun TimelineBar(
                         val frac = (marker.seconds / (durationMs / 1000.0)).toFloat().coerceIn(0f, 1f)
                         val x = size.width * frac
                         drawCircle(
-                            color = SpineColors.AccentPrimary.copy(alpha = 0.6f),
+                            color = accent.primary.copy(alpha = 0.6f),
                             radius = ringRadius,
                             center = Offset(x, centerY),
                             style = Stroke(width = 1.5f),
@@ -169,7 +171,7 @@ internal fun TimelineBar(
                 Canvas(Modifier.fillMaxWidth().height(28.dp)) {
                     val r = with(density) { thumbR.toPx() }
                     drawCircle(
-                        color = SpineColors.AccentPrimary,
+                        color = accent.primary,
                         radius = r,
                         center = Offset(size.width * displayFraction, size.height / 2f),
                     )
@@ -203,6 +205,7 @@ internal fun ScrubPreviewCard(
     preview: ScrubPreview,
     durationMs: Long,
 ) {
+    val accent = LocalAccentColors.current
     val target = formatDuration(preview.targetMs)
     val total = durationMs.takeIf { it > 0 }?.let { formatDuration(it) }
     val deltaSeconds = preview.deltaMs / 1000
@@ -234,7 +237,7 @@ internal fun ScrubPreviewCard(
             Text(
                 delta,
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Medium),
-                color = SpineColors.AccentPrimary,
+                color = accent.primary,
             )
         }
     }
@@ -242,13 +245,14 @@ internal fun ScrubPreviewCard(
 
 @Composable
 internal fun BannerPill(text: String) {
+    val accent = LocalAccentColors.current
     Surface(
         shape = RoundedCornerShape(20.dp),
         color = SpineColors.SurfaceTop.copy(alpha = 0.92f),
         modifier =
             Modifier.drawBehind {
                 drawRect(
-                    color = SpineColors.AccentPrimary,
+                    color = accent.primary,
                     topLeft = Offset.Zero,
                     size = Size(3.dp.toPx(), size.height),
                 )
@@ -257,7 +261,7 @@ internal fun BannerPill(text: String) {
         Text(
             text,
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
-            color = SpineColors.AccentPrimary,
+            color = accent.primary,
             modifier = Modifier.padding(start = 16.dp, end = 12.dp, top = 6.dp, bottom = 6.dp),
         )
     }
@@ -277,6 +281,7 @@ internal fun ChapterStrip(
     durationMs: Long,
     modifier: Modifier = Modifier,
 ) {
+    val accent = LocalAccentColors.current
     if (markers.isEmpty() || durationMs <= 0) return
     val density = LocalDensity.current
     androidx.compose.foundation.Canvas(modifier.height(24.dp)) {
@@ -302,7 +307,7 @@ internal fun ChapterStrip(
             val isPlayed = start < playedFraction
 
             drawRect(
-                color = if (isPlayed) SpineColors.AccentPrimary else Color.White.copy(alpha = 0.18f),
+                color = if (isPlayed) accent.primary else Color.White.copy(alpha = 0.18f),
                 topLeft =
                     androidx.compose.ui.geometry
                         .Offset(segStart, centerY - trackH / 2),

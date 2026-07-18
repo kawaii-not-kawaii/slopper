@@ -5,9 +5,6 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.stashapp.android.core.model.StashServer
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -56,16 +53,6 @@ class ConnectionStore
             prefs.edit().clear().apply()
         }
 
-        fun observe(): Flow<StashServer?> =
-            callbackFlow {
-                trySend(currentServer())
-                val listener =
-                    android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-                        trySend(currentServer())
-                    }
-                prefs.registerOnSharedPreferenceChangeListener(listener)
-                awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
-            }
 
         private companion object {
             const val FILE_NAME = "stash_connection"

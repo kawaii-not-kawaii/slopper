@@ -30,9 +30,6 @@ object CodecCapabilities {
         }
     }
 
-    /** True when some flavour of the FFmpeg decoder extension is on the classpath. */
-    val ffmpegExtensionPresent: Boolean get() = ffmpegClass != null
-
     /**
      * Best-effort check that the native libs actually loaded. The class can
      * exist on the classpath while JNI load fails (e.g. wrong ABI split), so
@@ -45,14 +42,4 @@ object CodecCapabilities {
             method.invoke(null) as Boolean
         }.getOrDefault(false)
     }
-
-    /**
-     * Human-facing one-liner for the settings / about screen.
-     */
-    val statusLabel: String get() =
-        when {
-            ffmpegExtensionUsable -> "FFmpeg extension active — full codec support"
-            ffmpegExtensionPresent -> "FFmpeg extension detected but failed to load"
-            else -> "MediaCodec only — some audio codecs (AC3, EAC3, DTS) will fail"
-        }
 }

@@ -89,30 +89,6 @@ object MainNavItems {
             iconFilled = Icons.Filled.Movie,
             iconOutlined = Icons.Outlined.Movie,
         )
-    val Studios =
-        MainNavItem(
-            id = "studios",
-            route = Routes.browse("studios"),
-            label = "Studios",
-            iconFilled = Icons.Filled.Storefront,
-            iconOutlined = Icons.Outlined.Storefront,
-        )
-    val Performers =
-        MainNavItem(
-            id = "performers",
-            route = Routes.browse("performers"),
-            label = "People",
-            iconFilled = Icons.Filled.Person,
-            iconOutlined = Icons.Outlined.Person,
-        )
-    val Tags =
-        MainNavItem(
-            id = "tags",
-            route = Routes.browse("tags"),
-            label = "Tags",
-            iconFilled = Icons.Filled.Label,
-            iconOutlined = Icons.Outlined.Label,
-        )
 
     // Spine design: Browse tab = single entry point for performers/studios/tags
     // route prefix "browse/" ensures it lights up for any browse/* route
@@ -135,7 +111,7 @@ object MainNavItems {
         )
 
     /** All items available for customisation. */
-    val All = listOf(Home, Scenes, Studios, Performers, Tags, Browse, Settings)
+    val All = listOf(Home, Scenes, Browse, Settings)
 
     /** Spine default: Home · Library · Browse · Settings */
     val DefaultVisibleIds = listOf(Home.id, Scenes.id, Browse.id, Settings.id)
@@ -146,14 +122,12 @@ object MainNavItems {
  *
  * Renders a centered Row with a frosted-glass pill container. Active tab shows
  * AccentPrimary background with label; inactive tabs are icon-only.
- * [onOpenMore] is kept for backward compatibility (the Browse screen triggers it).
  */
 @Composable
 fun MainBottomBar(
     currentRoute: String?,
     visibleIds: List<String> = MainNavItems.DefaultVisibleIds,
     onNavigate: (String) -> Unit,
-    onOpenMore: () -> Unit,
 ) {
     val visibleItems = visibleIds.mapNotNull { id -> MainNavItems.All.find { it.id == id } }
 

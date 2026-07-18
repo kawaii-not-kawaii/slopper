@@ -32,7 +32,6 @@ import androidx.compose.material.icons.filled.Forward10
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PictureInPicture
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Repeat
@@ -65,6 +64,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.stashapp.android.core.designsystem.theme.ShapeMedium
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.RepeatMode
 import kotlinx.collections.immutable.ImmutableList
@@ -109,7 +109,6 @@ internal fun PlayerControls(
     onCycleResize: () -> Unit,
     onCycleSpeed: () -> Unit,
     onToggleRemaining: () -> Unit,
-    onScreenshot: () -> Unit,
     onToggleSettings: () -> Unit = {},
 ) {
     // Note: outer wrap in PlayerScreen Box(safeDrawingPadding()) already
@@ -227,12 +226,6 @@ internal fun PlayerControls(
                     onClick = onCycleResize,
                 )
                 UtilityIconButton(
-                    icon = Icons.Filled.PhotoCamera,
-                    active = false,
-                    contentDescription = "Screenshot",
-                    onClick = onScreenshot,
-                )
-                UtilityIconButton(
                     icon = Icons.Filled.Shuffle,
                     active = shuffled,
                     contentDescription = "Shuffle",
@@ -322,6 +315,7 @@ private fun PlayPauseFlat(
     isPlaying: Boolean,
     onClick: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     // Spine 52dp AccentPrimary play/pause button (SPINE-11, D-transport).
     // ShapeMedium (10dp radius) per design handoff.
     Box(
@@ -329,7 +323,7 @@ private fun PlayPauseFlat(
             Modifier
                 .size(52.dp)
                 .clip(ShapeMedium)
-                .background(SpineColors.AccentPrimary)
+                .background(accent.primary)
                 .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -344,7 +338,7 @@ private fun PlayPauseFlat(
             Icon(
                 if (playing) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                 contentDescription = if (playing) "Pause" else "Play",
-                tint = SpineColors.AccentOnPrimary,
+                tint = accent.onPrimary,
                 modifier = Modifier.size(28.dp),
             )
         }
@@ -377,11 +371,12 @@ private fun UtilityIconButton(
     onClick: () -> Unit,
     iconSize: androidx.compose.ui.unit.Dp = 22.dp,
 ) {
+    val accent = LocalAccentColors.current
     IconButton(onClick = onClick, modifier = Modifier.size(36.dp)) {
         Icon(
             icon,
             contentDescription = contentDescription,
-            tint = if (active) SpineColors.AccentPrimary else Color.White,
+            tint = if (active) accent.primary else Color.White,
             modifier = Modifier.size(iconSize),
         )
     }
@@ -421,9 +416,10 @@ private fun SpeedPill(
     onClick: () -> Unit,
 ) {
     val active = speed != 1f
+    val accent = LocalAccentColors.current
     Surface(
-        color = if (active) SpineColors.AccentPrimary else SpineColors.SurfaceTop.copy(alpha = 0.85f),
-        contentColor = if (active) SpineColors.AccentOnPrimary else Color.White,
+        color = if (active) accent.primary else SpineColors.SurfaceTop.copy(alpha = 0.85f),
+        contentColor = if (active) accent.onPrimary else Color.White,
         shape = TopChipShape,
         border =
             if (!active) {

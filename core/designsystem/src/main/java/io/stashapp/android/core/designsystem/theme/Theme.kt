@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 val ShapeSmall = RoundedCornerShape(6.dp)
 val ShapeMedium = RoundedCornerShape(10.dp)
 val ShapeLarge = RoundedCornerShape(16.dp)
-val ShapeCircle = CircleShape
 
 // ---- Accent palette data structures (D-05) ----------------------------------
 

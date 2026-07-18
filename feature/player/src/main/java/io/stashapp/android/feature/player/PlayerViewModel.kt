@@ -204,13 +204,11 @@ class PlayerViewModel
             player.seekTo(positionMs.coerceAtLeast(0L))
         }
 
-        /** Nudge — e.g. for double-tap seek; returns the applied delta for UI feedback. */
-        fun seekBy(deltaMs: Long): Long {
+        /** Nudge — e.g. for double-tap seek. */
+        fun seekBy(deltaMs: Long) {
             val p = player
-            val before = p.currentPosition
-            val target = (before + deltaMs).coerceAtLeast(0L)
+            val target = (p.currentPosition + deltaMs).coerceAtLeast(0L)
             p.seekTo(target)
-            return target - before
         }
 
         /** Set playback speed directly (used by PlayerSettingsPanel). */
@@ -219,8 +217,8 @@ class PlayerViewModel
             _state.update { it.copy(playbackSpeed = speed) }
         }
 
-        /** Cycle through the speed presets. Returns the new speed. */
-        fun cyclePlaybackSpeed(): Float {
+        /** Cycle through the speed presets. */
+        fun cyclePlaybackSpeed() {
             val presets = PLAYBACK_SPEEDS
             val current = _state.value.playbackSpeed
             val idx =
@@ -236,7 +234,6 @@ class PlayerViewModel
                 )
             }
             clearBannerLater()
-            return next
         }
 
         companion object {

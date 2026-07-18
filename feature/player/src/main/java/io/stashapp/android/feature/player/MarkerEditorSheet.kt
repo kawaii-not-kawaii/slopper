@@ -42,6 +42,7 @@ import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.MonoSmall
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.model.Marker
 import kotlinx.collections.immutable.ImmutableList
 
@@ -134,7 +135,7 @@ private fun MarkerMiniTimeline(
     durationMs: Long,
     modifier: Modifier = Modifier,
 ) {
-    val accentPrimary = SpineColors.AccentPrimary
+    val accentPrimary = LocalAccentColors.current.primary
     val warning = SpineColors.Warning
     val bg = SpineColors.Bg
 
@@ -219,7 +220,7 @@ private fun MarkerRow(marker: Marker) {
                     Text(
                         text = marker.primaryTagName,
                         style = MetaMono,
-                        color = SpineColors.AccentPrimary,
+                        color = LocalAccentColors.current.primary,
                     )
                 }
             }

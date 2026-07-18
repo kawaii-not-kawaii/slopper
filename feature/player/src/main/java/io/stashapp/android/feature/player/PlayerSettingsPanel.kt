@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 
 /**
  * Spine right-anchored player settings panel — SPINE-12 (D-11).
@@ -41,7 +42,6 @@ internal fun PlayerSettingsPanel(
     visible: Boolean,
     playbackSpeed: Float,
     onSpeedChange: (Float) -> Unit,
-    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
@@ -51,6 +51,7 @@ internal fun PlayerSettingsPanel(
         modifier = modifier,
     ) {
         val borderStrong = SpineColors.BorderStrong
+        val accent = LocalAccentColors.current
 
         Box(
             modifier =
@@ -87,7 +88,7 @@ internal fun PlayerSettingsPanel(
                                     .clip(ShapeSmall)
                                     .background(
                                         if (isSelected) {
-                                            SpineColors.AccentPrimary
+                                            accent.primary
                                         } else {
                                             SpineColors.SurfaceTop
                                         },
@@ -100,7 +101,7 @@ internal fun PlayerSettingsPanel(
                                 style = MetaMono,
                                 color =
                                     if (isSelected) {
-                                        SpineColors.AccentOnPrimary
+                                        accent.onPrimary
                                     } else {
                                         SpineColors.OnSurface
                                     },

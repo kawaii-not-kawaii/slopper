@@ -24,7 +24,7 @@ internal fun SceneFilter.toGql(): SceneFilterType? {
     if (!isActive) return null
 
     return SceneFilterType(
-        rating100 = ratingCriterion(),
+        rating100 = intRange(minRating100, maxRating100),
         resolution = resolutionCriterion(),
         organized = Optional.presentIfNotNull(organized),
         has_markers = Optional.presentIfNotNull(hasMarkers?.let { if (it) "true" else "false" }),
@@ -124,35 +124,6 @@ private fun SceneFilter.captionsCriterion(): Optional<StringCriterionInput?> =
         null -> Optional.absent()
     }
 
-private fun SceneFilter.ratingCriterion(): Optional<IntCriterionInput?> {
-    val min = minRating100
-    val max = maxRating100
-    return when {
-        min != null && max != null ->
-            Optional.present(
-                IntCriterionInput(
-                    value = min,
-                    value2 = Optional.present(max),
-                    modifier = CriterionModifier.BETWEEN,
-                ),
-            )
-        min != null ->
-            Optional.present(
-                IntCriterionInput(
-                    value = min,
-                    modifier = CriterionModifier.GREATER_THAN,
-                ),
-            )
-        max != null ->
-            Optional.present(
-                IntCriterionInput(
-                    value = max,
-                    modifier = CriterionModifier.LESS_THAN,
-                ),
-            )
-        else -> Optional.absent()
-    }
-}
 
 private fun SceneFilter.resolutionCriterion(): Optional<ResolutionCriterionInput?> =
     minResolution?.let {

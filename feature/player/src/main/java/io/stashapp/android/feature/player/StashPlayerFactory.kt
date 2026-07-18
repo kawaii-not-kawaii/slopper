@@ -41,7 +41,6 @@ class StashPlayerFactory(
             DefaultTrackSelector(context).apply {
                 setParameters(
                     buildUponParameters()
-                        .setPreferredAudioLanguage(null)
                         .setTunnelingEnabled(true)
                         .setAllowVideoMixedMimeTypeAdaptiveness(true),
                 )

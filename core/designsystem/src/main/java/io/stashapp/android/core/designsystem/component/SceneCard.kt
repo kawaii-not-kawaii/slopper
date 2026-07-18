@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpineColors
 
@@ -59,6 +60,7 @@ fun SceneCard(
     onClick: () -> Unit,
     onLongClick: () -> Unit = {},
 ) {
+    val accent = LocalAccentColors.current
     var pressed by remember { mutableStateOf(false) }
     val overlayAlpha by animateColorAsState(
         if (pressed) Color.Black.copy(alpha = 0.85f) else Color.Transparent,
@@ -172,7 +174,7 @@ fun SceneCard(
                                 Modifier
                                     .fillMaxWidth(resumeFraction!!.coerceIn(0f, 1f))
                                     .fillMaxHeight()
-                                    .background(SpineColors.AccentPrimary),
+                                    .background(accent.primary),
                         )
                     }
                 }
@@ -196,9 +198,10 @@ private fun Chip(
     text: String,
     accent: Boolean = false,
 ) {
+    val colors = LocalAccentColors.current
     Surface(
-        color = if (accent) SpineColors.AccentPrimary else SpineColors.SurfaceTop,
-        contentColor = if (accent) SpineColors.AccentOnPrimary else Color.White,
+        color = if (accent) colors.primary else SpineColors.SurfaceTop,
+        contentColor = if (accent) colors.onPrimary else Color.White,
         shape = RoundedCornerShape(4.dp),
     ) {
         Text(

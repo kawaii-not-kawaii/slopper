@@ -9,7 +9,6 @@ import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.crossfade
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.network.StashEndpointProvider
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
@@ -25,7 +24,6 @@ class StashImageLoaderFactory
     constructor(
         @ApplicationContext private val context: Context,
         private val endpointProvider: StashEndpointProvider,
-        private val uiPreferences: UiPreferences,
     ) : SingletonImageLoader.Factory {
         override fun newImageLoader(context: PlatformContext): ImageLoader {
             val authClient =

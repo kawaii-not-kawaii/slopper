@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.domain.DateBucket
 import io.stashapp.android.core.domain.SceneDurationBucket
 import io.stashapp.android.core.domain.SceneFilter
@@ -54,10 +55,7 @@ import java.time.LocalDate
 /**
  * Filter + sort bottom sheet.
  *
- * All edits happen against local state and only commit on [onApply]. The sheet
- * also exposes "Save as default" / "Clear default" for persisting the current
- * filter — surfaced at the bottom of the sheet so it doesn't distract the
- * primary edit flow.
+ * All edits happen against local state and only commit on [onApply].
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -65,12 +63,10 @@ fun FilterSheet(
     sheetState: SheetState,
     initialFilter: SceneFilter,
     initialSort: SceneSort,
-    hasSavedDefault: Boolean,
     onDismiss: () -> Unit,
     onApply: (SceneFilter, SceneSort) -> Unit,
-    onSaveAsDefault: (SceneFilter) -> Unit,
-    onClearDefault: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     var filter by remember { mutableStateOf(initialFilter) }
     var sort by remember { mutableStateOf(initialSort) }
 
@@ -194,8 +190,8 @@ fun FilterSheet(
                     },
                     colors =
                         androidx.compose.material3.ButtonDefaults.buttonColors(
-                            containerColor = SpineColors.AccentPrimary,
-                            contentColor = SpineColors.AccentOnPrimary,
+                            containerColor = accent.primary,
+                            contentColor = accent.onPrimary,
                         ),
                 ) {
                     Text("Apply")
@@ -504,6 +500,7 @@ private fun ToggleChip(
     state: Boolean?,
     onChange: (Boolean?) -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     val display =
         when (state) {
             true -> "$label: yes"
@@ -525,7 +522,7 @@ private fun ToggleChip(
         label = { Text(display) },
         colors =
             FilterChipDefaults.filterChipColors(
-                selectedContainerColor = SpineColors.AccentPrimary.copy(alpha = 0.25f),
+                selectedContainerColor = accent.primary.copy(alpha = 0.25f),
             ),
     )
 }

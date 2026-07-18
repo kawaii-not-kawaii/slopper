@@ -58,6 +58,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.model.RepeatMode
 import kotlinx.collections.immutable.toPersistentList
@@ -86,6 +87,7 @@ fun PlayerScreen(
     onExit: () -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
+    val accent = LocalAccentColors.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as? Activity
@@ -362,7 +364,7 @@ fun PlayerScreen(
                         Icon(
                             Icons.Filled.Lock,
                             contentDescription = "Unlock",
-                            tint = SpineColors.AccentPrimary,
+                            tint = accent.primary,
                             modifier = Modifier.size(28.dp),
                         )
                     }
@@ -506,12 +508,6 @@ fun PlayerScreen(
                                 showRemaining = !showRemaining
                                 lastInteraction = System.currentTimeMillis()
                             },
-                            onScreenshot = {
-                                // TODO: capture frame. MediaMetadataRetriever path works
-                                // but needs storage permission + URI handling — punting
-                                // to a follow-up pass since it's more than UI plumbing.
-                                viewModel.flashBanner("Screenshot — coming soon")
-                            },
                             onToggleSettings = {
                                 showSettingsPanel = !showSettingsPanel
                                 lastInteraction = System.currentTimeMillis()
@@ -528,10 +524,6 @@ fun PlayerScreen(
             playbackSpeed = state.playbackSpeed,
             onSpeedChange = { speed ->
                 viewModel.setPlaybackSpeed(speed)
-                lastInteraction = System.currentTimeMillis()
-            },
-            onDismiss = {
-                showSettingsPanel = false
                 lastInteraction = System.currentTimeMillis()
             },
             modifier = Modifier.align(Alignment.CenterEnd),

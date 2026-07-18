@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.ShapeMedium
 import io.stashapp.android.core.designsystem.theme.SpineColors
@@ -54,6 +55,7 @@ fun SpineResumeCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val accent = LocalAccentColors.current
     Surface(
         color = SpineColors.Surface,
         shape = ShapeMedium,
@@ -129,7 +131,7 @@ fun SpineResumeCard(
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 1.sp,
                         ),
-                    color = SpineColors.AccentPrimary,
+                    color = accent.primary,
                 )
 
                 // Title
@@ -170,7 +172,7 @@ fun SpineResumeCard(
                             Modifier
                                 .fillMaxWidth(progress.coerceIn(0f, 1f))
                                 .fillMaxHeight()
-                                .background(SpineColors.AccentPrimary),
+                                .background(accent.primary),
                     )
                 }
             }

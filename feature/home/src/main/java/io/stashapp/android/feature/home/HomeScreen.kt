@@ -44,6 +44,7 @@ import io.stashapp.android.core.designsystem.component.resolutionLabel
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.model.SceneSummary
 import kotlinx.collections.immutable.ImmutableList
 
@@ -117,6 +118,7 @@ private fun SpineTopBar(
     onSearchClick: () -> Unit,
     onRefreshClick: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     Row(
         modifier =
             Modifier
@@ -131,7 +133,7 @@ private fun SpineTopBar(
                     .size(22.dp)
                     .rotate(45f)
                     .clip(ShapeSmall)
-                    .background(SpineColors.AccentPrimary),
+                    .background(accent.primary),
         )
         Spacer(Modifier.width(8.dp))
         Text("Slopper", style = MaterialTheme.typography.titleLarge)

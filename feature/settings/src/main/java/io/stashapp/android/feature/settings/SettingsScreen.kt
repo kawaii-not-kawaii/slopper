@@ -1,87 +1,77 @@
 package io.stashapp.android.feature.settings
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.PowerOff
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.stashapp.android.core.data.prefs.PlayerPreferences
 import io.stashapp.android.core.data.prefs.UiPreferences
+import io.stashapp.android.core.designsystem.component.CSlider
+import io.stashapp.android.core.designsystem.component.DRow
+import io.stashapp.android.core.designsystem.component.DRowStacked
+import io.stashapp.android.core.designsystem.theme.EmberAccent
 import io.stashapp.android.core.designsystem.theme.JetBrainsMono
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
+import io.stashapp.android.core.designsystem.theme.SageAccent
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
+import io.stashapp.android.core.designsystem.theme.SignalAccent
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
-import io.stashapp.android.core.ui.nav.Routes
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
     onDisconnected: () -> Unit,
-    onPlaybackClick: () -> Unit,
-    onCodecsClick: () -> Unit,
-    onDisplayClick: () -> Unit,
-    onLibraryClick: () -> Unit,
     onServerClick: () -> Unit,
     onAboutClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -92,389 +82,385 @@ fun SettingsScreen(
     val activeServer by viewModel.activeServer.collectAsStateWithLifecycle()
     val serverInfo by viewModel.serverInfo.collectAsStateWithLifecycle()
 
-    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
-    val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
+    // Playback prefs
+    val doubleTap by pp.doubleTapSeekSeconds.collectAsStateWithLifecycle(10)
+    val seekMs by pp.seekMsPerPx.collectAsStateWithLifecycle(120f)
 
-    var showSearch by remember { mutableStateOf(false) }
+    // Display prefs
+    val accentPalette by up.accentPalette.collectAsStateWithLifecycle("sage")
+    val gridColumns by up.gridColumns.collectAsStateWithLifecycle("auto")
 
-    // Playback summary prefs
-    val speed by pp.defaultPlaybackSpeed.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_SPEED)
-    val doubleTapSec by pp.doubleTapSeekSeconds.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_DOUBLE_TAP_SEEK_SEC)
-    val bufferPreset by pp.videoBufferPreset.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_BUFFER_PRESET)
-    val decoderPref by pp.decoderPreference.collectAsStateWithLifecycle(initialValue = PlayerPreferences.DEFAULT_DECODER_PREF)
+    // Library prefs
+    val cacheMb by up.imageCacheSizeMb.collectAsStateWithLifecycle(256)
 
-    // Display summary prefs
-    val accentPaletteVal by up.accentPalette.collectAsStateWithLifecycle(initialValue = UiPreferences.DEFAULT_ACCENT_PALETTE)
-    val gridColumns by up.gridColumns.collectAsStateWithLifecycle(initialValue = UiPreferences.DEFAULT_GRID_COLUMNS)
-
-    // Library summary prefs
-    val imageCacheMb by up.imageCacheSizeMb.collectAsStateWithLifecycle(initialValue = UiPreferences.DEFAULT_IMAGE_CACHE_MB)
-
-    // Summary strings
-    val playbackSummary = "$speed× · ${doubleTapSec}s seek"
-    val codecSummary = "$decoderPref · $bufferPreset"
-    val displaySummary = "$accentPaletteVal · $gridColumns cols"
-    val librarySummary = "$imageCacheMb MB cache"
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(
-            contentPadding = PaddingValues(bottom = 100.dp),
-        ) {
-            item {
-                TopAppBar(
-                    title = {
-                        Text(
-                            "Settings",
-                            style =
-                                TextStyle(
-                                    fontFamily = SpaceGrotesk,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                ),
-                            color = SpineColors.OnSurface,
+    LazyColumn(contentPadding = PaddingValues(bottom = 100.dp)) {
+        // ---- TopAppBar ----
+        item {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Settings",
+                        style =
+                            TextStyle(
+                                fontFamily = SpaceGrotesk,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
+                        color = SpineColors.OnSurface,
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                            contentDescription = "Back",
+                            tint = SpineColors.OnSurface,
+                            modifier = Modifier.size(22.dp),
                         )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                                contentDescription = "Back",
-                                tint = SpineColors.OnSurface,
-                                modifier = Modifier.size(22.dp),
+                    }
+                },
+                actions = {
+                    val synced = serverInfo != null
+                    Surface(
+                        shape = RoundedCornerShape(50),
+                        color = SpineColors.Surface,
+                        border = BorderStroke(1.dp, SpineColors.Border),
+                        modifier = Modifier.padding(end = 12.dp),
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .size(6.dp)
+                                        .background(
+                                            if (synced) SpineColors.Success else SpineColors.OnSurfaceMuted,
+                                            RoundedCornerShape(50),
+                                        ),
+                            )
+                            Spacer(Modifier.width(5.dp))
+                            Text(
+                                if (synced) "Synced" else "Offline",
+                                style = MetaMono,
+                                color = if (synced) SpineColors.Success else SpineColors.OnSurfaceMuted,
                             )
                         }
-                    },
-                    actions = {
-                        // Sync-status pill
-                        val synced = serverInfo != null
-                        Surface(
-                            shape = CircleShape,
-                            color = SpineColors.Surface,
-                            border = BorderStroke(1.dp, SpineColors.Border),
-                            modifier = Modifier.padding(end = 12.dp),
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = SpineColors.Bg),
+            )
+        }
+
+        // ---- Server status card ----
+        item {
+            Surface(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp, vertical = 8.dp)
+                        .then(
+                            if (activeServer != null) {
+                                Modifier.clickable { onServerClick() }
+                            } else {
+                                Modifier
+                            },
+                        ),
+                color = SpineColors.Surface,
+                shape = RoundedCornerShape(16.dp),
+                border = BorderStroke(1.dp, SpineColors.Border),
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val accentColors = LocalAccentColors.current
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(40.dp)
+                                .background(
+                                    accentColors.primary.copy(alpha = 0.12f),
+                                    RoundedCornerShape(10.dp),
+                                ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = null,
+                            tint = accentColors.primary,
+                            modifier = Modifier.size(22.dp),
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = activeServer?.displayName ?: "Not connected",
+                                style =
+                                    TextStyle(
+                                        fontFamily = SpaceGrotesk,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                    ),
+                                color = SpineColors.OnSurface,
+                            )
+                            if (serverInfo != null) {
+                                Spacer(Modifier.width(6.dp))
                                 Box(
-                                    modifier =
-                                        Modifier
-                                            .size(6.dp)
-                                            .background(
-                                                if (synced) SpineColors.Success else SpineColors.OnSurfaceMuted,
-                                                CircleShape,
-                                            ),
-                                )
-                                Spacer(Modifier.width(5.dp))
-                                Text(
-                                    if (synced) "Synced" else "Offline",
-                                    style = MetaMono,
-                                    color = if (synced) SpineColors.Success else SpineColors.OnSurfaceMuted,
+                                    Modifier
+                                        .size(8.dp)
+                                        .background(SpineColors.Success, RoundedCornerShape(50)),
                                 )
                             }
                         }
-                    },
-                    colors =
-                        TopAppBarDefaults.topAppBarColors(
-                            containerColor = SpineColors.Bg,
-                        ),
-                )
+                        if (activeServer != null) {
+                            val subText =
+                                serverInfo?.let { "Stash v${it.version} · ${it.sceneCount} scenes" }
+                                    ?: "Connected · tap to refresh"
+                            Text(
+                                text = subText,
+                                style = MetaMono,
+                                color = SpineColors.OnSurfaceMuted,
+                                modifier = Modifier.padding(top = 2.dp),
+                            )
+                        }
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
+                        contentDescription = null,
+                        tint = SpineColors.OnSurfaceMuted,
+                        modifier = Modifier.size(14.dp),
+                    )
+                }
             }
+        }
 
-            // Server status card
-            item {
-                Surface(
+        // ---- Theme ----
+        item {
+            DetailGroup(
+                title = "Theme",
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+            ) {
+                val palettes =
+                    listOf(
+                        Triple("sage", "Sage", SageAccent.primary),
+                        Triple("ember", "Ember", EmberAccent.primary),
+                        Triple("signal", "Signal", SignalAccent.primary),
+                    )
+                Row(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 14.dp, vertical = 8.dp)
-                            .then(
-                                if (activeServer != null) {
-                                    Modifier.clickable { onServerClick() }
-                                } else {
-                                    Modifier
-                                },
-                            ),
-                    color = SpineColors.Surface,
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(1.dp, SpineColors.Border),
+                            .padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    Row(
-                        modifier = Modifier.padding(14.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        // Icon container
-                        val accentColors = LocalAccentColors.current
+                    palettes.forEach { (id, name, color) ->
+                        val isActive = accentPalette == id
                         Box(
                             modifier =
                                 Modifier
-                                    .size(40.dp)
+                                    .weight(1f)
+                                    .clip(ShapeSmall)
                                     .background(
-                                        accentColors.primary.copy(alpha = 0.12f),
-                                        RoundedCornerShape(10.dp),
-                                    ),
-                            contentAlignment = Alignment.Center,
+                                        if (isActive) color.copy(alpha = 0.08f) else SpineColors.Bg,
+                                    ).border(1.dp, if (isActive) color else SpineColors.Border, ShapeSmall)
+                                    .clickable { viewModel.setAccentPalette(id) }
+                                    .padding(10.dp),
                         ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Settings,
-                                contentDescription = null,
-                                tint = accentColors.primary,
-                                modifier = Modifier.size(22.dp),
-                            )
-                        }
-                        Spacer(Modifier.width(12.dp))
-                        Column(Modifier.weight(1f)) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .size(28.dp)
+                                            .background(color, RoundedCornerShape(6.dp)),
+                                )
+                                Spacer(Modifier.height(6.dp))
                                 Text(
-                                    text = activeServer?.displayName ?: "Not connected",
+                                    text = name,
                                     style =
                                         TextStyle(
                                             fontFamily = SpaceGrotesk,
-                                            fontSize = 14.sp,
+                                            fontSize = 11.sp,
                                             fontWeight = FontWeight.SemiBold,
                                         ),
                                     color = SpineColors.OnSurface,
                                 )
-                                if (serverInfo != null) {
-                                    Spacer(Modifier.width(6.dp))
-                                    Box(
-                                        Modifier
-                                            .size(8.dp)
-                                            .background(SpineColors.Success, CircleShape),
-                                    )
-                                }
                             }
-                            if (activeServer != null) {
-                                val subText =
-                                    serverInfo?.let {
-                                        "Stash v${it.version} · ${it.sceneCount} scenes"
-                                    } ?: "Connected · tap to refresh"
-                                Text(
-                                    text = subText,
-                                    style = MetaMono,
-                                    color = SpineColors.OnSurfaceMuted,
-                                    modifier = Modifier.padding(top = 2.dp),
+                            if (isActive) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Check,
+                                    contentDescription = null,
+                                    tint = color,
+                                    modifier =
+                                        Modifier
+                                            .size(14.dp)
+                                            .align(Alignment.TopEnd),
                                 )
                             }
                         }
-                        Spacer(Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
-                            contentDescription = null,
-                            tint = SpineColors.OnSurfaceMuted,
-                            modifier = Modifier.size(14.dp),
-                        )
                     }
                 }
             }
+        }
 
-            // Quick search field — tapping opens search overlay
-            item {
-                Surface(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 14.dp, vertical = 4.dp)
-                            .clickable { showSearch = true },
-                    color = SpineColors.Surface,
-                    shape = ShapeSmall,
-                    border = BorderStroke(1.dp, SpineColors.Border),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Search,
-                            contentDescription = null,
-                            tint = SpineColors.OnSurfaceMuted,
-                            modifier = Modifier.size(14.dp),
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = "search settings…",
-                            style = MetaMono,
-                            color = SpineColors.OnSurfaceMuted,
-                        )
-                    }
-                }
-            }
-
-            // HubGroup: Playback, Quality & Codecs, Display, Library
-            item {
-                HubGroup(
-                    title = null,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                ) {
-                    HubRow(
-                        icon = Icons.Outlined.PlayArrow,
-                        label = "Playback",
-                        value = playbackSummary,
-                        onClick = onPlaybackClick,
-                    )
-                    HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
-                    HubRow(
-                        icon = Icons.Outlined.Tune,
-                        label = "Quality & Codecs",
-                        value = codecSummary,
-                        onClick = onCodecsClick,
-                    )
-                    HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
-                    HubRow(
-                        icon = Icons.Outlined.Palette,
-                        label = "Display",
-                        value = displaySummary,
-                        onClick = onDisplayClick,
-                    )
-                    HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
-                    HubRow(
-                        icon = Icons.Outlined.VideoLibrary,
-                        label = "Library",
-                        value = librarySummary,
-                        onClick = onLibraryClick,
-                    )
-                }
-            }
-
-            // HubGroup: App
-            item {
-                HubGroup(
-                    title = "App",
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
-                ) {
-                    HubRow(
-                        icon = Icons.Outlined.Info,
-                        label = "About & diagnostics",
-                        value = "",
-                        onClick = onAboutClick,
-                    )
-                }
-            }
-
-            // HubGroup: Danger zone
-            item {
-                HubGroup(
-                    title = "Danger zone",
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
-                ) {
-                    HubRow(
-                        icon = Icons.Outlined.PowerOff,
-                        label = "Disconnect server",
-                        value = "",
-                        onClick = { viewModel.disconnect(onDisconnected) },
-                        danger = true,
+        // ---- Library layout ----
+        item {
+            DetailGroup(
+                title = "Library layout",
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+            ) {
+                DRowStacked(label = "Grid columns") {
+                    ChipRow(
+                        options =
+                            listOf(
+                                "Auto" to "auto",
+                                "2" to "2",
+                                "3" to "3",
+                                "4" to "4",
+                            ),
+                        selected = gridColumns,
+                        onSelect = { v -> viewModel.setUi { setGridColumns(v) } },
                     )
                 }
             }
         }
 
-        AnimatedVisibility(
-            visible = showSearch,
-            enter = fadeIn(tween(150)),
-            exit = fadeOut(tween(100)),
-        ) {
-            SettingsSearchOverlay(
-                query = searchQuery,
-                results = searchResults,
-                onQueryChange = viewModel::updateSearchQuery,
-                onResultClick = { entry ->
-                    showSearch = false
-                    viewModel.updateSearchQuery("")
-                    when (entry.route) {
-                        Routes.SettingsPlayback -> onPlaybackClick()
-                        Routes.SettingsCodecs -> onCodecsClick()
-                        Routes.SettingsDisplay -> onDisplayClick()
-                        Routes.SettingsLibrary -> onLibraryClick()
-                        Routes.SettingsServer -> onServerClick()
-                        Routes.SettingsAbout -> onAboutClick()
-                    }
-                },
-                onClose = {
-                    showSearch = false
-                    viewModel.updateSearchQuery("")
-                },
+        // ---- Playback ----
+        item {
+            DetailGroup(
+                title = "Playback",
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+            ) {
+                DRowStacked(label = "Double-tap seek", hint = "Seconds to skip on double-tap") {
+                    CSlider(
+                        value = doubleTap.toFloat(),
+                        onValueChange = { viewModel.setPlayer { setDoubleTapSeekSeconds(it.roundToInt()) } },
+                        valueRange = 5f..60f,
+                        valueLabel = "${doubleTap}s",
+                    )
+                }
+                HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
+                DRowStacked(label = "Scrub sensitivity", hint = "Milliseconds of video per pixel dragged") {
+                    CSlider(
+                        value = seekMs,
+                        onValueChange = { viewModel.setPlayer { setSeekMsPerPx(it) } },
+                        valueRange = PlayerPreferences.SEEK_MS_PER_PX_MIN..PlayerPreferences.SEEK_MS_PER_PX_MAX,
+                        valueLabel = "${seekMs.roundToInt()} ms/px",
+                    )
+                }
+            }
+        }
+
+        // ---- Image cache ----
+        item {
+            DetailGroup(
+                title = "Image cache",
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+            ) {
+                DRowStacked(
+                    label = "Disk cache",
+                    hint = "Size of the thumbnail disk cache",
+                ) {
+                    CSlider(
+                        value = cacheMb.toFloat(),
+                        onValueChange = { viewModel.setUi { setImageCacheSizeMb(it.roundToInt()) } },
+                        valueRange = 64f..512f,
+                        valueLabel = "$cacheMb MB",
+                    )
+                }
+            }
+        }
+
+        // ---- Nav rows: Server, About ----
+        item {
+            SectionLabel("App", Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+            NavRow(
+                icon = Icons.Outlined.Settings,
+                label = "Server",
+                onClick = onServerClick,
+            )
+            NavRow(
+                icon = Icons.Outlined.Info,
+                label = "About & diagnostics",
+                onClick = onAboutClick,
+            )
+        }
+
+        // ---- Danger zone ----
+        item {
+            SectionLabel("Danger zone", Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+            NavRow(
+                icon = Icons.Outlined.PowerOff,
+                label = "Disconnect server",
+                onClick = { viewModel.disconnect(onDisconnected) },
+                danger = true,
             )
         }
     }
 }
 
-// ---- Hub primitives ----------------------------------------------------------
+// ---- Nav rows ---------------------------------------------------------------
 
 @Composable
-private fun HubGroup(
-    title: String?,
+private fun SectionLabel(
+    text: String,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
 ) {
-    Column(modifier = modifier) {
-        if (title != null) {
-            Text(
-                text = title.uppercase(),
-                style =
-                    MetaMono.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = 1.sp,
-                    ),
-                color = SpineColors.OnSurfaceMuted,
-                modifier = Modifier.padding(bottom = 8.dp, start = 2.dp),
-            )
-        }
-        Surface(
-            color = SpineColors.Surface,
-            shape = ShapeSmall,
-            border = BorderStroke(1.dp, SpineColors.Border),
-        ) {
-            Column {
-                content()
-            }
-        }
-    }
+    Text(
+        text = text.uppercase(),
+        style =
+            MetaMono.copy(
+                fontWeight = FontWeight.SemiBold,
+                letterSpacing = 1.sp,
+            ),
+        color = SpineColors.OnSurfaceMuted,
+        modifier = modifier.padding(bottom = 8.dp, start = 2.dp),
+    )
 }
 
 @Composable
-private fun HubRow(
+private fun NavRow(
     icon: ImageVector,
     label: String,
-    value: String,
     onClick: () -> Unit,
     danger: Boolean = false,
+    modifier: Modifier = Modifier,
 ) {
-    val iconBg =
-        if (danger) {
-            SpineColors.Error.copy(alpha = 0.08f)
-        } else {
-            SpineColors.SurfaceHigh
-        }
+    val iconBg = if (danger) SpineColors.Error.copy(alpha = 0.08f) else SpineColors.SurfaceHigh
     val iconTint = if (danger) SpineColors.Error else SpineColors.OnSurfaceVariant
     val labelColor = if (danger) SpineColors.Error else SpineColors.OnSurface
-
-    Row(
+    Surface(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(horizontal = 12.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically,
+                .padding(horizontal = 14.dp)
+                .clickable(onClick = onClick),
+        color = SpineColors.Surface,
+        shape = ShapeSmall,
+        border = BorderStroke(1.dp, SpineColors.Border),
     ) {
-        // Leading icon container
-        Box(
-            modifier =
-                Modifier
-                    .size(32.dp)
-                    .background(iconBg, ShapeSmall),
-            contentAlignment = Alignment.Center,
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(18.dp),
-            )
-        }
-        Spacer(Modifier.width(12.dp))
-        // Center label + value
-        Column(Modifier.weight(1f)) {
+            Box(
+                modifier =
+                    Modifier
+                        .size(32.dp)
+                        .background(iconBg, ShapeSmall),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+            Spacer(Modifier.width(12.dp))
             Text(
                 text = label,
                 style =
@@ -484,215 +470,135 @@ private fun HubRow(
                         fontWeight = FontWeight.Medium,
                     ),
                 color = labelColor,
+                modifier = Modifier.weight(1f),
             )
-            if (value.isNotEmpty()) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
+                contentDescription = null,
+                tint = SpineColors.OnSurfaceMuted,
+                modifier = Modifier.size(16.dp),
+            )
+        }
+    }
+    Spacer(Modifier.height(6.dp))
+}
+
+// ---- Shared primitives (used by Server + About sub-screens) -----------------
+
+/**
+ * Themed Switch using accent palette colors.
+ */
+@Composable
+internal fun SpineSwitch(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    val accent = LocalAccentColors.current
+    Switch(
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        colors =
+            SwitchDefaults.colors(
+                checkedThumbColor = accent.onPrimary,
+                checkedTrackColor = accent.primary,
+                uncheckedThumbColor = SpineColors.OnSurfaceMuted,
+                uncheckedTrackColor = SpineColors.SurfaceHigh,
+            ),
+    )
+}
+
+/**
+ * Horizontal scrollable chip row.
+ */
+@Composable
+internal fun <T> ChipRow(
+    options: List<Pair<String, T>>,
+    selected: T,
+    onSelect: (T) -> Unit,
+) {
+    val accent = LocalAccentColors.current
+    androidx.compose.foundation.lazy.LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        items(options.size) { i ->
+            val (label, value) = options[i]
+            val isActive = value == selected
+            Surface(
+                onClick = { onSelect(value) },
+                shape = ShapeSmall,
+                color = if (isActive) accent.primary.copy(alpha = 0.12f) else SpineColors.SurfaceHigh,
+                border =
+                    BorderStroke(
+                        1.dp,
+                        if (isActive) accent.primary else SpineColors.Border,
+                    ),
+            ) {
                 Text(
-                    text = value,
+                    text = label,
                     style =
-                        TextStyle(
-                            fontFamily = JetBrainsMono,
-                            fontSize = 11.sp,
+                        MetaMono.copy(
+                            fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
                         ),
-                    color = LocalAccentColors.current.primary,
-                    modifier = Modifier.padding(top = 2.dp),
+                    color = if (isActive) accent.primary else SpineColors.OnSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
                 )
             }
         }
-        // Trailing chevron
-        Icon(
-            imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
-            contentDescription = null,
-            tint = SpineColors.OnSurfaceMuted,
-            modifier = Modifier.size(16.dp),
-        )
     }
 }
 
-// ---- Search overlay ----------------------------------------------------------
-
+/**
+ * Container for a group of settings rows on a detail page.
+ */
 @Composable
-private fun SettingsSearchOverlay(
-    query: String,
-    results: List<SettingsSearchEntry>,
-    onQueryChange: (String) -> Unit,
-    onResultClick: (SettingsSearchEntry) -> Unit,
-    onClose: () -> Unit,
+internal fun DetailGroup(
+    title: String? = null,
+    badge: String? = null,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = SpineColors.Bg,
-    ) {
-        Column {
-            // Top bar: back arrow + active TextField
+    val accent = LocalAccentColors.current
+    Column(modifier = modifier) {
+        if (title != null || badge != null) {
             Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                modifier = Modifier.padding(bottom = 8.dp, start = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                IconButton(onClick = onClose) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                        contentDescription = "Back",
-                        tint = SpineColors.OnSurface,
-                    )
-                }
-                BasicTextField(
-                    value = query,
-                    onValueChange = onQueryChange,
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .background(SpineColors.Surface, ShapeSmall)
-                            .border(
-                                1.dp,
-                                if (query.isNotEmpty()) {
-                                    LocalAccentColors.current.primary
-                                } else {
-                                    SpineColors.Border
-                                },
-                                ShapeSmall,
-                            ).padding(horizontal = 12.dp, vertical = 10.dp),
-                    textStyle = MonoSmall.copy(color = SpineColors.OnSurface),
-                    cursorBrush = SolidColor(LocalAccentColors.current.primary),
-                    singleLine = true,
-                    decorationBox = { innerTextField ->
-                        if (query.isEmpty()) {
-                            Text(
-                                "search settings…",
-                                style = MonoSmall,
-                                color = SpineColors.OnSurfaceMuted,
-                            )
-                        }
-                        innerTextField()
-                    },
-                )
-            }
-
-            if (results.isNotEmpty()) {
-                Text(
-                    "${results.size} MATCHES",
-                    style = MetaMono,
-                    color = SpineColors.OnSurfaceMuted,
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
-                )
-                Surface(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 18.dp),
-                    shape = ShapeSmall,
-                    border = BorderStroke(1.dp, SpineColors.Border),
-                ) {
-                    LazyColumn {
-                        itemsIndexed(results) { index, entry ->
-                            if (index > 0) {
-                                HorizontalDivider(color = SpineColors.Border, thickness = 1.dp)
-                            }
-                            SearchHit(
-                                entry = entry,
-                                query = query,
-                                onClick = { onResultClick(entry) },
-                            )
-                        }
-                    }
-                }
-            } else if (query.isNotBlank()) {
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = 48.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+                if (title != null) {
                     Text(
-                        "No results for “$query”",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = SpineColors.OnSurfaceVariant,
-                    )
-                    Text(
-                        "Try a different keyword",
-                        style = MetaMono,
+                        text = title.uppercase(),
+                        style =
+                            MetaMono.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                letterSpacing = 1.sp,
+                            ),
                         color = SpineColors.OnSurfaceMuted,
                     )
                 }
+                if (badge != null) {
+                    Spacer(Modifier.padding(start = 8.dp))
+                    Text(
+                        text = badge,
+                        style = MetaMono,
+                        color = accent.primary,
+                        modifier =
+                            Modifier
+                                .background(
+                                    color = accent.primary.copy(alpha = 0.10f),
+                                    shape = ShapeSmall,
+                                ).padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
+                }
+            }
+        }
+        Surface(
+            color = SpineColors.Surface,
+            shape = ShapeSmall,
+            border = BorderStroke(1.dp, SpineColors.Border),
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                content()
             }
         }
     }
 }
-
-@Composable
-private fun SearchHit(
-    entry: SettingsSearchEntry,
-    query: String,
-    onClick: () -> Unit,
-) {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(12.dp),
-    ) {
-        Text(entry.breadcrumb, style = MetaMono, color = SpineColors.OnSurfaceMuted)
-        Spacer(Modifier.height(2.dp))
-        HighlightedText(
-            text = entry.label,
-            highlight = query,
-            normalColor = SpineColors.OnSurface,
-            highlightColor = LocalAccentColors.current.primary,
-            highlightBg = LocalAccentColors.current.primary.copy(alpha = 0.25f),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Text(
-            entry.hint,
-            style = MaterialTheme.typography.bodySmall,
-            color = SpineColors.OnSurfaceMuted,
-            maxLines = 2,
-        )
-    }
-}
-
-@Composable
-private fun HighlightedText(
-    text: String,
-    highlight: String,
-    normalColor: Color,
-    highlightColor: Color,
-    highlightBg: Color,
-    style: TextStyle,
-) {
-    if (highlight.isBlank()) {
-        Text(text, style = style, color = normalColor)
-        return
-    }
-    val idx = text.indexOf(highlight, ignoreCase = true)
-    if (idx < 0) {
-        Text(text, style = style, color = normalColor)
-        return
-    }
-    val annotated =
-        buildAnnotatedString {
-            withStyle(SpanStyle(color = normalColor)) {
-                append(text.substring(0, idx))
-            }
-            withStyle(
-                SpanStyle(
-                    color = highlightColor,
-                    background = highlightBg,
-                    fontWeight = FontWeight.SemiBold,
-                ),
-            ) {
-                append(text.substring(idx, idx + highlight.length))
-            }
-            withStyle(SpanStyle(color = normalColor)) {
-                append(text.substring(idx + highlight.length))
-            }
-        }
-    Text(annotated, style = style)
-}
-
-// ---- MonoSmall alias (local — avoids extra import) ---------------------------
-
-private val MonoSmall = io.stashapp.android.core.designsystem.theme.MonoSmall

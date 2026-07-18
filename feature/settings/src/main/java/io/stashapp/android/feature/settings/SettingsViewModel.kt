@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -61,25 +60,6 @@ class SettingsViewModel
             viewModelScope.launch { uiPrefs.setAccentPalette(name) }
         }
 
-        // --- Search (SETTINGS-11, wired by Plan 6.3) ---
-        private val _searchQuery = MutableStateFlow("")
-        val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-
-        val searchResults: StateFlow<List<SettingsSearchEntry>> =
-            _searchQuery
-                .map { q ->
-                    if (q.isBlank()) {
-                        emptyList()
-                    } else {
-                        SettingsSearchIndex.filter { entry ->
-                            (entry.label + " " + entry.hint).contains(q, ignoreCase = true)
-                        }
-                    }
-                }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
-
-        fun updateSearchQuery(query: String) {
-            _searchQuery.value = query
-        }
 
         init {
             viewModelScope.launch {

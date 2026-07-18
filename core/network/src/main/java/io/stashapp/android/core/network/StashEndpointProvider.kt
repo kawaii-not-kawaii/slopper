@@ -9,7 +9,4 @@ import kotlinx.coroutines.flow.Flow
 interface StashEndpointProvider {
     /** Current active endpoint; `null` if user has not connected yet. */
     fun current(): StashEndpoint?
-
-    /** Observes endpoint changes. Emits `null` when disconnected. */
-    fun observe(): Flow<StashEndpoint?>
 }

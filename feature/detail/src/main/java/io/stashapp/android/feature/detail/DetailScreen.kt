@@ -66,6 +66,7 @@ import io.stashapp.android.core.designsystem.theme.ShapeMedium
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.PerformerRef
 import io.stashapp.android.core.model.SceneDetail
@@ -141,6 +142,7 @@ private fun SceneBody(
     onDecrementO: () -> Unit,
 ) {
     val s = scene.summary
+    val accent = LocalAccentColors.current
 
     Column(
         Modifier
@@ -218,14 +220,14 @@ private fun SceneBody(
                         .padding(8.dp)
                         .size(44.dp)
                         .clip(CircleShape)
-                        .background(SpineColors.AccentPrimary)
+                        .background(accent.primary)
                         .clickable { onPlay(s.id, s.resumeTimeSeconds?.takeIf { it > 2 }) },
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
                     Icons.Filled.PlayArrow,
                     contentDescription = "Play",
-                    tint = SpineColors.AccentOnPrimary,
+                    tint = accent.onPrimary,
                     modifier = Modifier.size(24.dp),
                 )
             }
@@ -241,7 +243,7 @@ private fun SceneBody(
                 Text(
                     studioName.uppercase(),
                     style = MetaMono.copy(fontWeight = FontWeight.Bold, letterSpacing = 1.sp),
-                    color = SpineColors.AccentPrimary,
+                    color = accent.primary,
                 )
                 Spacer(Modifier.height(4.dp))
             }
@@ -282,8 +284,8 @@ private fun SceneBody(
                     .padding(horizontal = 18.dp),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = SpineColors.AccentPrimary,
-                    contentColor = SpineColors.AccentOnPrimary,
+                    containerColor = accent.primary,
+                    contentColor = accent.onPrimary,
                 ),
             shape = ShapeSmall,
             contentPadding = PaddingValues(12.dp),
@@ -438,6 +440,7 @@ private fun ActionRow(
     onDecrementO: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val accent = LocalAccentColors.current
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // 5-star rating row
         Row(
@@ -481,8 +484,8 @@ private fun ActionRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Surface(
-                color = if (organized) SpineColors.AccentPrimary else MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = if (organized) SpineColors.AccentOnPrimary else MaterialTheme.colorScheme.onSurface,
+                color = if (organized) accent.primary else MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = if (organized) accent.onPrimary else MaterialTheme.colorScheme.onSurface,
                 shape = RoundedCornerShape(8.dp),
                 onClick = { onOrganizedToggle(!organized) },
             ) {
@@ -520,7 +523,7 @@ private fun ActionRow(
                     Text(
                         "● $oCounter",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = if (oCounter > 0) SpineColors.AccentPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = if (oCounter > 0) accent.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 4.dp),
                     )
                     IconButton(
@@ -611,6 +614,7 @@ private fun ChapterRow(
     marker: Marker,
     onClick: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     Surface(
         color = SpineColors.Surface,
         shape = ShapeSmall,
@@ -634,7 +638,7 @@ private fun ChapterRow(
                     Text(
                         marker.primaryTagName,
                         style = MetaMono,
-                        color = SpineColors.AccentPrimary,
+                        color = accent.primary,
                     )
                 }
             }
