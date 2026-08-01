@@ -1,10 +1,11 @@
 <!-- generated-by: gsd-doc-writer -->
 # Slopper
 
-> ⚠️ **Alpha software.** Slopper is under active development and **not production-ready**.
-> The build, APIs, and behavior may change without notice, and releases are unstable.
-> It currently rides pre-release build tooling (AGP 9, Kotlin 2.3.20 / KSP2, detekt 2.0-alpha,
-> androidx baseline-profile 1.5.0-alpha). Use at your own risk.
+> ⚠️ **Alpha software.** Slopper 0.2.0-alpha is under active development and
+> **not production-ready**. The build, APIs, and behavior may change without
+> notice, and releases are unstable. It currently rides pre-release build tooling
+> (AGP 9.2.1, Kotlin 2.3.20 / KSP 2.3.9, detekt 2.0.0-alpha.5, and
+> androidx baseline-profile 1.5.0-alpha07). Use at your own risk.
 
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/kawaii-not-kawaii/slopper/badge)](https://scorecard.dev/viewer/?uri=github.com/kawaii-not-kawaii/slopper)
 
@@ -14,30 +15,30 @@ server. Connection flow, paginated library grid with search/filter, scene
 detail with rating + organize + O-counter actions, and a Media3-backed player
 with queue / shuffle / repeat / PiP / marker-seek / resume sync-back.
 
-This repository is on the **v1.0 modernization milestone**. Phases 1–2 have
-landed: Gradle 8.11.1, AGP 8.7.3, Kotlin 2.2.20, Compose BOM 2026.05.00, Hilt
-2.56.2, Apollo 4.4.3, Media3 1.9.1 (Phase 1); plus edge-to-edge, predictive
-back (`PredictiveBackHandler`), Splash Screen API, per-app language picker,
-and orphan-permission cleanup (Phase 2). All 5 phases (DEPS / COMPLY / PERF / POLISH / SPINE) of the v1.0 milestone are complete.
-**Phase 5 — SPINE:** Complete visual redesign. Sage accent (#9DC83C), Space Grotesk + JetBrains Mono typography, floating pill bottom nav, chapter strip in player, all 8 screens and 6 modal flows redesigned.
+The **v1.0 modernization milestone** is complete, and phases 7–10 of the v1.1
+milestone have landed. The current 0.2.0-alpha build uses Gradle 9.4.1, AGP
+9.2.1, Kotlin 2.3.20, Hilt 2.59.2, Apollo 5.0.1, and Media3 1.10.0. The
+milestones also delivered the platform-compliance, performance, visual-design,
+and architecture work described in the repository history.
 
 ## Toolchain
 
-| Component       | Version                | Source                                  |
-|-----------------|------------------------|-----------------------------------------|
-| Gradle wrapper  | 8.11.1 (SHA-256 pinned)| `gradle/wrapper/gradle-wrapper.properties` |
-| AGP             | 8.7.3                  | `gradle/libs.versions.toml`             |
-| Kotlin / KSP    | 2.2.20 / 2.2.20-2.0.4  | `gradle/libs.versions.toml`             |
-| JDK toolchain   | 17 (auto-download off) | `build-logic/.../KotlinAndroid.kt`, `gradle.properties` |
-| compileSdk      | 35                     | `build-logic/.../KotlinAndroid.kt`      |
-| targetSdk       | 35                     | `build-logic/.../AndroidApplicationConventionPlugin.kt`, `AndroidLibraryConventionPlugin.kt` |
-| minSdk          | 26                     | `build-logic/.../KotlinAndroid.kt`      |
-| Hilt            | 2.56.2                 | `gradle/libs.versions.toml`             |
-| Apollo          | 4.4.3                  | `gradle/libs.versions.toml`             |
-| Compose BOM     | 2026.05.00             | `gradle/libs.versions.toml`             |
-| Media3          | 1.9.1                  | `gradle/libs.versions.toml`             |
-| Coil            | 3.0.4                  | `gradle/libs.versions.toml`             |
-| detekt / ktlint | 1.23.8 / 13.1.0 plugin | `gradle/libs.versions.toml`             |
+| Component                  | Version                  | Source                                  |
+|----------------------------|--------------------------|-----------------------------------------|
+| Application                | 0.2.0-alpha              | `app/build.gradle.kts`                  |
+| Gradle wrapper             | 9.4.1 (SHA-256 pinned)   | `gradle/wrapper/gradle-wrapper.properties` |
+| AGP                        | 9.2.1                    | `gradle/libs.versions.toml`             |
+| Kotlin / KSP               | 2.3.20 / 2.3.9           | `gradle/libs.versions.toml`             |
+| JDK toolchain              | 17 (auto-download off)   | `build-logic/.../KotlinAndroid.kt`, `gradle.properties` |
+| compileSdk / targetSdk     | 36 / 35                  | `build-logic/.../KotlinAndroid.kt`, convention plugins |
+| minSdk                     | 26                       | `build-logic/.../KotlinAndroid.kt`      |
+| Hilt                       | 2.59.2                   | `gradle/libs.versions.toml`             |
+| Apollo                     | 5.0.1                    | `gradle/libs.versions.toml`             |
+| Compose BOM                | 2026.06.01               | `gradle/libs.versions.toml`             |
+| Media3 / nextlib extension | 1.10.0 / 1.10.0-0.12.1  | `gradle/libs.versions.toml`             |
+| Coil                       | 3.4.0                    | `gradle/libs.versions.toml`             |
+| detekt / ktlint plugin     | 2.0.0-alpha.5 / 14.2.0  | `gradle/libs.versions.toml`             |
+| Baseline-profile plugin    | 1.5.0-alpha07            | `gradle/libs.versions.toml`             |
 
 Single source of truth for every library version is
 [`gradle/libs.versions.toml`](gradle/libs.versions.toml).
@@ -70,7 +71,7 @@ Notes:
 - The wrapper enforces `org.gradle.java.installations.auto-download=false` —
   Gradle will refuse to download its own JDK. Install JDK 17 yourself.
 - [`bootstrap.sh`](bootstrap.sh) prefers a system `gradle` if present;
-  otherwise it pulls Gradle 8.11.1 into `~/.local/gradle-8.11.1/` and uses
+  otherwise it pulls Gradle 9.4.1 into `~/.local/gradle-9.4.1/` and uses
   that to generate the wrapper.
 - Build artifacts land in `app/build/outputs/apk/debug/` as per-ABI splits
   (`app-arm64-v8a-debug.apk`, `app-armeabi-v7a-debug.apk`).
@@ -145,17 +146,16 @@ distribution.
 Three lint detectors are turned off in
 [`build-logic/convention/src/main/kotlin/io/stashapp/android/buildlogic/KotlinAndroid.kt`](build-logic/convention/src/main/kotlin/io/stashapp/android/buildlogic/KotlinAndroid.kt):
 
-- `NullSafeMutableLiveData` (from `androidx.lifecycle` 2.8.7)
-- `FrequentlyChangingValue` (from `compose-runtime` in Compose BOM 2026.05.00)
-- `RememberInComposition` (from `compose-runtime` in Compose BOM 2026.05.00)
+- `NullSafeMutableLiveData` (from `androidx.lifecycle` 2.10.0)
+- `FrequentlyChangingValue` (from `compose-runtime` in Compose BOM 2026.06.01)
+- `RememberInComposition` (from `compose-runtime` in Compose BOM 2026.06.01)
 
-These detectors ship inside the AndroidX artifacts and crash with
-`IncompatibleClassChangeError` under AGP 8.7.3 + Kotlin 2.2.20 lint. They will
-be re-enabled when the underlying AndroidX libraries are bumped under
-**DEPS-07** (deferred from Phase 1 into a later AndroidX-refresh pass).
+These detectors remain disabled in the current convention plugin pending
+compatibility re-evaluation. Re-enable them when the AndroidX/toolchain
+combination supports them.
 
-If you see new "ignored" lint warnings appear after rebasing, check whether
-DEPS-07 has landed — the list may have shrunk.
+If you see new ignored lint warnings after rebasing, check whether this list
+can be reduced.
 
 ## Repository layout
 
@@ -169,7 +169,7 @@ slopper/
 ├── feature/                 # connection, home, library, browse, detail, player, settings
 ├── gradle/
 │   ├── libs.versions.toml   # Single source of truth for deps + versions
-│   └── wrapper/             # Pinned Gradle 8.11.1 wrapper
+│   └── wrapper/             # Pinned Gradle 9.4.1 wrapper
 ├── tools/                   # Out-of-band tooling (e.g. ffmpeg-extension build)
 ├── bootstrap.sh             # One-time Gradle wrapper installer
 ├── DEVICE_TESTING.md        # End-to-end install + smoke test checklist
@@ -180,26 +180,25 @@ slopper/
 
 ## Status & caveats
 
-- **No automated test suite yet.** Verification today is the manual checklist
-  in [`DEVICE_TESTING.md`](DEVICE_TESTING.md). A test pass is on the POLISH
-  backlog.
-- **No CI.** All builds are local. A CI wiring pass is planned but not done.
-- **Phase 3 (PERF) landed.** GMD (Pixel 6 API 34) declared; Compose Compiler stability reports enabled; `ImmutableList<T>` migration for home/player UiState; `applyVideoFrameRate` moved from `AndroidView.update` to `LaunchedEffect`; shuffle queue-exhaustion UX fix; `ColdStartBenchmark` + `LibraryScrollBenchmark` added. Macrobench execution deferred to device testing session.
+- **Automated JVM coverage exists.** The local full gate on 2026-08-01 ran 61
+  passing JVM tests across 16 reports. There is still no `androidTest`
+  correctness coverage, so UI and device behavior require the checklist in
+  [`DEVICE_TESTING.md`](DEVICE_TESTING.md).
+- **CI configuration exists.** GitHub Actions and Forgejo Actions workflows are
+  present. No live remote workflow result was verified on 2026-08-01.
+- **The local build and quality gate passed on 2026-08-01.**
+  `./gradlew :app:assembleDebug detekt ktlintCheck test lint --no-daemon`
+  completed with 896 tasks (203 executed, 693 up-to-date). APK runtime launch
+  was not verified: no device was connected, and software emulators crashed
+  without KVM.
+- **Phase 3 (PERF) landed.** GMD (Pixel 6 API 34) declared; Compose Compiler stability reports enabled; `ImmutableList<T>` migration for home/player UiState; `applyVideoFrameRate` moved from `AndroidView.update` to `LaunchedEffect`; shuffle queue-exhaustion UX fix; `ColdStartBenchmark` + `LibraryScrollBenchmark` added. Macrobench execution remains a device-testing concern.
 - **Platform compliance (Phase 2) landed.** Edge-to-edge enforced via
   `enableEdgeToEdge()` (bar-color overrides stripped from `themes.xml`); all
   three `ModalBottomSheet` sites get `contentWindowInsets`; `PlayerScreen`
   chrome wrapped in `safeDrawingPadding`; `PredictiveBackHandler` replaces
-  `BackHandler` at `PlayerScreen.kt:188`; Splash Screen API wired in
-  `MainActivity`; per-app language picker via `generateLocaleConfig`; orphan
-  `POST_NOTIFICATIONS` and `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permissions
-  removed.
-- **Media3 stays on 1.9.1.** The 1.10.0 upgrade is deferred together with
-  AGP 9 + compileSdk 36; see the comment block in
-  [`gradle/libs.versions.toml`](gradle/libs.versions.toml).
-- **Apollo 4.4.3 + OkHttp 4.12.0 are explicitly held.** Apollo 5 (May 2026)
-  split `apollo-normalized-cache-sqlite` and promoted warnings to errors;
-  OkHttp 5 shares the client transitively with Apollo + Media3 + Coil.
-  Both are deferred to the NET-01 milestone.
+  `BackHandler`; Splash Screen API wired in `MainActivity`; per-app language
+  picker via `generateLocaleConfig`; orphan `POST_NOTIFICATIONS` and
+  `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permissions removed.
 - **FFmpeg extension is optional.** Without it, ExoPlayer falls back to the
   device's hardware decoders only (AC3/EAC3/DTS/TrueHD may fail). Build
   scripts live in `tools/ffmpeg-extension/`.

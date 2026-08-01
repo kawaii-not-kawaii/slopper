@@ -57,7 +57,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.model.RepeatMode
 import kotlinx.collections.immutable.toPersistentList
@@ -86,6 +86,7 @@ fun PlayerScreen(
     onExit: () -> Unit,
     viewModel: PlayerViewModel = hiltViewModel(),
 ) {
+    val accent = LocalAccentColors.current
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as? Activity
@@ -317,7 +318,7 @@ fun PlayerScreen(
 
         scrubPreview?.let { preview ->
             // Duration rarely changes — read it once per scene for the preview.
-            val snapshotDuration = viewModel.position.value.durationMs
+            val snapshotDuration = position.durationMs
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 ScrubPreviewCard(preview, snapshotDuration)
             }
@@ -362,7 +363,7 @@ fun PlayerScreen(
                         Icon(
                             Icons.Filled.Lock,
                             contentDescription = "Unlock",
-                            tint = SpineColors.AccentPrimary,
+                            tint = accent.primary,
                             modifier = Modifier.size(28.dp),
                         )
                     }
@@ -506,12 +507,6 @@ fun PlayerScreen(
                                 showRemaining = !showRemaining
                                 lastInteraction = System.currentTimeMillis()
                             },
-                            onScreenshot = {
-                                // TODO: capture frame. MediaMetadataRetriever path works
-                                // but needs storage permission + URI handling — punting
-                                // to a follow-up pass since it's more than UI plumbing.
-                                viewModel.flashBanner("Screenshot — coming soon")
-                            },
                             onToggleSettings = {
                                 showSettingsPanel = !showSettingsPanel
                                 lastInteraction = System.currentTimeMillis()
@@ -530,10 +525,6 @@ fun PlayerScreen(
                 viewModel.setPlaybackSpeed(speed)
                 lastInteraction = System.currentTimeMillis()
             },
-            onDismiss = {
-                showSettingsPanel = false
-                lastInteraction = System.currentTimeMillis()
-            },
             modifier = Modifier.align(Alignment.CenterEnd),
         )
     }
@@ -549,6 +540,7 @@ fun PlayerScreen(
  * every compose `update` pass of the [AndroidView]; cheap because
  * `setFrameRate()` is idempotent when the value hasn't changed.
  */
+@OptIn(UnstableApi::class)
 private fun applyVideoFrameRate(
     playerView: PlayerView,
     fps: Float?,
@@ -578,6 +570,7 @@ private fun codecLabel(): String =
         else -> "HW"
     }
 
+@OptIn(UnstableApi::class)
 private fun nextResize(current: Int): Int =
     when (current) {
         AspectRatioFrameLayout.RESIZE_MODE_FIT -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM

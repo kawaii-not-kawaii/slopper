@@ -25,7 +25,6 @@ import javax.inject.Inject
 data class LibraryUiState(
     val query: SceneQuery = SceneQuery(),
     val searchText: String = "",
-    val searchExpanded: Boolean = false,
     /** Whether the user has a persisted default filter — used to decide if
      *  "Reset to default" should be shown / labelled differently. */
     val hasSavedDefault: Boolean = false,
@@ -62,11 +61,6 @@ class LibraryViewModel
                     uiFlow.value = uiFlow.value.copy(hasSavedDefault = saved != null)
                 }
             }
-        }
-
-        fun setSearchExpanded(expanded: Boolean) {
-            uiFlow.value = uiFlow.value.copy(searchExpanded = expanded)
-            if (!expanded && uiFlow.value.searchText.isNotEmpty()) setSearchText("")
         }
 
         fun setSearchText(text: String) {

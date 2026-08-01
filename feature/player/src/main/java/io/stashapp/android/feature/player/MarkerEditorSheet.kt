@@ -38,6 +38,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.MonoSmall
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
@@ -134,7 +135,7 @@ private fun MarkerMiniTimeline(
     durationMs: Long,
     modifier: Modifier = Modifier,
 ) {
-    val accentPrimary = SpineColors.AccentPrimary
+    val accentPrimary = LocalAccentColors.current.primary
     val warning = SpineColors.Warning
     val bg = SpineColors.Bg
 
@@ -219,7 +220,7 @@ private fun MarkerRow(marker: Marker) {
                     Text(
                         text = marker.primaryTagName,
                         style = MetaMono,
-                        color = SpineColors.AccentPrimary,
+                        color = LocalAccentColors.current.primary,
                     )
                 }
             }

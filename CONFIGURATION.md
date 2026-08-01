@@ -26,7 +26,7 @@ Android SDK path are read.
 | `STASH_KEY_ALIAS` | Optional (release-signing path A) | Key alias inside the keystore. | `stash-release` |
 | `STASH_KEY_PASSWORD` | Optional (release-signing path A) | Password for the key entry. | `redacted` |
 | `NVD_API_KEY` | Optional | Speeds up `./gradlew dependencyCheckAggregate` by avoiding the NVD anonymous rate limit. Not yet enforced by CI. <!-- VERIFY: NVD_API_KEY consumption is via the OWASP dependencyCheck plugin's standard `nvdApiKey` setting — confirm in CI workflow when added --> | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
-| `GRADLE_VERSION` | Optional | Used **only** by `bootstrap.sh` to override the wrapper version it installs. Default `8.11.1`. Does not affect builds once the wrapper exists. | `8.11.1` |
+| `GRADLE_VERSION` | Optional | Used **only** by `bootstrap.sh` to override the wrapper version it installs. Default `9.4.1`. Does not affect builds once the wrapper exists. | `9.4.1` |
 
 Release signing follows a two-source pattern: `keystore.properties` values take
 precedence; missing keys fall through to the matching `STASH_KEYSTORE_*` env var. See §3.
@@ -48,7 +48,6 @@ Project-wide Gradle behavior. Every key from
 | `kotlin.daemon.jvmargs` | `-Xmx1500m -XX:+UseParallelGC` | Kotlin daemon heap cap (paired with the worker cap above). |
 | `android.useAndroidX` | `true` | Required for the modern AndroidX stack. |
 | `android.nonTransitiveRClass` | `true` | Each module gets its own R class; faster builds, smaller APKs. |
-| `android.defaults.buildfeatures.buildconfig` | `false` | `BuildConfig` generation off by default (modules opt in). |
 | `android.defaults.buildfeatures.resvalues` | `false` | `resValues` generation off by default. |
 | `android.defaults.buildfeatures.shaders` | `false` | Shader compilation off by default. |
 | `kotlin.code.style` | `official` | Aligns IDE formatting with the official Kotlin style guide. |
@@ -105,13 +104,13 @@ bumps.
 ## 5. Gradle wrapper pin (`gradle/wrapper/gradle-wrapper.properties`)
 
 ```properties
-distributionUrl=https\://services.gradle.org/distributions/gradle-8.11.1-bin.zip
-distributionSha256Sum=f397b287023acdba1e9f6fc5ea72d22dd63669d59ed4a289a29b1a76eee151c6
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.4.1-bin.zip
+distributionSha256Sum=2ab2958f2a1e51120c326cad6f385153bb11ee93b3c216c5fccebfdfbb7ec6cb
 networkTimeout=10000
 validateDistributionUrl=true
 ```
 
-Gradle `8.11.1` with SHA-256 pinning + URL validation. The wrapper jar (`gradlew`,
+Gradle `9.4.1` with SHA-256 pinning + URL validation. The wrapper jar (`gradlew`,
 `gradlew.bat`, `gradle-wrapper.jar`) is **gitignored** — `bootstrap.sh` regenerates it
 on first run.
 
@@ -127,8 +126,8 @@ on first run.
 | `config/owasp-suppressions.xml` | OWASP dependency-check false-positive suppressions. Referenced by the root `dependencyCheck { suppressionFile = ... }` block. |
 
 The detekt root config is wired in `build.gradle.kts` via the `subprojects {}` block —
-every module inherits it automatically. Tool version (`1.23.8`) is set both there and in
-`libs.versions.toml`; keep them in sync.
+every module inherits it automatically. Tool version (`2.0.0-alpha.5`) is set both
+there and in `libs.versions.toml`; keep them in sync.
 
 ### 6.2 Baselines (all committed)
 
@@ -138,9 +137,13 @@ every module inherits it automatically. Tool version (`1.23.8`) is set both ther
 | `app/detekt-baseline.xml` | detekt baseline for `:app`. | `./gradlew :app:detektBaseline` |
 | `core/data/detekt-baseline.xml` | detekt baseline for `:core:data`. | `./gradlew :core:data:detektBaseline` |
 | `core/designsystem/detekt-baseline.xml` | detekt baseline for `:core:designsystem`. | `./gradlew :core:designsystem:detektBaseline` |
+| `core/domain/detekt-baseline.xml` | detekt baseline for `:core:domain`. | `./gradlew :core:domain:detektBaseline` |
 | `core/ui/detekt-baseline.xml` | detekt baseline for `:core:ui`. | `./gradlew :core:ui:detektBaseline` |
+| `feature/browse/detekt-baseline.xml` | detekt baseline for `:feature:browse`. | `./gradlew :feature:browse:detektBaseline` |
 | `feature/connection/detekt-baseline.xml` | detekt baseline for `:feature:connection`. | `./gradlew :feature:connection:detektBaseline` |
 | `feature/detail/detekt-baseline.xml` | detekt baseline for `:feature:detail`. | `./gradlew :feature:detail:detektBaseline` |
+| `feature/home/detekt-baseline.xml` | detekt baseline for `:feature:home`. | `./gradlew :feature:home:detektBaseline` |
+| `feature/library/detekt-baseline.xml` | detekt baseline for `:feature:library`. | `./gradlew :feature:library:detektBaseline` |
 | `feature/player/detekt-baseline.xml` | detekt baseline for `:feature:player`. | `./gradlew :feature:player:detektBaseline` |
 | `feature/settings/detekt-baseline.xml` | detekt baseline for `:feature:settings`. | `./gradlew :feature:settings:detektBaseline` |
 
@@ -180,7 +183,7 @@ Every Android module applied via the `stash.android.*` convention plugins inheri
 
 | Setting | Value |
 |---|---|
-| `compileSdk` | `35` |
+| `compileSdk` | `36` |
 | `minSdk` | `26` |
 | `targetCompatibility` / `sourceCompatibility` | `JavaVersion.VERSION_17` |
 | `isCoreLibraryDesugaringEnabled` | `false` |
@@ -196,14 +199,14 @@ freeCompilerArgs.addAll(
 )
 ```
 
-**Lint detectors disabled at the convention-plugin level** (re-enable when DEPS-07
-lands — currently deferred):
+**Lint detectors disabled at the convention-plugin level** (re-evaluate after
+AndroidX/toolchain updates):
 
 | Detector | Source | Reason disabled |
 |---|---|---|
-| `NullSafeMutableLiveData` | `androidx.lifecycle 2.8.7` | Detector crashes with `IncompatibleClassChangeError` under AGP 8.7.3 lint + Kotlin 2.2.20. |
-| `FrequentlyChangingValue` | `androidx.compose-runtime` (Compose BOM 2026.05.00) | Same incompatibility. |
-| `RememberInComposition` | `androidx.compose-runtime` (Compose BOM 2026.05.00) | Same incompatibility. |
+| `NullSafeMutableLiveData` | `androidx.lifecycle 2.10.0` | Pending compatibility re-evaluation. |
+| `FrequentlyChangingValue` | `androidx.compose-runtime` (Compose BOM 2026.06.01) | Pending compatibility re-evaluation. |
+| `RememberInComposition` | `androidx.compose-runtime` (Compose BOM 2026.06.01) | Pending compatibility re-evaluation. |
 
 **Additional `:app`-level lint config** (`app/build.gradle.kts` lines 89–102):
 
@@ -228,7 +231,7 @@ lands — currently deferred):
 ABI splits enabled: `arm64-v8a`, `armeabi-v7a`. No universal APK
 (`isUniversalApk = false`).
 
-Identity: `applicationId = "io.stashapp.android"`, `versionCode = 2`,
+Identity: `applicationId = "io.stashapp.android"`, `versionCode = 5`,
 `versionName = "0.2.0-alpha"`.
 
 ---

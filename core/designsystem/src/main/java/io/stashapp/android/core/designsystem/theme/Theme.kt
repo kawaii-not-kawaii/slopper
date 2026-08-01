@@ -1,6 +1,5 @@
 package io.stashapp.android.core.designsystem.theme
 
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -16,7 +15,6 @@ import androidx.compose.ui.unit.dp
 val ShapeSmall = RoundedCornerShape(6.dp)
 val ShapeMedium = RoundedCornerShape(10.dp)
 val ShapeLarge = RoundedCornerShape(16.dp)
-val ShapeCircle = CircleShape
 
 // ---- Accent palette data structures (D-05) ----------------------------------
 

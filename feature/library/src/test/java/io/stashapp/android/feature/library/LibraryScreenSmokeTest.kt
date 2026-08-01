@@ -20,12 +20,6 @@ class LibraryScreenSmokeTest {
     }
 
     @Test
-    fun `LibraryUiState initial search is not expanded`() {
-        val state = LibraryUiState()
-        assertFalse(state.searchExpanded)
-    }
-
-    @Test
     fun `LibraryUiState initial filter is inactive`() {
         val state = LibraryUiState()
         assertFalse(state.query.filter.isActive)

@@ -7,10 +7,6 @@ package io.stashapp.android.core.ui.nav
 object Routes {
     const val Connection = "connection"
     const val Settings = "settings"
-    const val SettingsPlayback = "settings/playback"
-    const val SettingsCodecs = "settings/codecs"
-    const val SettingsDisplay = "settings/display"
-    const val SettingsLibrary = "settings/library"
     const val SettingsServer = "settings/server"
     const val SettingsAbout = "settings/about"
     const val Home = "home"

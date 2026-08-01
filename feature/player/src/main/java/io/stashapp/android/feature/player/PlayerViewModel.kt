@@ -1,6 +1,7 @@
 package io.stashapp.android.feature.player
 
 import android.app.Application
+import androidx.annotation.OptIn
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -127,6 +129,7 @@ class PlayerViewModel
                     _state.update { it.copy(error = humanize(error), isPlaying = false) }
                 }
 
+                @OptIn(UnstableApi::class)
                 override fun onVideoSizeChanged(videoSize: androidx.media3.common.VideoSize) {
                     // Pull the freshly-reported frame rate off the player — VideoSize
                     // itself doesn't carry fps in Media3 1.9.
@@ -204,13 +207,11 @@ class PlayerViewModel
             player.seekTo(positionMs.coerceAtLeast(0L))
         }
 
-        /** Nudge — e.g. for double-tap seek; returns the applied delta for UI feedback. */
-        fun seekBy(deltaMs: Long): Long {
+        /** Nudge — e.g. for double-tap seek. */
+        fun seekBy(deltaMs: Long) {
             val p = player
-            val before = p.currentPosition
-            val target = (before + deltaMs).coerceAtLeast(0L)
+            val target = (p.currentPosition + deltaMs).coerceAtLeast(0L)
             p.seekTo(target)
-            return target - before
         }
 
         /** Set playback speed directly (used by PlayerSettingsPanel). */
@@ -219,8 +220,8 @@ class PlayerViewModel
             _state.update { it.copy(playbackSpeed = speed) }
         }
 
-        /** Cycle through the speed presets. Returns the new speed. */
-        fun cyclePlaybackSpeed(): Float {
+        /** Cycle through the speed presets. */
+        fun cyclePlaybackSpeed() {
             val presets = PLAYBACK_SPEEDS
             val current = _state.value.playbackSpeed
             val idx =
@@ -236,7 +237,6 @@ class PlayerViewModel
                 )
             }
             clearBannerLater()
-            return next
         }
 
         companion object {

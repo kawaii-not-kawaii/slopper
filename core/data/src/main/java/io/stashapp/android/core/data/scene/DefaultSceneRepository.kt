@@ -84,16 +84,20 @@ class DefaultSceneRepository
                     val result =
                         response.data?.findScenes
                             ?: return AppResult.Failure(AppError.Server("Empty response"))
-                    AppResult.Success(result.scenes.map { it.sceneCard.toSummary(endpoint) })
+                    val summaries =
+                        result.scenes.map {
+                            try {
+                                it.sceneCard.toSummary(endpoint)
+                            } catch (e: IllegalStateException) {
+                                return toSceneMappingFailure(e, it.sceneCard.id)
+                            }
+                        }
+                    AppResult.Success(summaries)
                 }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: ApolloException) {
-                AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
-            } catch (e: IOException) {
-                AppResult.Failure(AppError.Network(e.message ?: "IO error"))
-            } catch (e: Exception) {
-                AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
+                toAppResult(e)
             }
         }
 
@@ -111,16 +115,16 @@ class DefaultSceneRepository
                     val scene =
                         response.data?.findScene
                             ?: return AppResult.Failure(AppError.NotFound("Scene $id not found"))
-                    AppResult.Success(scene.toDetail(endpoint))
+                    try {
+                        AppResult.Success(scene.toDetail(endpoint))
+                    } catch (e: IllegalStateException) {
+                        toSceneMappingFailure(e, scene.sceneCard.id)
+                    }
                 }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: ApolloException) {
-                AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
-            } catch (e: IOException) {
-                AppResult.Failure(AppError.Network(e.message ?: "IO error"))
-            } catch (e: Exception) {
-                AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
+                toAppResult(e)
             }
         }
 
@@ -193,6 +197,26 @@ class DefaultSceneRepository
 
         // ---- helpers --------------------------------------------------------
 
+        private fun toSceneMappingFailure(
+            e: IllegalStateException,
+            sceneId: String,
+        ): AppResult.Failure {
+            val message = "Scene $sceneId missing stream URL"
+            if (e.message != message) {
+                throw e
+            }
+            return AppResult.Failure(AppError.Server(message))
+        }
+
+        /** Maps an exception to an [AppResult.Failure], rethrowing [CancellationException]. */
+        private fun toAppResult(e: Throwable): AppResult.Failure =
+            when (e) {
+                is CancellationException -> throw e
+                is ApolloException -> AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
+                is IOException -> AppResult.Failure(AppError.Network(e.message ?: "IO error"))
+                else -> AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
+            }
+
         private suspend inline fun mutate(
             crossinline block: suspend () -> com.apollographql.apollo.api.ApolloResponse<*>,
         ): AppResult<Unit> =
@@ -208,11 +232,7 @@ class DefaultSceneRepository
             } catch (e: CancellationException) {
                 throw e
             } catch (e: ApolloException) {
-                AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
-            } catch (e: IOException) {
-                AppResult.Failure(AppError.Network(e.message ?: "IO error"))
-            } catch (e: Exception) {
-                AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
+                toAppResult(e)
             }
 
         private suspend inline fun <T> mutateMapped(
@@ -231,10 +251,6 @@ class DefaultSceneRepository
             } catch (e: CancellationException) {
                 throw e
             } catch (e: ApolloException) {
-                AppResult.Failure(AppError.Network(e.message ?: "Apollo request failed"))
-            } catch (e: IOException) {
-                AppResult.Failure(AppError.Network(e.message ?: "IO error"))
-            } catch (e: Exception) {
-                AppResult.Failure(AppError.Unknown(e.message ?: "Unexpected error", cause = e))
+                toAppResult(e)
             }
     }

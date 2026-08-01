@@ -51,6 +51,7 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import io.stashapp.android.core.designsystem.component.SceneCard
 import io.stashapp.android.core.designsystem.component.resolutionLabel
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.MonoSmall
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
@@ -91,14 +92,11 @@ fun LibraryScreen(
             sheetState = sheetState,
             initialFilter = ui.query.filter,
             initialSort = ui.query.sort,
-            hasSavedDefault = ui.hasSavedDefault,
             onDismiss = { showFilterSheet = false },
             onApply = { filter, sort ->
                 viewModel.setFilter(filter)
                 viewModel.setSort(sort)
             },
-            onSaveAsDefault = { viewModel.saveAsDefault() },
-            onClearDefault = { viewModel.clearDefault() },
         )
     }
 }
@@ -108,6 +106,7 @@ private fun SpineSearchBar(
     filterActive: Boolean,
     onOpenFilter: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     Row(
         modifier =
             Modifier
@@ -156,7 +155,7 @@ private fun SpineSearchBar(
             Icon(
                 Icons.Filled.FilterList,
                 contentDescription = "Filters",
-                tint = if (filterActive) SpineColors.AccentPrimary else SpineColors.OnSurfaceVariant,
+                tint = if (filterActive) accent.primary else SpineColors.OnSurfaceVariant,
             )
         }
     }
@@ -171,6 +170,7 @@ private fun ScenesGrid(
     onSceneClick: (String, List<String>, Int) -> Unit,
     onPlayQueue: (List<String>, Int) -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     val refresh = scenes.loadState.refresh
     val append = scenes.loadState.append
 
@@ -272,14 +272,14 @@ private fun ScenesGrid(
                                         shape = ShapeSmall,
                                         colors =
                                             FilterChipDefaults.filterChipColors(
-                                                selectedContainerColor = SpineColors.AccentPrimary.copy(alpha = 0.12f),
-                                                selectedLabelColor = SpineColors.AccentPrimary,
+                                                selectedContainerColor = accent.primary.copy(alpha = 0.12f),
+                                                selectedLabelColor = accent.primary,
                                             ),
                                         border =
                                             FilterChipDefaults.filterChipBorder(
                                                 enabled = true,
                                                 selected = true,
-                                                selectedBorderColor = SpineColors.AccentPrimary.copy(alpha = 0.30f),
+                                                selectedBorderColor = accent.primary.copy(alpha = 0.30f),
                                             ),
                                     )
                                 }
