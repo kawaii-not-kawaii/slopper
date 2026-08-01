@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "io.stashapp.android.baselineprofile"
-    compileSdk = 36
+    compileSdk = 37
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
