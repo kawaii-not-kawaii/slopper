@@ -41,7 +41,7 @@ jobs:
             21
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@87557b9c84dde89fdd9b10e88954ac2f4248e463 # v3
+        uses: github/codeql-action/init@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v3
         with:
           languages: java-kotlin
           build-mode: manual
