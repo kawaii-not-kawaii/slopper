@@ -34,8 +34,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
+import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.model.Marker
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.StateFlow

@@ -57,7 +57,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.model.RepeatMode
@@ -319,7 +318,7 @@ fun PlayerScreen(
 
         scrubPreview?.let { preview ->
             // Duration rarely changes — read it once per scene for the preview.
-            val snapshotDuration = viewModel.position.value.durationMs
+            val snapshotDuration = position.durationMs
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 ScrubPreviewCard(preview, snapshotDuration)
             }
@@ -541,6 +540,7 @@ fun PlayerScreen(
  * every compose `update` pass of the [AndroidView]; cheap because
  * `setFrameRate()` is idempotent when the value hasn't changed.
  */
+@OptIn(UnstableApi::class)
 private fun applyVideoFrameRate(
     playerView: PlayerView,
     fps: Float?,
@@ -570,6 +570,7 @@ private fun codecLabel(): String =
         else -> "HW"
     }
 
+@OptIn(UnstableApi::class)
 private fun nextResize(current: Int): Int =
     when (current) {
         AspectRatioFrameLayout.RESIZE_MODE_FIT -> AspectRatioFrameLayout.RESIZE_MODE_ZOOM

@@ -75,7 +75,6 @@ class PlayerQueue private constructor(
         return activeOrder[prevIdx]
     }
 
-
     companion object {
         fun from(
             ids: List<String>,

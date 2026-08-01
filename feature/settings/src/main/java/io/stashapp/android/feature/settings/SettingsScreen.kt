@@ -24,11 +24,8 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.PowerOff
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -52,12 +49,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.stashapp.android.core.data.prefs.PlayerPreferences
-import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.designsystem.component.CSlider
-import io.stashapp.android.core.designsystem.component.DRow
 import io.stashapp.android.core.designsystem.component.DRowStacked
 import io.stashapp.android.core.designsystem.theme.EmberAccent
-import io.stashapp.android.core.designsystem.theme.JetBrainsMono
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.SageAccent

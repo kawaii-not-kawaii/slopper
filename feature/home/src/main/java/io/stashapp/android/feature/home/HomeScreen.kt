@@ -41,10 +41,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.stashapp.android.core.designsystem.component.SceneCard
 import io.stashapp.android.core.designsystem.component.SpineResumeCard
 import io.stashapp.android.core.designsystem.component.resolutionLabel
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpineColors
-import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.model.SceneSummary
 import kotlinx.collections.immutable.ImmutableList
 

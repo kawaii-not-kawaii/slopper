@@ -1,7 +1,5 @@
 package io.stashapp.android.core.network
 
-import kotlinx.coroutines.flow.Flow
-
 /**
  * Abstraction so `:core:network` can read the active endpoint without depending
  * on `:core:data`. The data layer provides the real implementation.

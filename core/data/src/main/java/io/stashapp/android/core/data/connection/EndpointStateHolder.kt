@@ -25,10 +25,10 @@ class EndpointStateHolder
                 store.currentServer()?.let { StashEndpoint(it.baseUrl, it.apiKey) },
             )
 
-    override fun current(): StashEndpoint? = state.value
+        override fun current(): StashEndpoint? = state.value
 
-    /** Called by the repository to point at a different server. */
-    internal fun set(endpoint: StashEndpoint?) {
-        state.value = endpoint
+        /** Called by the repository to point at a different server. */
+        internal fun set(endpoint: StashEndpoint?) {
+            state.value = endpoint
+        }
     }
-}

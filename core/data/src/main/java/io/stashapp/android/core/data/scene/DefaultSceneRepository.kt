@@ -84,9 +84,19 @@ class DefaultSceneRepository
                     val result =
                         response.data?.findScenes
                             ?: return AppResult.Failure(AppError.Server("Empty response"))
-                    AppResult.Success(result.scenes.map { it.sceneCard.toSummary(endpoint) })
+                    val summaries =
+                        result.scenes.map {
+                            try {
+                                it.sceneCard.toSummary(endpoint)
+                            } catch (e: IllegalStateException) {
+                                return toSceneMappingFailure(e, it.sceneCard.id)
+                            }
+                        }
+                    AppResult.Success(summaries)
                 }
-            } catch (e: Throwable) {
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
                 toAppResult(e)
             }
         }
@@ -105,9 +115,15 @@ class DefaultSceneRepository
                     val scene =
                         response.data?.findScene
                             ?: return AppResult.Failure(AppError.NotFound("Scene $id not found"))
-                    AppResult.Success(scene.toDetail(endpoint))
+                    try {
+                        AppResult.Success(scene.toDetail(endpoint))
+                    } catch (e: IllegalStateException) {
+                        toSceneMappingFailure(e, scene.sceneCard.id)
+                    }
                 }
-            } catch (e: Throwable) {
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
                 toAppResult(e)
             }
         }
@@ -181,6 +197,17 @@ class DefaultSceneRepository
 
         // ---- helpers --------------------------------------------------------
 
+        private fun toSceneMappingFailure(
+            e: IllegalStateException,
+            sceneId: String,
+        ): AppResult.Failure {
+            val message = "Scene $sceneId missing stream URL"
+            if (e.message != message) {
+                throw e
+            }
+            return AppResult.Failure(AppError.Server(message))
+        }
+
         /** Maps an exception to an [AppResult.Failure], rethrowing [CancellationException]. */
         private fun toAppResult(e: Throwable): AppResult.Failure =
             when (e) {
@@ -202,7 +229,9 @@ class DefaultSceneRepository
                 } else {
                     AppResult.Success(Unit)
                 }
-            } catch (e: Throwable) {
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
                 toAppResult(e)
             }
 
@@ -219,7 +248,9 @@ class DefaultSceneRepository
                     value == null -> AppResult.Failure(AppError.Server("Empty mutation response"))
                     else -> AppResult.Success(value)
                 }
-            } catch (e: Throwable) {
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
                 toAppResult(e)
             }
     }

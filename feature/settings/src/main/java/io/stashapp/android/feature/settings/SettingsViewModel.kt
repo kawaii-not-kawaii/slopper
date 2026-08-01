@@ -60,7 +60,6 @@ class SettingsViewModel
             viewModelScope.launch { uiPrefs.setAccentPalette(name) }
         }
 
-
         init {
             viewModelScope.launch {
                 connectionRepository

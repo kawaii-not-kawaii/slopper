@@ -5,6 +5,7 @@ import androidx.paging.PagingState
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.ApolloResponse
 import com.apollographql.apollo.api.Optional
+import com.apollographql.apollo.exception.ApolloException
 import io.stashapp.android.core.domain.EntitySort
 import io.stashapp.android.core.model.PerformerBrowseItem
 import io.stashapp.android.core.model.StudioBrowseItem
@@ -48,7 +49,7 @@ class BrowsePagingSource<T : Any>(
     private val search: String?,
     private val sort: EntitySort,
     private val execute: suspend ApolloClient.(FindFilterType) -> ApolloResponse<*>,
-    private val map: (ApolloResponse<*>, StashEndpoint, Int) -> BrowsePage<T>,
+    private val map: (ApolloResponse<*>, StashEndpoint, Int) -> BrowsePage<T>?,
 ) : PagingSource<Int, T>() {
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
         val anchor = state.anchorPosition ?: return null
@@ -68,7 +69,9 @@ class BrowsePagingSource<T : Any>(
                     IllegalStateException(resp.errors?.joinToString { it.message }),
                 )
             }
-            val result = map(resp, endpoint, params.loadSize)
+            val result =
+                map(resp, endpoint, params.loadSize)
+                    ?: return LoadResult.Error(IllegalStateException("Empty response"))
             LoadResult.Page<Int, T>(
                 data = result.items,
                 prevKey = if (page <= 1) null else page - 1,
@@ -76,7 +79,7 @@ class BrowsePagingSource<T : Any>(
             )
         } catch (e: CancellationException) {
             throw e
-        } catch (e: Exception) {
+        } catch (e: ApolloException) {
             LoadResult.Error<Int, T>(e)
         }
     }
@@ -89,10 +92,10 @@ private val performersBinding =
         execute = { filter ->
             query(FindPerformersListQuery(filter = Optional.present(filter))).execute()
         },
-        map = { resp, endpoint, loadSize ->
+        map = map@{ resp, endpoint, loadSize ->
             val result =
                 (resp.data as FindPerformersListQuery.Data?)?.findPerformers
-                    ?: throw IllegalStateException("Empty response")
+                    ?: return@map null
             BrowsePage(
                 items =
                     result.performers.map {
@@ -115,10 +118,10 @@ private val studiosBinding =
         execute = { filter ->
             query(FindStudiosListQuery(filter = Optional.present(filter))).execute()
         },
-        map = { resp, endpoint, loadSize ->
+        map = map@{ resp, endpoint, loadSize ->
             val result =
                 (resp.data as FindStudiosListQuery.Data?)?.findStudios
-                    ?: throw IllegalStateException("Empty response")
+                    ?: return@map null
             BrowsePage(
                 items =
                     result.studios.map {
@@ -139,10 +142,10 @@ private val tagsBinding =
         execute = { filter ->
             query(FindTagsListQuery(filter = Optional.present(filter))).execute()
         },
-        map = { resp, endpoint, loadSize ->
+        map = map@{ resp, endpoint, loadSize ->
             val result =
                 (resp.data as FindTagsListQuery.Data?)?.findTags
-                    ?: throw IllegalStateException("Empty response")
+                    ?: return@map null
             BrowsePage(
                 items =
                     result.tags.map {
@@ -181,5 +184,5 @@ fun tagsPagingSource(
 
 private data class Binding<T>(
     val execute: suspend ApolloClient.(FindFilterType) -> ApolloResponse<*>,
-    val map: (ApolloResponse<*>, StashEndpoint, Int) -> BrowsePage<T>,
+    val map: (ApolloResponse<*>, StashEndpoint, Int) -> BrowsePage<T>?,
 )

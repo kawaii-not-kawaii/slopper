@@ -51,12 +51,12 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import io.stashapp.android.core.designsystem.component.SceneCard
 import io.stashapp.android.core.designsystem.component.resolutionLabel
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.MonoSmall
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
-import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

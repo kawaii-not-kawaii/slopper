@@ -19,7 +19,6 @@ class LibraryScreenSmokeTest {
         assertNotNull(LibraryUiState())
     }
 
-
     @Test
     fun `LibraryUiState initial filter is inactive`() {
         val state = LibraryUiState()
