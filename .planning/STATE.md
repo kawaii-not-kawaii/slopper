@@ -133,9 +133,9 @@ Surfaced 2026-07-11 during a Dependabot sweep — closed as blocked (not stale C
 
 **v1.1 COMPLETE — Phases 7–10 are complete.** Current repository versions are app `0.2.0-alpha`, Gradle 9.4.1, AGP 9.2.1, Kotlin 2.3.20, KSP 2.3.9, Hilt 2.59.2, Apollo 5.0.1, Media3 1.10.0 + nextlib 1.10.0-0.12.1, detekt 2.0.0-alpha.5, baseline-profile plugin 1.5.0-alpha07, compileSdk 36, targetSdk 35, and minSdk 26.
 
-The final local gate `./gradlew :app:assembleDebug detekt ktlintCheck test lint --no-daemon` passed on 2026-08-01 (896 tasks: 137 executed, 759 up-to-date). The JVM suite has 61 passing tests across 16 reports; there are no `androidTest` tests. Quality, documentation, and launcher-name changes are committed in `444d9a7` (`fix: restore project quality gates`); the launcher label is now **Slopper**. At handoff capture, local `master` was clean and one commit ahead of the local `origin/master` tracking ref.
+The final local gate `./gradlew :app:assembleDebug detekt ktlintCheck test lint --no-daemon` passed on 2026-08-01 (896 tasks: 137 executed, 759 up-to-date). The JVM suite has 61 passing tests across 16 reports; there are no `androidTest` tests. Quality, documentation, and launcher-name changes are tracked in GitHub PR #58 (`Fix project quality gates and app label`); the launcher label is now **Slopper**. Verify the live PR state instead of relying on a hard-coded commit hash.
 
-**Next:** install `/home/yun/Slopper-0.2.0-alpha-arm64.apk` from Taildrop on the Galaxy S23+ and run current device UAT. The release build passed and its v2 signature was verified with the Android debug certificate, but installation and runtime remain unconfirmed. If `444d9a7` is not yet merged, deliver it only through a GitHub pull request and merge only after required CI passes.
+**Next:** install `/home/yun/Slopper-0.2.0-alpha-arm64.apk` from Taildrop on the Galaxy S23+ and run current device UAT. The release build passed and its v2 signature was verified with the Android debug certificate, but installation and runtime remain unconfirmed. If GitHub PR #58 is not yet merged, merge it only after required CI passes.
 
 ## Decisions (accumulated)
 
@@ -153,4 +153,4 @@ The final local gate `./gradlew :app:assembleDebug detekt ktlintCheck test lint 
 - **08.1** — AGP 9 removed `targetSdk` from the library DSL → targetSdk guard is 2 app/test sites (not 3 in build scripts); compileSdk 36 ×2, targetSdk 35 explicit, no silent Android-16 opt-in.
 
 ---
-*Last updated: 2026-08-01 — v1.1 Phases 7–10 complete; local full gate GREEN; quality/delivery commit `444d9a7`; Slopper arm64 APK signature-verified and Taildropped; current device UAT pending.*
+*Last updated: 2026-08-01 — v1.1 Phases 7–10 complete; local full gate GREEN; quality/delivery change set tracked in GitHub PR #58; Slopper arm64 APK signature-verified and Taildropped; current device UAT pending.*
