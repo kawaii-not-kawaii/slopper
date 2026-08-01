@@ -1,29 +1,33 @@
 <!-- generated-by: gsd-doc-writer -->
 # Testing
 
-This document describes the **actual** state of testing in Slopper today, plus
-the roadmap for landing a real test pyramid. Be aware: this is a brownfield
-project mid-modernization, and the automated test story is intentionally bare.
-If you change behaviour, run through the manual checklist in
-[`DEVICE_TESTING.md`](DEVICE_TESTING.md).
+This document describes the **actual** state of testing in Slopper today and
+the roadmap for deeper coverage. JVM tests and static gates are active, but
+there is no `androidTest` coverage. UI and device behavior still require the
+manual checklist in [`DEVICE_TESTING.md`](DEVICE_TESTING.md).
 
 ## Current state — what exists today
 
 | Layer | Status |
 |---|---|
-| JVM unit tests | None wired |
-| Instrumentation tests (`androidTest`) | None wired |
-| CI | None — no `.github/workflows`, no Forgejo Actions yet |
-| Manual device smoke test | [`DEVICE_TESTING.md`](DEVICE_TESTING.md) checklist |
+| JVM unit tests | 61 passing tests across 16 reports in the 2026-08-01 local full gate |
+| Instrumentation tests (`androidTest`) | No test coverage |
+| CI | GitHub Actions and Forgejo Actions workflows exist; no live remote result was verified on 2026-08-01 |
+| Manual device smoke test | [`DEVICE_TESTING.md`](DEVICE_TESTING.md) checklist; not run on 2026-08-01 |
 | Static analysis — detekt | Active, baselined per module |
 | Static analysis — ktlint | Active |
 | Android Lint | Active with `app/lint-baseline.xml` + 3 detector disables |
 | Macrobenchmark scaffolding | `:baselineprofile` module exists; profile is stale |
 | OWASP dependency CVE scan | Plugin wired; not yet run on every build |
 
-No module under `core/*` or `feature/*` has a `src/test/` or `src/androidTest/`
-directory. The only test-style module is `:baselineprofile`, which is a
-macrobenchmark generator, not a correctness test.
+JVM tests are wired under `src/test/`; the repository has no `src/androidTest/`
+correctness suite. The `:baselineprofile` generator is not a correctness test.
+
+On 2026-08-01,
+`./gradlew :app:assembleDebug detekt ktlintCheck test lint --no-daemon` passed
+locally with 896 tasks (203 executed, 693 up-to-date). This does not establish
+a live CI result or runtime UAT: no device was connected, and software
+emulators crashed without KVM, so the APK was not launched.
 
 ## Static analysis
 
@@ -31,10 +35,11 @@ All three tools run against the whole multi-module project from the root.
 
 ### detekt
 
-Version 1.23.8, applied to every subproject via the root `build.gradle.kts`
-`subprojects { }` block. Config lives at `config/detekt/detekt.yml`. Existing
-findings are captured in **per-module** baseline files
-(`<module>/detekt-baseline.xml`) — 9 modules currently carry a baseline.
+Version 2.0.0-alpha.5, applied to every subproject via the root
+`build.gradle.kts` `subprojects { }` block. Config lives at
+`config/detekt/detekt.yml`. Existing findings are captured in **per-module**
+baseline files (`<module>/detekt-baseline.xml`) — 12 modules currently carry a
+baseline.
 
 ```bash
 ./gradlew detekt                # run analysis (fails on new issues)
@@ -51,9 +56,9 @@ accepting new findings:
 
 ### ktlint
 
-Plugin `org.jlleitschuh.gradle.ktlint` 13.1.0, ktlint runtime 1.6.0. Applied to
-every subproject from the root. No on-disk baseline files — the current codebase
-passes clean.
+Plugin `org.jlleitschuh.gradle.ktlint` 14.2.0, ktlint runtime 1.6.0. Applied to
+every subproject from the root. No on-disk baseline files — the current
+codebase passes clean.
 
 ```bash
 ./gradlew ktlintCheck           # check formatting
@@ -72,16 +77,14 @@ Run against the application module:
 ```
 
 Three detectors are **disabled** in the convention plugin
-(`build-logic/convention/src/main/kotlin/io/stashapp/android/buildlogic/KotlinAndroid.kt`)
-because they crash with `IncompatibleClassChangeError` under AGP 8.7.3 lint +
-Kotlin 2.2.20:
+(`build-logic/convention/src/main/kotlin/io/stashapp/android/buildlogic/KotlinAndroid.kt`):
 
-- `NullSafeMutableLiveData` (lifecycle 2.8.7)
-- `FrequentlyChangingValue` (compose-runtime, Compose BOM 2026.05.00)
-- `RememberInComposition` (compose-runtime, Compose BOM 2026.05.00)
+- `NullSafeMutableLiveData` (lifecycle 2.10.0)
+- `FrequentlyChangingValue` (compose-runtime, Compose BOM 2026.06.01)
+- `RememberInComposition` (compose-runtime, Compose BOM 2026.06.01)
 
-These will be re-enabled when AndroidX Lifecycle / Compose are bumped further
-(currently deferred under POLISH backlog).
+They remain disabled pending compatibility re-evaluation; reduce this list
+when the AndroidX/toolchain combination supports the detectors.
 
 ### Lint baseline policy
 
@@ -115,8 +118,8 @@ For full re-verification criteria see `02-UAT.md`.
 
 ## Manual device testing
 
-Until the automated pyramid lands, **every UI change is gated on the manual
-smoke checklist in [`DEVICE_TESTING.md`](DEVICE_TESTING.md)**.
+JVM tests do not replace runtime validation: **every UI change is still gated
+on the manual smoke checklist in [`DEVICE_TESTING.md`](DEVICE_TESTING.md)**.
 
 The bottom-bar smoke covers the six top-level destinations:
 
@@ -153,9 +156,9 @@ open + back out of detail.
 ./gradlew :app:generateBaselineProfile
 ```
 
-This requires a connected device (the module is configured with
-`useConnectedDevices = true` — no Gradle Managed Device yet). The plugin
-copies the output to:
+This uses the declared Pixel 6 / API 34 Gradle Managed Device
+(`pixel6Api34`, with `useConnectedDevices = false`) and therefore needs
+working emulator virtualization/KVM. The plugin copies the output to:
 
 ```
 app/src/release/generated/baselineProfiles/baseline-prof.txt
@@ -164,17 +167,17 @@ app/src/release/generated/baselineProfiles/baseline-prof.txt
 which `androidx.profileinstaller` (declared in `app/build.gradle.kts`) ships
 inside the release APK.
 
-**Current status**: the checked-in profile is **stale**. The Phase 1
-regeneration attempt was deferred because no test device was wired on the dev
-host. A new profile will land once the GMD work in PERF-01 makes regeneration
-repeatable in CI.
+**Current status**: the checked-in profile is **stale**. On 2026-08-01 the
+software emulator crashed without KVM, and no connected device was available
+as a runtime-testing fallback. Profile regeneration was therefore not
+verified.
 
 The `app` module also exposes a `benchmark` build type (`initWith(release)`,
 non-debuggable but `profileable`) for running macrobench traces.
 
 ## Dependency CVE scan
 
-OWASP dependency-check 11.1.1 is wired into the root `build.gradle.kts` and
+OWASP dependency-check 12.2.2 is wired into the root `build.gradle.kts` and
 configured to fail on CVSS ≥ 7.0 (HIGH / CRITICAL). Suppressions live at
 `config/owasp-suppressions.xml`.
 
@@ -188,40 +191,26 @@ export NVD_API_KEY="<your key from https://nvd.nist.gov/developers/request-an-ap
 ```
 
 `--no-configuration-cache` is required — the plugin is incompatible with the
-Gradle configuration cache as of the 11.x line. Reports land in
+Gradle configuration cache as of the 12.x line. Reports land in
 `build/reports/dependency-check-report.{html,json}`.
 
 This scan is **not yet run on every build**. CI integration is on the roadmap
 (see SEC-CI-01 below).
 
-## Roadmap — getting to a real test pyramid
+## Roadmap — deeper test coverage
 
-These items are tracked in the project's internal requirements backlog.
+The shared JVM test wiring is in place. Remaining work is to deepen behavioral
+coverage and add device-backed tests.
 
-### POLISH-04 — test framework wiring
+### POLISH-05 — expand test suites
 
-Wire **JUnit5 + Turbine + MockK + Robolectric** into the
-`stash.android.library` convention plugin so every `core/*` and `feature/*`
-module gets the same test classpath and runner configuration by default.
-Lands the `src/test/` source-set with shared test utilities.
+- Broaden JVM unit coverage across `core/*` and `feature/*`.
+- Strengthen ViewModel state-machine tests around transitions and failures.
+- Add Compose and integration smoke tests under `androidTest`.
 
-### POLISH-05 — seed test suites
+Coverage should grow around observable behavior and regressions rather than
+framework plumbing.
 
-The first wave of tests once POLISH-04 is in:
-
-- **Unit tests** for `core/common`, `core/model`, `core/domain` (pure-Kotlin layers, no Android stubs needed)
-- **One ViewModel state-machine test per feature** using Turbine to assert state transitions
-- **One Compose smoke test per feature** to catch composition crashes
-
-The coverage target is intentionally modest at first — get the pyramid built,
-then grow it.
-
-### PERF-01 — Gradle Managed Device for macrobench
-
-Wire a Pixel 6 / API 34 GMD into `:baselineprofile` so profile regeneration
-(and any future macrobench) runs hands-free in CI on a deterministic device.
-Unblocks fresh baseline-profile generation without a physical phone on the
-dev host.
 
 ### PERF-05 — expand baseline profile
 
@@ -237,14 +226,13 @@ not present in `config/owasp-suppressions.xml`.
 
 ## How to add a test
 
-When the test pyramid is wired (POLISH-04 / POLISH-05), this section will
-document:
+The `stash.android.library` convention plugin supplies JUnit5, Turbine, MockK,
+and Robolectric to library modules and uses the JUnit Platform. Put JVM tests
+under the module's `src/test/` source set, following the existing tests, then
+run the module test task or `./gradlew test`.
 
-- The `src/test/` and `src/androidTest/` source-set layout
-- JUnit5 + Turbine + MockK + Robolectric usage patterns for ViewModel / repository tests
-- The Compose smoke-test pattern for screen-level coverage
-- How tests run in CI and what failure modes look like locally
-
-Until then: any UI or behaviour change must be validated by walking the
-[`DEVICE_TESTING.md`](DEVICE_TESTING.md) checklist on a real device, and
-new commits must pass `./gradlew detekt ktlintCheck :app:lintDebug`.
+There is no `androidTest` suite yet. Device-backed Compose and integration
+tests belong under `src/androidTest/` when that coverage is added. Until then,
+validate UI and device behavior with
+[`DEVICE_TESTING.md`](DEVICE_TESTING.md) and run
+`./gradlew detekt ktlintCheck test lint`.

@@ -12,7 +12,6 @@ class LibraryViewModelTest {
         assertEquals("", state.searchText)
     }
 
-
     @Test
     fun `initial LibraryUiState has no saved default`() {
         val state = LibraryUiState()
@@ -23,5 +22,4 @@ class LibraryViewModelTest {
     fun `initial LibraryUiState is non-null`() {
         assertNotNull(LibraryUiState())
     }
-
 }

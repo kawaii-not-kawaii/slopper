@@ -1,7 +1,6 @@
 package io.stashapp.android.core.data.prefs
 
 import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -89,8 +88,6 @@ class UiPreferences
         override val gridColumns: Flow<String> = flow(KEY_GRID_COLUMNS, DEFAULT_GRID_COLUMNS)
 
         override suspend fun setGridColumns(value: String) = put(KEY_GRID_COLUMNS, value)
-
-
 
         // ---- Accent palette (D-05) -----------------------------------------------
 

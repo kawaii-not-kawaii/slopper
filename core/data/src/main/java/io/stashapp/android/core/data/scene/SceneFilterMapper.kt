@@ -124,7 +124,6 @@ private fun SceneFilter.captionsCriterion(): Optional<StringCriterionInput?> =
         null -> Optional.absent()
     }
 
-
 private fun SceneFilter.resolutionCriterion(): Optional<ResolutionCriterionInput?> =
     minResolution?.let {
         Optional.present(

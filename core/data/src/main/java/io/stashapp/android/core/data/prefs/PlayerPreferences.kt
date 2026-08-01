@@ -30,7 +30,6 @@ class PlayerPreferences
 
         override suspend fun setDoubleTapSeekSeconds(value: Int) = put(KEY_DOUBLE_TAP_SEEK_SEC, value)
 
-
         // ---- Helpers (reduce boilerplate) ----------------------------------------
 
         private fun <T> flow(

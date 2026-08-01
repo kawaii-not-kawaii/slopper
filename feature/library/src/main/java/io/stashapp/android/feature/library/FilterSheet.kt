@@ -41,9 +41,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
-import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.domain.DateBucket
 import io.stashapp.android.core.domain.SceneDurationBucket
 import io.stashapp.android.core.domain.SceneFilter

@@ -1,5 +1,6 @@
 package io.stashapp.android.feature.player
 
+import androidx.annotation.OptIn
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -62,9 +63,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.util.UnstableApi
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.ShapeMedium
 import io.stashapp.android.core.designsystem.theme.SpineColors
-import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.model.Marker
 import io.stashapp.android.core.model.RepeatMode
 import kotlinx.collections.immutable.ImmutableList
@@ -569,6 +571,7 @@ internal fun StepSeekCallout(
 
 // Helper used only within PlayerControls.kt (mirrors the one in PlayerTimeline.kt
 // but scoped here to avoid cross-file calls from the resize label in secondary row)
+@OptIn(UnstableApi::class)
 private fun resizeLabel(mode: Int): String =
     when (mode) {
         androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_FIT -> "Fit"

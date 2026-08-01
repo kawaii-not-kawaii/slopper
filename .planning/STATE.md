@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: AGP-9 Toolchain Modernization
 current_phase: 10
-status: "v1.1 COMPLETE — all 4 phases landed; assembleDebug green locally (EdEC blocker resolved under AGP 9); floating navbar fix + lifecycle perf fix applied"
-last_updated: "2026-05-31T16:30:00.000Z"
+status: "v1.1 COMPLETE — phases 7-10 complete; 2026-08-01 local full gate green; current device UAT pending"
+last_updated: "2026-08-01"
 progress:
   total_phases: 4
   completed_phases: 4
@@ -131,9 +131,11 @@ Surfaced 2026-07-11 during a Dependabot sweep — closed as blocked (not stale C
 
 ## Next Step
 
-**Phase 08 COMPLETE (08.1 landed GREEN 2026-05-31).** The full phase gate `compileDebugSources detekt ktlintCheck test` is BUILD SUCCESSFUL across all ~14 modules on **Gradle 9.4.1 + AGP 9.2.1 + Kotlin 2.3.20 + KSP 2.3.9 (KSP2) + built-in Kotlin + Hilt 2.59.2 + Apollo 5.0.0 + compileSdk 36/targetSdk 35 + detekt 2.0.0-alpha.3 (`dev.detekt`)**, all crutch flags ABSENT. B-08-04 resolved via option (a); the B-08-03 KSP1 commits were reversed. Hilt 2.59.2 KSP2 codegen empirically confirmed (assumption A1 PASS). Two gate-fix deviations: detekt 2.0 config-key migration (`a3e6568`) + baseline regeneration for the new 2.0 ID format (`7f6c0df`). See `08-01-SUMMARY.md`.
+**v1.1 COMPLETE — Phases 7–10 are complete.** Current repository versions are app `0.2.0-alpha`, Gradle 9.4.1, AGP 9.2.1, Kotlin 2.3.20, KSP 2.3.9, Hilt 2.59.2, Apollo 5.0.1, Media3 1.10.0 + nextlib 1.10.0-0.12.1, detekt 2.0.0-alpha.5, baseline-profile plugin 1.5.0-alpha07, compileSdk 36, targetSdk 35, and minSdk 26.
 
-**Next: Phase 09 — LIBS (green-gated library bumps).** Media3/nextlib pair (1.10.0-0.12.1, HARD CAP), activity-compose 1.13, core-ktx 1.18, leaf libs; then prune dependabot.yml ignores. Run `/gsd-plan-phase 09` (or research-first). **Active goal: fix all Dependabot toolchain debt properly — AGP/Gradle/Kotlin/KSP/Hilt/benchmark/compileSdk now landed.**
+The local full gate `./gradlew :app:assembleDebug detekt ktlintCheck test lint --no-daemon` passed on 2026-08-01 (896 tasks: 203 executed, 693 up-to-date). The JVM suite has 61 passing tests across 16 reports; there are no `androidTest` tests. GitHub and Forgejo CI workflows exist, but no live remote result is asserted here. HEAD is `09d4272`, with uncommitted quality/documentation cleanup in the working tree.
+
+**Next:** run current device UAT when hardware is available. APK launch after HEAD `09d4272` is unverified: no device was connected, and software emulators crashed without KVM. Earlier Galaxy S23 validation remains historical evidence only, not current-UAT evidence. After UAT, review and commit the pending cleanup.
 
 ## Decisions (accumulated)
 
@@ -151,4 +153,4 @@ Surfaced 2026-07-11 during a Dependabot sweep — closed as blocked (not stale C
 - **08.1** — AGP 9 removed `targetSdk` from the library DSL → targetSdk guard is 2 app/test sites (not 3 in build scripts); compileSdk 36 ×2, targetSdk 35 explicit, no silent Android-16 opt-in.
 
 ---
-*Last updated: 2026-05-31 — plan 08.1 executed (AGP-9 atomic migration, full gate GREEN); Phase 8 COMPLETE at 1/1.*
+*Last updated: 2026-08-01 — v1.1 Phases 7–10 complete; local full gate GREEN on HEAD `09d4272`; quality/documentation cleanup uncommitted; current device UAT pending.*

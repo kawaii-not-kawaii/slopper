@@ -53,7 +53,6 @@ class ConnectionStore
             prefs.edit().clear().apply()
         }
 
-
         private companion object {
             const val FILE_NAME = "stash_connection"
             const val KEY_URL = "url"
