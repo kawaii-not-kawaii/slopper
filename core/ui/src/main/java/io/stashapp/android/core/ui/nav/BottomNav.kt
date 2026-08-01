@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -42,8 +41,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -131,24 +128,6 @@ fun MainBottomBar(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter,
     ) {
-        // Static gradient footer: grounds the floating pill so it doesn't read as
-        // purely floating. Full-width, ignores nav-bar insets so it reaches the
-        // true bottom edge; transparent at top, fading to Surface at the bottom.
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(128.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            colors =
-                                listOf(
-                                    Color.Transparent,
-                                    SpineColors.Surface.copy(alpha = 0.95f),
-                                ),
-                        ),
-                    ),
-        )
         Box(
             modifier =
                 Modifier

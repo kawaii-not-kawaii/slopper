@@ -5,9 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -238,15 +235,9 @@ private fun StashAppContent(
             // using Scaffold's bottomBar slot (which draws a surface-colored strip
             // behind the bar, defeating the floating-pill look).
             Box(Modifier.fillMaxSize()) {
-                // Main screens own their own TopAppBar (which handles status bar
-                // insets via WindowInsets.systemBars). No Scaffold needed — we
-                // pass bottom padding directly to the nav host so content doesn't
-                // draw behind the floating pill.
-                val bottomPad = if (showBottomBar) 96.dp else 0.dp
                 AppNavHost(
                     navController = navController,
                     startDestination = startDestination,
-                    contentPadding = PaddingValues(top = 0.dp, bottom = bottomPad),
                 )
 
                 // Floating pill — aligned at the bottom, no Scaffold background.
@@ -317,15 +308,11 @@ private fun NavHostController.tabNavigate(
 private fun AppNavHost(
     navController: NavHostController,
     startDestination: String,
-    contentPadding: PaddingValues,
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(contentPadding),
+        modifier = Modifier.fillMaxSize(),
     ) {
         composable(Routes.Connection) {
             ConnectionScreen(
