@@ -16,6 +16,11 @@ enum class EntitySort(
     Random("random", "DESC"),
 }
 
+data class FilterOptionQuery(
+    val kind: FilterEntityKind,
+    val search: String? = null,
+)
+
 interface BrowseRepository {
     fun performers(
         search: String?,
@@ -31,4 +36,6 @@ interface BrowseRepository {
         search: String?,
         sort: EntitySort,
     ): Flow<PagingData<TagBrowseItem>>
+
+    suspend fun filterOptions(query: FilterOptionQuery): List<FilterEntityOption>
 }

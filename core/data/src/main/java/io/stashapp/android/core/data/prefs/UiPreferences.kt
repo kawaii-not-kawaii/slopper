@@ -6,7 +6,11 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.stashapp.android.core.domain.FilterEntityOption
 import io.stashapp.android.core.domain.SceneFilter
+import io.stashapp.android.core.domain.SceneFilterCriterion
+import io.stashapp.android.core.domain.SceneFilterField
+import io.stashapp.android.core.domain.SceneFilterModifier
 import io.stashapp.android.core.domain.SceneOrientation
 import io.stashapp.android.core.domain.SceneResolution
 import io.stashapp.android.core.domain.UiSettings
@@ -125,6 +129,60 @@ class UiPreferences
         }
     }
 
+@Serializable
+private data class StoredFilterEntityOption(
+    val id: String,
+    val label: String,
+) {
+    fun toDomain() = FilterEntityOption(id, label)
+
+    companion object {
+        fun from(option: FilterEntityOption) = StoredFilterEntityOption(option.id, option.label)
+    }
+}
+
+@Serializable
+private data class StoredSceneFilterCriterion(
+    val field: String,
+    val modifier: String,
+    val value: String = "",
+    val value2: String? = null,
+    val selected: List<StoredFilterEntityOption> = emptyList(),
+    val excluded: List<StoredFilterEntityOption> = emptyList(),
+    val depth: Int = 0,
+    val auxiliary: String? = null,
+) {
+    fun toDomain(): SceneFilterCriterion? {
+        val parsedField = runCatching { SceneFilterField.valueOf(field) }.getOrNull() ?: return null
+        val parsedModifier =
+            runCatching { SceneFilterModifier.valueOf(modifier) }.getOrDefault(parsedField.defaultModifier)
+        return SceneFilterCriterion(
+            field = parsedField,
+            modifier = parsedModifier,
+            value = value,
+            value2 = value2,
+            selected = selected.map(StoredFilterEntityOption::toDomain),
+            excluded = excluded.map(StoredFilterEntityOption::toDomain),
+            depth = depth,
+            auxiliary = auxiliary,
+        )
+    }
+
+    companion object {
+        fun from(criterion: SceneFilterCriterion) =
+            StoredSceneFilterCriterion(
+                field = criterion.field.name,
+                modifier = criterion.modifier.name,
+                value = criterion.value,
+                value2 = criterion.value2,
+                selected = criterion.selected.map(StoredFilterEntityOption::from),
+                excluded = criterion.excluded.map(StoredFilterEntityOption::from),
+                depth = criterion.depth,
+                auxiliary = criterion.auxiliary,
+            )
+    }
+}
+
 /**
  * Serializable mirror of [SceneFilter] — keeps the domain model free of
  * kotlinx.serialization annotations (the domain lives in `:core:domain`, which
@@ -152,6 +210,7 @@ private data class StoredSceneFilter(
     val maxOCounter: Int? = null,
     val orientation: String? = null,
     val hasCaptions: Boolean? = null,
+    val criteria: List<StoredSceneFilterCriterion> = emptyList(),
 ) {
     fun toFilter() =
         SceneFilter(
@@ -175,6 +234,7 @@ private data class StoredSceneFilter(
             maxOCounter = maxOCounter,
             orientation = orientation?.let { runCatching { SceneOrientation.valueOf(it) }.getOrNull() },
             hasCaptions = hasCaptions,
+            criteria = criteria.mapNotNull(StoredSceneFilterCriterion::toDomain),
         )
 
     companion object {
@@ -200,6 +260,7 @@ private data class StoredSceneFilter(
                 maxOCounter = f.maxOCounter,
                 orientation = f.orientation?.name,
                 hasCaptions = f.hasCaptions,
+                criteria = f.criteria.map(StoredSceneFilterCriterion::from),
             )
     }
 }

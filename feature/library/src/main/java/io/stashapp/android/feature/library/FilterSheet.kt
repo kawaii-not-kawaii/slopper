@@ -47,9 +47,12 @@ import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.domain.DateBucket
 import io.stashapp.android.core.domain.SceneDurationBucket
 import io.stashapp.android.core.domain.SceneFilter
+import io.stashapp.android.core.domain.SceneFilterField
 import io.stashapp.android.core.domain.SceneOrientation
 import io.stashapp.android.core.domain.SceneResolution
 import io.stashapp.android.core.domain.SceneSort
+import io.stashapp.android.core.domain.SceneSortDirection
+import io.stashapp.android.core.domain.SceneSortField
 import java.time.LocalDate
 
 /**
@@ -87,6 +90,9 @@ fun FilterSheet(
         ) {
             SectionTitle("Sort by")
             SortDropdown(sort) { sort = it }
+            SortDirectionChips(sort.direction) { direction ->
+                sort = sort.copy(direction = direction)
+            }
 
             SectionTitle("Duration")
             DurationSection(
@@ -99,23 +105,35 @@ fun FilterSheet(
                 activeBucket = currentDateBucket(filter),
                 onChange = { bucket ->
                     val (min, max) = datesFor(bucket)
-                    filter = filter.copy(minDate = min, maxDate = max)
+                    filter =
+                        filter
+                            .withoutCriterion(SceneFilterField.Date)
+                            .copy(minDate = min, maxDate = max)
                 },
             )
 
             SectionTitle("Minimum resolution")
             ResolutionChips(filter.minResolution) {
-                filter = filter.copy(minResolution = it)
+                filter =
+                    filter
+                        .withoutCriterion(SceneFilterField.Resolution)
+                        .copy(minResolution = it)
             }
 
             SectionTitle("Orientation")
             OrientationChips(filter.orientation) {
-                filter = filter.copy(orientation = it)
+                filter =
+                    filter
+                        .withoutCriterion(SceneFilterField.Orientation)
+                        .copy(orientation = it)
             }
 
             SectionTitle("Rating (★ 0–5)")
             RatingRange(filter.minRating100, filter.maxRating100) { min, max ->
-                filter = filter.copy(minRating100 = min, maxRating100 = max)
+                filter =
+                    filter
+                        .withoutCriterion(SceneFilterField.Rating)
+                        .copy(minRating100 = min, maxRating100 = max)
             }
 
             SectionTitle("Play count")
@@ -129,7 +147,10 @@ fun FilterSheet(
                     }
                 },
                 onChange = { v ->
-                    filter = filter.copy(minPlayCount = if (v == 0) null else v)
+                    filter =
+                        filter
+                            .withoutCriterion(SceneFilterField.PlayCount)
+                            .copy(minPlayCount = if (v == 0) null else v)
                 },
             )
 
@@ -144,31 +165,26 @@ fun FilterSheet(
                     }
                 },
                 onChange = { v ->
-                    filter = filter.copy(minOCounter = if (v == 0) null else v)
+                    filter =
+                        filter
+                            .withoutCriterion(SceneFilterField.OCounter)
+                            .copy(minOCounter = if (v == 0) null else v)
                 },
             )
 
             SectionTitle("Flags")
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                ToggleChip("Organized", filter.organized) {
-                    filter = filter.copy(organized = it)
-                }
-                ToggleChip("Has markers", filter.hasMarkers) {
-                    filter = filter.copy(hasMarkers = it)
-                }
-                ToggleChip("Interactive", filter.interactive) {
-                    filter = filter.copy(interactive = it)
-                }
-                ToggleChip("In progress", filter.hasResumeTime) {
-                    filter = filter.copy(hasResumeTime = it)
-                }
-                ToggleChip("Has captions", filter.hasCaptions) {
-                    filter = filter.copy(hasCaptions = it)
-                }
-            }
+            FlagChips(filter) { filter = it }
+
+            SectionTitle("All Stash filters")
+            StashCriteriaSection(
+                criteria = filter.criteria,
+                onChange = { criteria ->
+                    filter =
+                        filter
+                            .clearQuickFields(criteria.mapTo(mutableSetOf()) { it.field })
+                            .copy(criteria = criteria)
+                },
+            )
 
             Spacer(Modifier.height(8.dp))
 
@@ -184,6 +200,7 @@ fun FilterSheet(
                 }) { Text("Reset") }
                 Spacer(Modifier.weight(1f))
                 Button(
+                    enabled = filter.criteria.all { it.isValid },
                     onClick = {
                         onApply(filter, sort)
                         onDismiss()
@@ -231,7 +248,7 @@ private fun SortDropdown(
         onExpandedChange = { expanded = it },
     ) {
         OutlinedTextField(
-            value = current.label,
+            value = current.field.label,
             onValueChange = {},
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -244,15 +261,32 @@ private fun SortDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            SceneSort.entries.forEach { opt ->
+            SceneSortField.entries.forEach { field ->
                 DropdownMenuItem(
-                    text = { Text(opt.label) },
+                    text = { Text(field.label) },
                     onClick = {
-                        onChange(opt)
+                        onChange(current.copy(field = field))
                         expanded = false
                     },
                 )
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun SortDirectionChips(
+    current: SceneSortDirection,
+    onChange: (SceneSortDirection) -> Unit,
+) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        SceneSortDirection.entries.forEach { direction ->
+            FilterChip(
+                selected = current == direction,
+                onClick = { onChange(direction) },
+                label = { Text(direction.label) },
+            )
         }
     }
 }
@@ -286,7 +320,11 @@ private fun DurationSection(
                 selected = activeBucket == null && !customMode && !hasBoundsWithoutPreset,
                 onClick = {
                     customMode = false
-                    onChange(filter.copy(minDurationSeconds = null, maxDurationSeconds = null))
+                    onChange(
+                        filter
+                            .withoutCriterion(SceneFilterField.Duration)
+                            .copy(minDurationSeconds = null, maxDurationSeconds = null),
+                    )
                 },
                 label = { Text("Any") },
             )
@@ -297,10 +335,12 @@ private fun DurationSection(
                         customMode = false
                         val targetBucket = if (activeBucket == bucket) null else bucket
                         onChange(
-                            filter.copy(
-                                minDurationSeconds = targetBucket?.minSeconds,
-                                maxDurationSeconds = targetBucket?.maxSeconds,
-                            ),
+                            filter
+                                .withoutCriterion(SceneFilterField.Duration)
+                                .copy(
+                                    minDurationSeconds = targetBucket?.minSeconds,
+                                    maxDurationSeconds = targetBucket?.maxSeconds,
+                                ),
                         )
                     },
                     label = { Text(bucket.label) },
@@ -319,7 +359,9 @@ private fun DurationSection(
                 maxSeconds = filter.maxDurationSeconds,
                 onChange = { min, max ->
                     onChange(
-                        filter.copy(minDurationSeconds = min, maxDurationSeconds = max),
+                        filter
+                            .withoutCriterion(SceneFilterField.Duration)
+                            .copy(minDurationSeconds = min, maxDurationSeconds = max),
                     )
                 },
             )
@@ -494,6 +536,34 @@ private fun IntMinSlider(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun FlagChips(
+    filter: SceneFilter,
+    onChange: (SceneFilter) -> Unit,
+) {
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        ToggleChip("Organized", filter.organized) {
+            onChange(filter.withoutCriterion(SceneFilterField.Organized).copy(organized = it))
+        }
+        ToggleChip("Has markers", filter.hasMarkers) {
+            onChange(filter.withoutCriterion(SceneFilterField.HasMarkers).copy(hasMarkers = it))
+        }
+        ToggleChip("Interactive", filter.interactive) {
+            onChange(filter.withoutCriterion(SceneFilterField.Interactive).copy(interactive = it))
+        }
+        ToggleChip("In progress", filter.hasResumeTime) {
+            onChange(filter.withoutCriterion(SceneFilterField.ResumeTime).copy(hasResumeTime = it))
+        }
+        ToggleChip("Has captions", filter.hasCaptions) {
+            onChange(filter.withoutCriterion(SceneFilterField.Captions).copy(hasCaptions = it))
+        }
+    }
+}
+
 @Composable
 private fun ToggleChip(
     label: String,
@@ -556,3 +626,29 @@ private fun datesFor(bucket: DateBucket?): Pair<String?, String?> {
         DateBucket.ThisYear -> LocalDate.of(today.year, 1, 1).toString() to today.toString()
     }
 }
+
+private fun SceneFilter.withoutCriterion(field: SceneFilterField): SceneFilter = copy(criteria = criteria.filterNot { it.field == field })
+
+private fun SceneFilter.clearQuickFields(fields: Set<SceneFilterField>): SceneFilter =
+    copy(
+        minResolution = minResolution.takeUnless { SceneFilterField.Resolution in fields },
+        minRating100 = minRating100.takeUnless { SceneFilterField.Rating in fields },
+        maxRating100 = maxRating100.takeUnless { SceneFilterField.Rating in fields },
+        organized = organized.takeUnless { SceneFilterField.Organized in fields },
+        hasMarkers = hasMarkers.takeUnless { SceneFilterField.HasMarkers in fields },
+        interactive = interactive.takeUnless { SceneFilterField.Interactive in fields },
+        performerIds = performerIds.takeUnless { SceneFilterField.Performers in fields }.orEmpty(),
+        studioIds = studioIds.takeUnless { SceneFilterField.Studios in fields }.orEmpty(),
+        tagIds = tagIds.takeUnless { SceneFilterField.Tags in fields }.orEmpty(),
+        hasResumeTime = hasResumeTime.takeUnless { SceneFilterField.ResumeTime in fields },
+        minDurationSeconds = minDurationSeconds.takeUnless { SceneFilterField.Duration in fields },
+        maxDurationSeconds = maxDurationSeconds.takeUnless { SceneFilterField.Duration in fields },
+        minDate = minDate.takeUnless { SceneFilterField.Date in fields },
+        maxDate = maxDate.takeUnless { SceneFilterField.Date in fields },
+        minPlayCount = minPlayCount.takeUnless { SceneFilterField.PlayCount in fields },
+        maxPlayCount = maxPlayCount.takeUnless { SceneFilterField.PlayCount in fields },
+        minOCounter = minOCounter.takeUnless { SceneFilterField.OCounter in fields },
+        maxOCounter = maxOCounter.takeUnless { SceneFilterField.OCounter in fields },
+        orientation = orientation.takeUnless { SceneFilterField.Orientation in fields },
+        hasCaptions = hasCaptions.takeUnless { SceneFilterField.Captions in fields },
+    )

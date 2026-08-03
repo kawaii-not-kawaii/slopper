@@ -51,13 +51,6 @@ This is a freshly-restored Android Kotlin project (Stash client) with an MVP sca
 - Workaround: None. The UI element is shipped but non-functional.
 - Fix approach: Use `MediaMetadataRetriever.getFrameAtTime` (per the in-file comment) plus `MediaStore.Images` insert; declare `READ_MEDIA_IMAGES` (API 33+) / scoped storage write. The author flagged storage-permission plumbing as the deferred work.
 
-### Filter sheet entity pickers not yet implemented
-- Symptoms: README "TODO" entry — tag/performer/studio picker inside the filter sheet only round-trips pre-selected ids; you cannot pick them inside the sheet.
-- Files: `feature/library/src/main/java/io/stashapp/android/feature/library/FilterSheet.kt` (531 lines), referenced by `feature/library/src/main/java/io/stashapp/android/feature/library/LibraryViewModel.kt`
-- Trigger: Open filter sheet → there is no UI to add a tag/performer/studio filter.
-- Workaround: None from the UI; ids can be passed in programmatically via deep-link from the Browse screens, which is the existing UX path.
-- Fix approach: Reuse the Browse screen's entity grid as a picker dialog; pass back selection through a saved-state handle.
-
 ## Restoration Gaps (likely lost in session-history restore)
 
 The single commit message ("restore Slopper Android app from Claude session history") plus the absence of files that the codebase references suggests the following items were never restored:
