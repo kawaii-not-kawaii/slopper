@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,10 +22,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
@@ -34,8 +37,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,11 +50,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -66,7 +68,6 @@ import io.stashapp.android.core.designsystem.component.SectionLabel
 import io.stashapp.android.core.designsystem.component.SegmentedRail
 import io.stashapp.android.core.designsystem.component.privacyBlur
 import io.stashapp.android.core.designsystem.component.resolutionLabel
-import io.stashapp.android.core.designsystem.theme.JetBrainsMono
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.MonoSmall
@@ -113,6 +114,80 @@ data class SearchResults(
         }
 }
 
+/**
+ * The one search field, shared by the scenes-tab bar and this overlay so that opening
+ * search does not resize the control under the user's finger.
+ *
+ * Deliberately not an M3 `OutlinedTextField`: that enforces a 56dp minimum height, which
+ * is what made the two bars different sizes. Read-only mode ([onQueryChange] null) renders
+ * the placeholder and delegates taps to [onClick]; editable mode renders a text field.
+ */
+@Composable
+internal fun SpineSearchField(
+    query: String,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    onQueryChange: ((String) -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+    focusRequester: FocusRequester? = null,
+) {
+    val accent = LocalAccentColors.current
+    var focused by remember { mutableStateOf(false) }
+    val active = onQueryChange != null && focused
+    val textStyle = MetaMono.copy(fontSize = 12.sp)
+
+    Row(
+        modifier =
+            modifier
+                .background(SpineColors.Surface, ShapeSmall)
+                .border(1.dp, if (active) accent.primary.copy(alpha = 0.45f) else SpineColors.Border, ShapeSmall)
+                .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+                .padding(horizontal = 12.dp, vertical = 11.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            Icons.Outlined.Search,
+            contentDescription = null,
+            tint = if (active) accent.primary else SpineColors.OnSurfaceMuted,
+            modifier = Modifier.size(16.dp),
+        )
+        Spacer(Modifier.width(8.dp))
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+            if (query.isEmpty()) {
+                Text(
+                    placeholder,
+                    style = textStyle,
+                    color = SpineColors.OnSurfaceMuted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            if (onQueryChange != null) {
+                BasicTextField(
+                    value = query,
+                    onValueChange = onQueryChange,
+                    singleLine = true,
+                    textStyle = textStyle.copy(color = SpineColors.OnSurface),
+                    cursorBrush = SolidColor(accent.primary),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .then(focusRequester?.let { Modifier.focusRequester(it) } ?: Modifier)
+                            .onFocusChanged { focused = it.isFocused },
+                )
+            }
+        }
+        if (onQueryChange != null && query.isNotEmpty()) {
+            Icon(
+                Icons.Outlined.Close,
+                contentDescription = "Clear search",
+                tint = SpineColors.OnSurfaceVariant,
+                modifier = Modifier.size(14.dp).clickable { onQueryChange("") },
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun SearchOverlay(
@@ -142,9 +217,16 @@ internal fun SearchOverlay(
         enter = fadeIn() + slideInVertically { -it / 4 },
         exit = fadeOut() + slideOutVertically { -it / 4 },
     ) {
-        Column(Modifier.fillMaxSize().background(SpineColors.Bg)) {
+        // statusBarsPadding: the overlay is drawn outside the Scaffold under
+        // enableEdgeToEdge(), so without it the field slides under the system status bar.
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(SpineColors.Bg)
+                .statusBarsPadding(),
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -156,44 +238,12 @@ internal fun SearchOverlay(
                         modifier = Modifier.size(18.dp),
                     )
                 }
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = onQueryChange,
-                    placeholder = { Text("Search scenes, performers, tags…", style = MetaMono) },
-                    leadingIcon = {
-                        Icon(
-                            Icons.Outlined.Search,
-                            contentDescription = null,
-                            tint = accent.primary,
-                            modifier = Modifier.size(14.dp),
-                        )
-                    },
-                    trailingIcon = {
-                        if (query.isNotEmpty()) {
-                            IconButton(onClick = { onQueryChange("") }) {
-                                Icon(
-                                    Icons.Outlined.Close,
-                                    contentDescription = "Clear search",
-                                    tint = SpineColors.OnSurfaceVariant,
-                                    modifier = Modifier.size(12.dp),
-                                )
-                            }
-                        }
-                    },
-                    singleLine = true,
-                    modifier = Modifier.weight(1f).focusRequester(focusRequester),
-                    shape = ShapeSmall,
-                    textStyle = TextStyle(fontFamily = JetBrainsMono, fontSize = 12.sp),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = accent.primary.copy(alpha = 0.45f),
-                            unfocusedBorderColor = SpineColors.Border,
-                            focusedContainerColor = SpineColors.Surface,
-                            unfocusedContainerColor = SpineColors.Surface,
-                            focusedTextColor = SpineColors.OnSurface,
-                            unfocusedTextColor = SpineColors.OnSurface,
-                            cursorColor = accent.primary,
-                        ),
+                SpineSearchField(
+                    query = query,
+                    placeholder = "search · scene title, performer, tag…",
+                    onQueryChange = onQueryChange,
+                    focusRequester = focusRequester,
+                    modifier = Modifier.weight(1f),
                 )
             }
 

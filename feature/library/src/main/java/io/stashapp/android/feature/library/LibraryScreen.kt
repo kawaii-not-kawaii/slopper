@@ -3,7 +3,6 @@ package io.stashapp.android.feature.library
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -22,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -164,30 +161,13 @@ private fun SpineSearchBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .background(SpineColors.Surface, ShapeSmall)
-                    .border(1.dp, SpineColors.Border, ShapeSmall)
-                    .clickable(onClick = onOpenSearch)
-                    .padding(horizontal = 12.dp, vertical = 11.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                Icons.Outlined.Search,
-                contentDescription = null,
-                tint = SpineColors.OnSurfaceMuted,
-                modifier = Modifier.size(16.dp),
-            )
-            Spacer(modifier = Modifier.padding(start = 8.dp))
-            Text(
-                "search · scene title, performer, tag…",
-                style = MetaMono.copy(fontSize = 12.sp),
-                color = SpineColors.OnSurfaceMuted,
-                modifier = Modifier.weight(1f),
-            )
-        }
+        // Same composable the overlay uses, so tapping it doesn't resize the control.
+        SpineSearchField(
+            query = "",
+            placeholder = "search · scene title, performer, tag…",
+            onClick = onOpenSearch,
+            modifier = Modifier.weight(1f),
+        )
 
         // Filter icon
         androidx.compose.material3.IconButton(onClick = onOpenFilter) {
