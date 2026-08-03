@@ -122,8 +122,11 @@ internal fun PlayerControls(
         Modifier
             .fillMaxSize()
             .drawBehind {
-                val topH = 260f
-                val bottomH = 260f
+                // Sized in dp, not raw px: the previous literals meant the scrim was a
+                // different physical height on every density.
+                val topH = 116.dp.toPx()
+                // Hugs the timeline + transport row rather than fading far above it.
+                val bottomH = 96.dp.toPx()
                 // F2 = 95% opacity — heavier scrim so controls stay legible
                 // over bright scenes without a full blackout.
                 drawRect(
@@ -136,12 +139,14 @@ internal fun PlayerControls(
                         ),
                     size = Size(size.width, topH),
                 )
+                // Bottom stays deliberately light — the transport icons carry their own
+                // contrast, so this only needs to lift them off a bright frame.
                 drawRect(
                     brush =
                         Brush.verticalGradient(
                             0f to Color.Transparent,
-                            0.45f to Color(0x59000000),
-                            1f to Color(0xE6000000),
+                            0.55f to Color(0x26000000),
+                            1f to Color(0x8C000000),
                             startY = 0f,
                             endY = bottomH,
                         ),
@@ -250,7 +255,8 @@ internal fun PlayerControls(
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp)
+                // Bottom breathing room so the transport row isn't flush to the edge.
+                .padding(start = 8.dp, end = 8.dp, bottom = 12.dp)
                 .align(Alignment.BottomStart),
             verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {

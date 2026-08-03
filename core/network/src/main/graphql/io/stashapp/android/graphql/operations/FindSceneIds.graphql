@@ -1,0 +1,14 @@
+## Ids only — used to build the shuffle pool over a whole filtered library.
+## Deliberately does NOT reuse the SceneCard fragment: this can return thousands
+## of rows and only the id is needed.
+query FindSceneIds(
+  $filter: FindFilterType
+  $scene_filter: SceneFilterType
+) {
+  findScenes(filter: $filter, scene_filter: $scene_filter) {
+    count
+    scenes {
+      id
+    }
+  }
+}

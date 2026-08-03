@@ -502,6 +502,16 @@ interface SceneRepository {
         limit: Int,
     ): AppResult<ScenePage>
 
+    /**
+     * Every scene id matching [query], ids only. Backs shuffle: the player needs the
+     * whole filtered set as its pool, not just the page the library happened to load.
+     * [limit] of -1 asks the server for all matches.
+     */
+    suspend fun sceneIds(
+        query: SceneQuery,
+        limit: Int = -1,
+    ): AppResult<List<String>>
+
     suspend fun scene(id: String): AppResult<SceneDetail>
 
     /** Persist resume position + accumulated play duration on the server. */
