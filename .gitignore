@@ -15,6 +15,9 @@ captures/
 # Signing — release keystore credentials MUST NOT be committed.
 # Use keystore.properties.example as the documented template.
 keystore.properties
+
+# Local dev server credentials (Stash URL + API key) — never commit.
+.secrets/
 *.jks
 *.keystore
 release.keystore
