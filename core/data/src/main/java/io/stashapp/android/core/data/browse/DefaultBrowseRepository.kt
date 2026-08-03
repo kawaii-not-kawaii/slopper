@@ -10,6 +10,7 @@ import io.stashapp.android.core.domain.BrowseRepository
 import io.stashapp.android.core.domain.EntitySort
 import io.stashapp.android.core.domain.FilterEntityKind
 import io.stashapp.android.core.domain.FilterEntityOption
+import io.stashapp.android.core.domain.FilterOptionPage
 import io.stashapp.android.core.domain.FilterOptionQuery
 import io.stashapp.android.core.model.PerformerBrowseItem
 import io.stashapp.android.core.model.StudioBrowseItem
@@ -57,7 +58,9 @@ class DefaultBrowseRepository
             sort: EntitySort,
         ): Flow<PagingData<TagBrowseItem>> = Pager(config) { tagsPagingSource(apollo, endpointProvider, search, sort) }.flow
 
-        override suspend fun filterOptions(query: FilterOptionQuery): List<FilterEntityOption> {
+        override suspend fun filterOptions(query: FilterOptionQuery): List<FilterEntityOption> = filterOptionsPage(query).options
+
+        override suspend fun filterOptionsPage(query: FilterOptionQuery): FilterOptionPage {
             val sort =
                 when (query.kind) {
                     FilterEntityKind.Gallery -> "title"
@@ -80,9 +83,11 @@ class DefaultBrowseRepository
                             .query(FindPerformersListQuery(Optional.present(filter)))
                             .execute()
                     response.throwOnErrors()
-                    response.data?.findPerformers?.performers.orEmpty().map {
-                        FilterEntityOption(it.id, it.name)
-                    }
+                    val data = response.data?.findPerformers
+                    FilterOptionPage(
+                        data?.performers.orEmpty().map { FilterEntityOption(it.id, it.name) },
+                        data?.count ?: 0,
+                    )
                 }
                 FilterEntityKind.Studio -> {
                     val response =
@@ -90,9 +95,11 @@ class DefaultBrowseRepository
                             .query(FindStudiosListQuery(Optional.present(filter)))
                             .execute()
                     response.throwOnErrors()
-                    response.data?.findStudios?.studios.orEmpty().map {
-                        FilterEntityOption(it.id, it.name)
-                    }
+                    val data = response.data?.findStudios
+                    FilterOptionPage(
+                        data?.studios.orEmpty().map { FilterEntityOption(it.id, it.name) },
+                        data?.count ?: 0,
+                    )
                 }
                 FilterEntityKind.Tag -> {
                     val response =
@@ -100,9 +107,11 @@ class DefaultBrowseRepository
                             .query(FindTagsListQuery(Optional.present(filter)))
                             .execute()
                     response.throwOnErrors()
-                    response.data?.findTags?.tags.orEmpty().map {
-                        FilterEntityOption(it.id, it.name)
-                    }
+                    val data = response.data?.findTags
+                    FilterOptionPage(
+                        data?.tags.orEmpty().map { FilterEntityOption(it.id, it.name) },
+                        data?.count ?: 0,
+                    )
                 }
                 FilterEntityKind.Group -> {
                     val response =
@@ -110,9 +119,11 @@ class DefaultBrowseRepository
                             .query(FindGroupsListQuery(Optional.present(filter)))
                             .execute()
                     response.throwOnErrors()
-                    response.data?.findGroups?.groups.orEmpty().map {
-                        FilterEntityOption(it.id, it.name)
-                    }
+                    val data = response.data?.findGroups
+                    FilterOptionPage(
+                        data?.groups.orEmpty().map { FilterEntityOption(it.id, it.name) },
+                        data?.count ?: 0,
+                    )
                 }
                 FilterEntityKind.Gallery -> {
                     val response =
@@ -120,9 +131,11 @@ class DefaultBrowseRepository
                             .query(FindGalleriesListQuery(Optional.present(filter)))
                             .execute()
                     response.throwOnErrors()
-                    response.data?.findGalleries?.galleries.orEmpty().map {
-                        FilterEntityOption(it.id, it.title ?: "Untitled")
-                    }
+                    val data = response.data?.findGalleries
+                    FilterOptionPage(
+                        data?.galleries.orEmpty().map { FilterEntityOption(it.id, it.title ?: "Untitled") },
+                        data?.count ?: 0,
+                    )
                 }
                 FilterEntityKind.Folder -> {
                     val response =
@@ -130,9 +143,11 @@ class DefaultBrowseRepository
                             .query(FindFoldersListQuery(Optional.present(filter)))
                             .execute()
                     response.throwOnErrors()
-                    response.data?.findFolders?.folders.orEmpty().map {
-                        FilterEntityOption(it.id, it.path)
-                    }
+                    val data = response.data?.findFolders
+                    FilterOptionPage(
+                        data?.folders.orEmpty().map { FilterEntityOption(it.id, it.path) },
+                        data?.count ?: 0,
+                    )
                 }
             }
         }

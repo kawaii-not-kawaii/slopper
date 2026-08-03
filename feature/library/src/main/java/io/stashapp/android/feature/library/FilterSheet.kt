@@ -1,6 +1,11 @@
 package io.stashapp.android.feature.library
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -12,24 +17,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,235 +42,501 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import io.stashapp.android.core.designsystem.component.SectionLabel
+import io.stashapp.android.core.designsystem.component.SegmentedRail
+import io.stashapp.android.core.designsystem.component.SpineChip
+import io.stashapp.android.core.designsystem.component.SpineTriStateChip
+import io.stashapp.android.core.designsystem.component.StarRatingPicker
+import io.stashapp.android.core.designsystem.component.StepperField
+import io.stashapp.android.core.designsystem.theme.JetBrainsMono
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
-import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
+import io.stashapp.android.core.designsystem.theme.MetaMono
+import io.stashapp.android.core.designsystem.theme.MonoSmall
+import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpineColors
 import io.stashapp.android.core.domain.DateBucket
+import io.stashapp.android.core.domain.SavedFilterPreset
 import io.stashapp.android.core.domain.SceneDurationBucket
 import io.stashapp.android.core.domain.SceneFilter
 import io.stashapp.android.core.domain.SceneFilterField
 import io.stashapp.android.core.domain.SceneOrientation
 import io.stashapp.android.core.domain.SceneResolution
 import io.stashapp.android.core.domain.SceneSort
-import io.stashapp.android.core.domain.SceneSortDirection
-import io.stashapp.android.core.domain.SceneSortField
 import java.time.LocalDate
 
-/**
- * Filter + sort bottom sheet.
- *
- * All edits happen against local state and only commit on [onApply].
- */
+/** Filter + sort bottom sheet. Edits remain local until [onApply]. */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun FilterSheet(
     sheetState: SheetState,
     initialFilter: SceneFilter,
     initialSort: SceneSort,
+    presets: List<SavedFilterPreset>,
     onDismiss: () -> Unit,
     onApply: (SceneFilter, SceneSort) -> Unit,
+    onSavePreset: (String, SceneFilter, SceneSort) -> Unit,
 ) {
     val accent = LocalAccentColors.current
-    var filter by remember { mutableStateOf(initialFilter) }
-    var sort by remember { mutableStateOf(initialSort) }
+    var filter by remember(initialFilter) { mutableStateOf(initialFilter) }
+    var sort by remember(initialSort) { mutableStateOf(initialSort) }
+    var showSaveDialog by remember { mutableStateOf(false) }
+    var showStashFilters by remember { mutableStateOf(false) }
+    val reset = {
+        filter = SceneFilter()
+        sort = SceneSort.DateDesc
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         contentWindowInsets = { WindowInsets.navigationBars },
         containerColor = SpineColors.Bg,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        dragHandle = {
+            Box(Modifier.padding(top = 8.dp, bottom = 2.dp), contentAlignment = Alignment.Center) {
+                Box(
+                    Modifier
+                        .size(width = 28.dp, height = 3.dp)
+                        .background(SpineColors.OnSurfaceFaint, RoundedCornerShape(2.dp)),
+                )
+            }
+        },
     ) {
         Column(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.84f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+                    .fillMaxHeight(0.86f)
+                    .border(
+                        1.dp,
+                        SpineColors.BorderStrong,
+                        RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    ),
         ) {
-            SectionTitle("Sort by")
-            SortDropdown(sort) { sort = it }
-            SortDirectionChips(sort.direction) { direction ->
-                sort = sort.copy(direction = direction)
-            }
+            FilterHeader(activeCount = filter.activeCount, onClear = reset)
 
-            SectionTitle("Duration")
-            DurationSection(
-                filter = filter,
-                onChange = { filter = it },
-            )
-
-            SectionTitle("Release date")
-            DateChips(
-                activeBucket = currentDateBucket(filter),
-                onChange = { bucket ->
-                    val (min, max) = datesFor(bucket)
-                    filter =
-                        filter
-                            .withoutCriterion(SceneFilterField.Date)
-                            .copy(minDate = min, maxDate = max)
-                },
-            )
-
-            SectionTitle("Minimum resolution")
-            ResolutionChips(filter.minResolution) {
-                filter =
-                    filter
-                        .withoutCriterion(SceneFilterField.Resolution)
-                        .copy(minResolution = it)
-            }
-
-            SectionTitle("Orientation")
-            OrientationChips(filter.orientation) {
-                filter =
-                    filter
-                        .withoutCriterion(SceneFilterField.Orientation)
-                        .copy(orientation = it)
-            }
-
-            SectionTitle("Rating (★ 0–5)")
-            RatingRange(filter.minRating100, filter.maxRating100) { min, max ->
-                filter =
-                    filter
-                        .withoutCriterion(SceneFilterField.Rating)
-                        .copy(minRating100 = min, maxRating100 = max)
-            }
-
-            SectionTitle("Play count")
-            IntMinSlider(
-                value = filter.minPlayCount ?: 0,
-                maxValue = 50,
-                labelForValue = { n ->
-                    when (n) {
-                        0 -> "Any"
-                        else -> "At least $n"
-                    }
-                },
-                onChange = { v ->
-                    filter =
-                        filter
-                            .withoutCriterion(SceneFilterField.PlayCount)
-                            .copy(minPlayCount = if (v == 0) null else v)
-                },
-            )
-
-            SectionTitle("O-counter")
-            IntMinSlider(
-                value = filter.minOCounter ?: 0,
-                maxValue = 20,
-                labelForValue = { n ->
-                    when (n) {
-                        0 -> "Any"
-                        else -> "At least $n"
-                    }
-                },
-                onChange = { v ->
-                    filter =
-                        filter
-                            .withoutCriterion(SceneFilterField.OCounter)
-                            .copy(minOCounter = if (v == 0) null else v)
-                },
-            )
-
-            SectionTitle("Flags")
-            FlagChips(filter) { filter = it }
-
-            SectionTitle("All Stash filters")
-            StashCriteriaSection(
-                criteria = filter.criteria,
-                onChange = { criteria ->
-                    filter =
-                        filter
-                            .clearQuickFields(criteria.mapTo(mutableSetOf()) { it.field })
-                            .copy(criteria = criteria)
-                },
-            )
-
-            Spacer(Modifier.height(8.dp))
-
-            // Footer — Reset (ghost) + Apply (AccentPrimary filled). No Save view per D-01 Q4.
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                        .padding(start = 18.dp, end = 18.dp, top = 14.dp, bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp),
             ) {
-                TextButton(onClick = {
-                    filter = SceneFilter()
-                    sort = SceneSort.DateDesc
-                }) { Text("Reset") }
-                Spacer(Modifier.weight(1f))
-                Button(
-                    enabled = filter.criteria.all { it.isValid },
-                    onClick = {
-                        onApply(filter, sort)
-                        onDismiss()
-                    },
-                    colors =
-                        androidx.compose.material3.ButtonDefaults.buttonColors(
-                            containerColor = accent.primary,
-                            contentColor = accent.onPrimary,
-                        ),
-                ) {
-                    Text("Apply")
-                }
+                FilterBody(
+                    filter = filter,
+                    sort = sort,
+                    presets = presets,
+                    showStashFilters = showStashFilters,
+                    onFilterChange = { filter = it },
+                    onSortChange = { sort = it },
+                    onSavePreset = { showSaveDialog = true },
+                    onToggleStashFilters = { showStashFilters = !showStashFilters },
+                )
             }
 
-            Spacer(Modifier.height(8.dp))
+            FilterFooter(
+                canApply = filter.criteria.all { it.isValid },
+                onReset = reset,
+                onSave = { showSaveDialog = true },
+                onApply = {
+                    onApply(filter, sort)
+                    onDismiss()
+                },
+            )
+        }
+    }
+
+    if (showSaveDialog) {
+        SavePresetDialog(
+            initialName = generatedPresetName(filter, presets.size + 1),
+            onDismiss = { showSaveDialog = false },
+            onSave = { name ->
+                onSavePreset(name, filter, sort)
+                showSaveDialog = false
+            },
+        )
+    }
+}
+
+@Composable
+private fun FilterBody(
+    filter: SceneFilter,
+    sort: SceneSort,
+    presets: List<SavedFilterPreset>,
+    showStashFilters: Boolean,
+    onFilterChange: (SceneFilter) -> Unit,
+    onSortChange: (SceneSort) -> Unit,
+    onSavePreset: () -> Unit,
+    onToggleStashFilters: () -> Unit,
+) {
+    PresetSection(filter, sort, presets, onFilterChange, onSortChange, onSavePreset)
+    FilterSection("Sort by") { SortRow(sort = sort, onChange = onSortChange) }
+    FilterSection("Duration") { DurationSection(filter = filter, onChange = onFilterChange) }
+    DateSection(filter, onFilterChange)
+    ResolutionSection(filter, onFilterChange)
+    OrientationAndRatingSections(filter, onFilterChange)
+    CountSections(filter, onFilterChange)
+    FilterSection("Flags — tap to cycle yes / no / any") {
+        FlagChips(filter = filter, onChange = onFilterChange)
+    }
+    StashFiltersSection(filter, showStashFilters, onToggleStashFilters, onFilterChange)
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PresetSection(
+    filter: SceneFilter,
+    sort: SceneSort,
+    presets: List<SavedFilterPreset>,
+    onFilterChange: (SceneFilter) -> Unit,
+    onSortChange: (SceneSort) -> Unit,
+    onSavePreset: () -> Unit,
+) {
+    if (presets.isEmpty() && !filter.isActive) return
+    FilterSection("Presets") {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            presets.forEach { preset ->
+                SpineChip(
+                    label = preset.name,
+                    selected = filter == preset.filter && sort == preset.sort,
+                    onClick = {
+                        onFilterChange(preset.filter)
+                        onSortChange(preset.sort)
+                    },
+                )
+            }
+            SpineChip("+ save current", false, onSavePreset, dashed = true)
         }
     }
 }
 
-// ---- Section components ----------------------------------------------------
-
 @Composable
-private fun SectionTitle(text: String) {
-    Text(
-        text,
-        style =
-            TextStyle(
-                fontFamily = SpaceGrotesk,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-            ),
-        color = MaterialTheme.colorScheme.onSurface,
-    )
+private fun DateSection(
+    filter: SceneFilter,
+    onChange: (SceneFilter) -> Unit,
+) {
+    FilterSection("Release date") {
+        val currentYear = LocalDate.now().year
+        SegmentedRail(
+            options =
+                listOf(
+                    "any" to null,
+                    "week" to DateBucket.LastWeek,
+                    "month" to DateBucket.LastMonth,
+                    "year" to DateBucket.LastYear,
+                    currentYear.toString() to DateBucket.ThisYear,
+                ),
+            selected = currentDateBucket(filter),
+            onSelect = { bucket ->
+                val (min, max) = datesFor(bucket)
+                onChange(filter.withoutCriterion(SceneFilterField.Date).copy(minDate = min, maxDate = max))
+            },
+        )
+    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SortDropdown(
-    current: SceneSort,
+private fun ResolutionSection(
+    filter: SceneFilter,
+    onChange: (SceneFilter) -> Unit,
+) {
+    FilterSection("Min resolution") {
+        val baseOptions =
+            listOf(
+                "any" to null,
+                "480" to SceneResolution.Sd480,
+                "720" to SceneResolution.Hd720,
+                "1080" to SceneResolution.Fhd1080,
+                "1440" to SceneResolution.Qhd1440,
+                "4K" to SceneResolution.Uhd4k,
+                "8K" to SceneResolution.Uhd8k,
+            )
+        val selected = filter.minResolution
+        val options =
+            if (selected != null &&
+                baseOptions.none { it.second == selected }
+            ) {
+                baseOptions + (selected.label to selected)
+            } else {
+                baseOptions
+            }
+        SegmentedRail(
+            options = options,
+            selected = selected,
+            onSelect = { onChange(filter.withoutCriterion(SceneFilterField.Resolution).copy(minResolution = it)) },
+        )
+        selected?.let {
+            Text(
+                text = "${it.label} and above",
+                style = MonoSmall,
+                color = SpineColors.OnSurfaceVariant,
+                modifier = Modifier.padding(top = 6.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun OrientationAndRatingSections(
+    filter: SceneFilter,
+    onChange: (SceneFilter) -> Unit,
+) {
+    FilterSection("Orientation") {
+        SegmentedRail(
+            options = listOf("any" to null) + SceneOrientation.entries.map { it.label.lowercase() to it },
+            selected = filter.orientation,
+            onSelect = { onChange(filter.withoutCriterion(SceneFilterField.Orientation).copy(orientation = it)) },
+        )
+    }
+    FilterSection("Rating — minimum") {
+        StarRatingPicker(
+            rating100 = filter.minRating100,
+            onChange = { onChange(filter.withoutCriterion(SceneFilterField.Rating).copy(minRating100 = it, maxRating100 = null)) },
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+private fun CountSections(
+    filter: SceneFilter,
+    onChange: (SceneFilter) -> Unit,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        FilterSection("Play count", Modifier.weight(1f)) {
+            StepperField(
+                value = filter.minPlayCount,
+                max = 50,
+                onChange = { onChange(filter.withoutCriterion(SceneFilterField.PlayCount).copy(minPlayCount = it, maxPlayCount = null)) },
+            )
+        }
+        FilterSection("O-counter", Modifier.weight(1f)) {
+            StepperField(
+                value = filter.minOCounter,
+                max = 20,
+                onChange = { onChange(filter.withoutCriterion(SceneFilterField.OCounter).copy(minOCounter = it, maxOCounter = null)) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun StashFiltersSection(
+    filter: SceneFilter,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    onChange: (SceneFilter) -> Unit,
+) {
+    Column {
+        Surface(
+            modifier = Modifier.fillMaxWidth().clickable(onClick = onToggle),
+            color = SpineColors.Surface,
+            shape = ShapeSmall,
+            border = BorderStroke(1.dp, SpineColors.Border),
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 11.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "ALL STASH FILTERS",
+                    style = MetaMono.copy(fontWeight = FontWeight.SemiBold, letterSpacing = 1.sp),
+                    color = SpineColors.OnSurfaceMuted,
+                )
+                Spacer(Modifier.weight(1f))
+                val criteriaCount = filter.criteria.count { it.isValid }
+                if (criteriaCount > 0) {
+                    Text(criteriaCount.toString(), style = MetaMono, color = SpineColors.OnSurfaceVariant)
+                    Spacer(Modifier.width(8.dp))
+                }
+                Icon(
+                    imageVector = Icons.Outlined.KeyboardArrowDown,
+                    contentDescription = if (expanded) "Collapse all Stash filters" else "Expand all Stash filters",
+                    tint = SpineColors.OnSurfaceMuted,
+                    modifier = Modifier.size(14.dp),
+                )
+            }
+        }
+        if (expanded) {
+            Spacer(Modifier.height(10.dp))
+            StashCriteriaSection(
+                criteria = filter.criteria,
+                onChange = { criteria ->
+                    onChange(filter.clearQuickFields(criteria.mapTo(mutableSetOf()) { it.field }).copy(criteria = criteria))
+                },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterHeader(
+    activeCount: Int,
+    onClear: () -> Unit,
+) {
+    val accent = LocalAccentColors.current
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, top = 10.dp, bottom = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "FILTERS",
+            style = MetaMono.copy(fontSize = 11.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 1.2.sp),
+            color = SpineColors.OnSurface,
+        )
+        if (activeCount > 0) {
+            Spacer(Modifier.width(10.dp))
+            Text(
+                text = "$activeCount ACTIVE",
+                style = MonoSmall.copy(fontWeight = FontWeight.SemiBold),
+                color = accent.primary,
+                modifier =
+                    Modifier
+                        .background(accent.primary.copy(alpha = 0.10f), RoundedCornerShape(4.dp))
+                        .border(1.dp, accent.primary.copy(alpha = 0.30f), RoundedCornerShape(4.dp))
+                        .padding(horizontal = 6.dp, vertical = 3.dp),
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        Text(
+            text = "CLEAR ALL",
+            style = MetaMono,
+            color = SpineColors.OnSurfaceVariant,
+            modifier = Modifier.clickable(onClick = onClear).padding(vertical = 8.dp),
+        )
+    }
+    HorizontalDivider(color = SpineColors.Border)
+}
+
+@Composable
+private fun FilterFooter(
+    canApply: Boolean,
+    onReset: () -> Unit,
+    onSave: () -> Unit,
+    onApply: () -> Unit,
+) {
+    val accent = LocalAccentColors.current
+    HorizontalDivider(color = SpineColors.Border)
+    Row(
+        modifier = Modifier.fillMaxWidth().background(SpineColors.Bg).padding(start = 18.dp, end = 18.dp, top = 12.dp, bottom = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "Reset",
+            style = MetaMono.copy(fontSize = 11.sp),
+            color = SpineColors.OnSurfaceMuted,
+            modifier = Modifier.clickable(onClick = onReset).padding(vertical = 11.dp),
+        )
+        Spacer(Modifier.weight(1f))
+        Surface(
+            onClick = onSave,
+            color = Color.Transparent,
+            shape = ShapeSmall,
+            border = BorderStroke(1.dp, SpineColors.Border),
+        ) {
+            Text(
+                text = "Save view",
+                style = MetaMono.copy(fontSize = 11.sp, fontWeight = FontWeight.SemiBold),
+                color = SpineColors.OnSurface,
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 11.dp),
+            )
+        }
+        Spacer(Modifier.width(10.dp))
+        Surface(
+            onClick = onApply,
+            enabled = canApply,
+            color = if (canApply) accent.primary else SpineColors.SurfaceHigh,
+            contentColor = if (canApply) accent.onPrimary else SpineColors.OnSurfaceMuted,
+            shape = ShapeSmall,
+        ) {
+            Text(
+                text = "Apply",
+                style =
+                    androidx.compose.material3.MaterialTheme.typography.bodySmall
+                        .copy(fontWeight = FontWeight.SemiBold),
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 11.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterSection(
+    label: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Column(modifier) {
+        SectionLabel(label)
+        content()
+    }
+}
+
+@Composable
+private fun SortRow(
+    sort: SceneSort,
     onChange: (SceneSort) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-    ) {
-        OutlinedTextField(
-            value = current.field.label,
-            onValueChange = {},
-            readOnly = true,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .menuAnchor(type = MenuAnchorType.PrimaryEditable, enabled = true),
+    val options =
+        listOf(
+            "Newest first" to SceneSort.DateDesc,
+            "Oldest first" to SceneSort.DateAsc,
+            "Recently added" to SceneSort.CreatedDesc,
+            "Title A–Z" to SceneSort.TitleAsc,
+            "Random" to SceneSort.Random,
+            "Highest rated" to SceneSort.Rating,
+            "Most played" to SceneSort.PlayCount,
+            "Recently played" to SceneSort.RecentlyPlayed,
+            "Longest" to SceneSort.Duration,
         )
-        ExposedDropdownMenu(
+    Box {
+        Surface(
+            modifier = Modifier.fillMaxWidth().clickable { expanded = true },
+            color = SpineColors.Surface,
+            shape = ShapeSmall,
+            border = BorderStroke(1.dp, SpineColors.Border),
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 11.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = options.firstOrNull { it.second == sort }?.first ?: sort.label,
+                    style = MetaMono.copy(fontSize = 12.sp, fontWeight = FontWeight.Medium),
+                    color = SpineColors.OnSurface,
+                )
+                Spacer(Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Outlined.KeyboardArrowDown,
+                    contentDescription = "Choose sort order",
+                    tint = SpineColors.OnSurfaceMuted,
+                    modifier = Modifier.size(14.dp),
+                )
+            }
+        }
+        DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
+            containerColor = SpineColors.SurfaceHigh,
         ) {
-            SceneSortField.entries.forEach { field ->
+            options.forEach { (label, value) ->
                 DropdownMenuItem(
-                    text = { Text(field.label) },
+                    text = { Text(label, style = MetaMono.copy(fontSize = 11.sp)) },
                     onClick = {
-                        onChange(current.copy(field = field))
+                        onChange(value)
                         expanded = false
                     },
                 )
@@ -274,32 +545,11 @@ private fun SortDropdown(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun SortDirectionChips(
-    current: SceneSortDirection,
-    onChange: (SceneSortDirection) -> Unit,
-) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        SceneSortDirection.entries.forEach { direction ->
-            FilterChip(
-                selected = current == direction,
-                onClick = { onChange(direction) },
-                label = { Text(direction.label) },
-            )
-        }
-    }
-}
-
 /**
  * Duration control: preset buckets OR a custom min/max range in minutes.
- *
- * "Custom" is a latched mode — when active, the preset chips become a way to
- * snap back to one of the canonical ranges. When the user edits the min/max
- * fields and the values no longer match any preset, the Custom chip stays
- * selected.
+ * Custom mode remains latched while entered bounds do not match a preset.
  */
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DurationSection(
     filter: SceneFilter,
@@ -314,9 +564,10 @@ private fun DurationSection(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            FilterChip(
+            SpineChip(
+                label = "Any",
                 selected = activeBucket == null && !customMode && !hasBoundsWithoutPreset,
                 onClick = {
                     customMode = false
@@ -326,10 +577,10 @@ private fun DurationSection(
                             .copy(minDurationSeconds = null, maxDurationSeconds = null),
                     )
                 },
-                label = { Text("Any") },
             )
             SceneDurationBucket.entries.forEach { bucket ->
-                FilterChip(
+                SpineChip(
+                    label = bucket.shortLabel,
                     selected = activeBucket == bucket && !customMode,
                     onClick = {
                         customMode = false
@@ -343,13 +594,12 @@ private fun DurationSection(
                                 ),
                         )
                     },
-                    label = { Text(bucket.label) },
                 )
             }
-            FilterChip(
+            SpineChip(
+                label = "custom",
                 selected = customMode || hasBoundsWithoutPreset,
                 onClick = { customMode = !customMode },
-                label = { Text("Custom") },
             )
         }
 
@@ -369,16 +619,20 @@ private fun DurationSection(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+private val SceneDurationBucket.shortLabel: String
+    get() =
+        when (this) {
+            SceneDurationBucket.UnderFive -> "<5m"
+            SceneDurationBucket.OverTwoHours -> "2h+"
+            else -> label
+        }
+
 @Composable
 private fun DurationCustomRange(
     minSeconds: Int?,
     maxSeconds: Int?,
     onChange: (Int?, Int?) -> Unit,
 ) {
-    // Internal state decoupled from the live filter so typing doesn't thrash
-    // the query on every keystroke — we push changes through as numeric
-    // values, but hold the raw strings (so "" is a valid "no bound" state).
     var minText by remember(minSeconds) {
         mutableStateOf(minSeconds?.let { (it / 60).toString() }.orEmpty())
     }
@@ -386,155 +640,102 @@ private fun DurationCustomRange(
         mutableStateOf(maxSeconds?.let { (it / 60).toString() }.orEmpty())
     }
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            DurationInput(
+                label = "MIN · MINUTES",
+                value = minText,
+                onValueChange = { raw ->
+                    val clean = raw.filter { it.isDigit() }.take(4)
+                    minText = clean
+                    onChange(
+                        clean.toIntOrNull()?.takeIf { it > 0 }?.times(60),
+                        maxText.toIntOrNull()?.takeIf { it > 0 }?.times(60),
+                    )
+                },
+                modifier = Modifier.weight(1f),
+            )
+            Text("–", style = MetaMono.copy(fontSize = 12.sp), color = SpineColors.OnSurfaceMuted)
+            DurationInput(
+                label = "MAX · MINUTES",
+                value = maxText,
+                onValueChange = { raw ->
+                    val clean = raw.filter { it.isDigit() }.take(4)
+                    maxText = clean
+                    onChange(
+                        minText.toIntOrNull()?.takeIf { it > 0 }?.times(60),
+                        clean.toIntOrNull()?.takeIf { it > 0 }?.times(60),
+                    )
+                },
+                modifier = Modifier.weight(1f),
+            )
+        }
+        Text(
+            text = durationSummary(minText.toIntOrNull(), maxText.toIntOrNull()),
+            style = MonoSmall,
+            color = SpineColors.OnSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun DurationInput(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val accent = LocalAccentColors.current
+    var focused by remember { mutableStateOf(false) }
+    Column(
+        modifier =
+            modifier
+                .background(SpineColors.Surface, ShapeSmall)
+                .border(1.dp, if (focused) accent.primary.copy(alpha = 0.45f) else SpineColors.Border, ShapeSmall)
+                .padding(horizontal = 11.dp, vertical = 9.dp),
     ) {
-        OutlinedTextField(
-            value = minText,
-            onValueChange = { raw ->
-                // Digits-only, max 4 chars. 9999 minutes = ~166 hours is plenty.
-                val clean = raw.filter { it.isDigit() }.take(4)
-                minText = clean
-                onChange(
-                    clean.toIntOrNull()?.takeIf { it > 0 }?.times(60),
-                    maxText.toIntOrNull()?.takeIf { it > 0 }?.times(60),
-                )
-            },
-            label = { Text("Min (min)") },
-            singleLine = true,
-            keyboardOptions =
-                androidx.compose.foundation.text.KeyboardOptions(
-                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
-                ),
-            modifier = Modifier.weight(1f),
+        Text(
+            text = label,
+            style = MonoSmall.copy(fontSize = 8.5.sp, letterSpacing = 0.8.sp),
+            color = SpineColors.OnSurfaceMuted,
         )
-        Text("–", style = MaterialTheme.typography.titleMedium)
-        OutlinedTextField(
-            value = maxText,
-            onValueChange = { raw ->
-                val clean = raw.filter { it.isDigit() }.take(4)
-                maxText = clean
-                onChange(
-                    minText.toIntOrNull()?.takeIf { it > 0 }?.times(60),
-                    clean.toIntOrNull()?.takeIf { it > 0 }?.times(60),
-                )
-            },
-            label = { Text("Max (min)") },
+        Spacer(Modifier.height(5.dp))
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
             singleLine = true,
-            keyboardOptions =
-                androidx.compose.foundation.text.KeyboardOptions(
-                    keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            textStyle =
+                TextStyle(
+                    fontFamily = JetBrainsMono,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = SpineColors.OnSurface,
                 ),
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth().onFocusChanged { focused = it.isFocused },
+            decorationBox = { inner ->
+                if (value.isEmpty()) {
+                    Text("no limit", style = MetaMono.copy(fontSize = 13.sp), color = SpineColors.OnSurfaceMuted)
+                }
+                inner()
+            },
         )
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun DateChips(
-    activeBucket: DateBucket?,
-    onChange: (DateBucket?) -> Unit,
-) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        FilterChip(selected = activeBucket == null, onClick = { onChange(null) }, label = { Text("Any") })
-        DateBucket.entries.forEach { b ->
-            FilterChip(
-                selected = activeBucket == b,
-                onClick = { onChange(if (activeBucket == b) null else b) },
-                label = { Text(b.label) },
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun ResolutionChips(
-    current: SceneResolution?,
-    onChange: (SceneResolution?) -> Unit,
-) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        FilterChip(selected = current == null, onClick = { onChange(null) }, label = { Text("Any") })
-        SceneResolution.entries.forEach { r ->
-            FilterChip(
-                selected = current == r,
-                onClick = { onChange(if (current == r) null else r) },
-                label = { Text(r.label) },
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun OrientationChips(
-    current: SceneOrientation?,
-    onChange: (SceneOrientation?) -> Unit,
-) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        FilterChip(selected = current == null, onClick = { onChange(null) }, label = { Text("Any") })
-        SceneOrientation.entries.forEach { o ->
-            FilterChip(
-                selected = current == o,
-                onClick = { onChange(if (current == o) null else o) },
-                label = { Text(o.label) },
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun RatingRange(
+private fun durationSummary(
     min: Int?,
     max: Int?,
-    onChange: (Int?, Int?) -> Unit,
-) {
-    val lo = (min ?: 0).coerceIn(0, 100).toFloat()
-    val hi = (max ?: 100).coerceIn(0, 100).toFloat()
-    Column {
-        RangeSlider(
-            value = lo..hi,
-            onValueChange = { range ->
-                onChange(
-                    range.start.toInt().takeIf { it > 0 },
-                    range.endInclusive.toInt().takeIf { it < 100 },
-                )
-            },
-            valueRange = 0f..100f,
-            steps = 19,
-        )
-        Text(
-            "${"%.1f".format(lo / 20)} – ${"%.1f".format(hi / 20)}",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+): String =
+    when {
+        min != null && max != null -> "$min–${max}m"
+        min != null -> "${min}m and longer"
+        max != null -> "up to ${max}m"
+        else -> "no duration limit"
     }
-}
-
-@Composable
-private fun IntMinSlider(
-    value: Int,
-    maxValue: Int,
-    labelForValue: (Int) -> String,
-    onChange: (Int) -> Unit,
-) {
-    Column {
-        Slider(
-            value = value.toFloat(),
-            onValueChange = { onChange(it.toInt()) },
-            valueRange = 0f..maxValue.toFloat(),
-            steps = maxValue - 1,
-        )
-        Text(
-            labelForValue(value),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -543,61 +744,104 @@ private fun FlagChips(
     onChange: (SceneFilter) -> Unit,
 ) {
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        ToggleChip("Organized", filter.organized) {
-            onChange(filter.withoutCriterion(SceneFilterField.Organized).copy(organized = it))
-        }
-        ToggleChip("Has markers", filter.hasMarkers) {
-            onChange(filter.withoutCriterion(SceneFilterField.HasMarkers).copy(hasMarkers = it))
-        }
-        ToggleChip("Interactive", filter.interactive) {
-            onChange(filter.withoutCriterion(SceneFilterField.Interactive).copy(interactive = it))
-        }
-        ToggleChip("In progress", filter.hasResumeTime) {
-            onChange(filter.withoutCriterion(SceneFilterField.ResumeTime).copy(hasResumeTime = it))
-        }
-        ToggleChip("Has captions", filter.hasCaptions) {
-            onChange(filter.withoutCriterion(SceneFilterField.Captions).copy(hasCaptions = it))
-        }
+        SpineTriStateChip(
+            label = "Organized",
+            state = filter.organized,
+            onChange = { onChange(filter.withoutCriterion(SceneFilterField.Organized).copy(organized = it)) },
+        )
+        SpineTriStateChip(
+            label = "Has markers",
+            state = filter.hasMarkers,
+            onChange = { onChange(filter.withoutCriterion(SceneFilterField.HasMarkers).copy(hasMarkers = it)) },
+        )
+        SpineTriStateChip(
+            label = "Interactive",
+            state = filter.interactive,
+            onChange = { onChange(filter.withoutCriterion(SceneFilterField.Interactive).copy(interactive = it)) },
+        )
+        SpineTriStateChip(
+            label = "In progress",
+            state = filter.hasResumeTime,
+            onChange = { onChange(filter.withoutCriterion(SceneFilterField.ResumeTime).copy(hasResumeTime = it)) },
+        )
+        SpineTriStateChip(
+            label = "Has captions",
+            state = filter.hasCaptions,
+            onChange = { onChange(filter.withoutCriterion(SceneFilterField.Captions).copy(hasCaptions = it)) },
+        )
     }
 }
 
 @Composable
-private fun ToggleChip(
-    label: String,
-    state: Boolean?,
-    onChange: (Boolean?) -> Unit,
+private fun SavePresetDialog(
+    initialName: String,
+    onDismiss: () -> Unit,
+    onSave: (String) -> Unit,
 ) {
-    val accent = LocalAccentColors.current
-    val display =
-        when (state) {
-            true -> "$label: yes"
-            false -> "$label: no"
-            null -> label
-        }
-    FilterChip(
-        selected = state != null,
-        onClick = {
-            // Tri-state: null → true → false → null
-            val next =
-                when (state) {
-                    null -> true
-                    true -> false
-                    false -> null
+    var name by remember(initialName) { mutableStateOf(initialName) }
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            color = SpineColors.SurfaceTop,
+            shape = ShapeSmall,
+            border = BorderStroke(1.dp, SpineColors.BorderStrong),
+        ) {
+            Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                SectionLabel("Save filter preset")
+                BasicTextField(
+                    value = name,
+                    onValueChange = { name = it.take(40) },
+                    singleLine = true,
+                    textStyle = MetaMono.copy(fontSize = 12.sp, color = SpineColors.OnSurface),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .background(SpineColors.Surface, ShapeSmall)
+                            .border(1.dp, SpineColors.Border, ShapeSmall)
+                            .padding(horizontal = 12.dp, vertical = 11.dp),
+                )
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    Text(
+                        "Cancel",
+                        style = MetaMono.copy(fontSize = 11.sp),
+                        color = SpineColors.OnSurfaceVariant,
+                        modifier = Modifier.clickable(onClick = onDismiss).padding(10.dp),
+                    )
+                    val accent = LocalAccentColors.current
+                    Surface(
+                        onClick = { onSave(name.trim()) },
+                        enabled = name.trim().isNotEmpty(),
+                        color = accent.primary,
+                        contentColor = accent.onPrimary,
+                        shape = ShapeSmall,
+                    ) {
+                        Text(
+                            "Save",
+                            style = MetaMono.copy(fontSize = 11.sp, fontWeight = FontWeight.SemiBold),
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                        )
+                    }
                 }
-            onChange(next)
-        },
-        label = { Text(display) },
-        colors =
-            FilterChipDefaults.filterChipColors(
-                selectedContainerColor = accent.primary.copy(alpha = 0.25f),
-            ),
-    )
+            }
+        }
+    }
 }
 
-// ---- Filter→bucket derivation ----------------------------------------------
+private fun generatedPresetName(
+    filter: SceneFilter,
+    number: Int,
+): String {
+    val parts =
+        buildList {
+            currentDurationBucket(filter)?.let { add(it.shortLabel) }
+            filter.minResolution?.let { add("≥${it.label}") }
+            filter.minRating100?.let { add("★${it / 20f}+") }
+            filter.minPlayCount?.let { add("≥$it plays") }
+        }
+    return (parts.takeIf { it.isNotEmpty() }?.joinToString(" · ") ?: "Preset $number").take(40)
+}
 
 private fun currentDurationBucket(f: SceneFilter): SceneDurationBucket? =
     SceneDurationBucket.entries.firstOrNull {
@@ -612,10 +856,6 @@ private fun currentDateBucket(f: SceneFilter): DateBucket? {
     }
 }
 
-/**
- * Resolve a [DateBucket] to `YYYY-MM-DD` bounds. Uses ISO local date; no
- * timezone math — Stash's `date` is a plain date string, not a timestamp.
- */
 private fun datesFor(bucket: DateBucket?): Pair<String?, String?> {
     val today = LocalDate.now()
     return when (bucket) {

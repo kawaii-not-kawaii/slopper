@@ -54,7 +54,16 @@ class DefaultSceneRepository
         override suspend fun scenes(
             query: io.stashapp.android.core.domain.SceneQuery,
             limit: Int,
-        ): AppResult<List<SceneSummary>> {
+        ): AppResult<List<SceneSummary>> =
+            when (val page = scenePage(query, limit)) {
+                is AppResult.Success -> AppResult.Success(page.data.scenes)
+                is AppResult.Failure -> AppResult.Failure(page.error)
+            }
+
+        override suspend fun scenePage(
+            query: io.stashapp.android.core.domain.SceneQuery,
+            limit: Int,
+        ): AppResult<io.stashapp.android.core.domain.ScenePage> {
             val endpoint =
                 endpointProvider.current()
                     ?: return AppResult.Failure(AppError.Auth("No server connected"))
@@ -92,7 +101,13 @@ class DefaultSceneRepository
                                 return toSceneMappingFailure(e, it.sceneCard.id)
                             }
                         }
-                    AppResult.Success(summaries)
+                    AppResult.Success(
+                        io.stashapp.android.core.domain.ScenePage(
+                            scenes = summaries,
+                            // The server's match count, not the size of this page.
+                            total = result.count,
+                        ),
+                    )
                 }
             } catch (e: CancellationException) {
                 throw e

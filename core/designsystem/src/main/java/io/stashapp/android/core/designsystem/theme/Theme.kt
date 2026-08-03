@@ -9,6 +9,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import io.stashapp.android.core.designsystem.component.LocalPrivacyBlurEnabled
 
 // ---- Shape tokens (Spine design system) -------------------------------------
 
@@ -72,6 +73,7 @@ private val StashDarkColorScheme =
 @Composable
 fun StashTheme(
     accentName: String = "sage",
+    blurThumbnails: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val accent = remember(accentName) { accentForName(accentName) }
@@ -84,7 +86,10 @@ fun StashTheme(
                 onPrimaryContainer = accent.onPrimary,
             )
         }
-    CompositionLocalProvider(LocalAccentColors provides accent) {
+    CompositionLocalProvider(
+        LocalAccentColors provides accent,
+        LocalPrivacyBlurEnabled provides blurThumbnails,
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = StashTypography,

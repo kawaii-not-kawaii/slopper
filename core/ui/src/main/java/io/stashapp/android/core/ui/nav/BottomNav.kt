@@ -46,6 +46,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
@@ -122,6 +123,7 @@ fun MainBottomBar(
     visibleIds: List<String> = MainNavItems.DefaultVisibleIds,
     onNavigate: (String) -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     val visibleItems = visibleIds.mapNotNull { id -> MainNavItems.All.find { it.id == id } }
 
     Box(
@@ -157,7 +159,7 @@ fun MainBottomBar(
                         }
                     val tabBg =
                         if (selected) {
-                            Modifier.background(SpineColors.AccentPrimary, RoundedCornerShape(15.dp))
+                            Modifier.background(accent.primary, RoundedCornerShape(15.dp))
                         } else {
                             Modifier
                         }
@@ -172,7 +174,7 @@ fun MainBottomBar(
                         Icon(
                             imageVector = if (selected) item.iconFilled else item.iconOutlined,
                             contentDescription = item.label,
-                            tint = if (selected) SpineColors.AccentOnPrimary else SpineColors.OnSurfaceVariant,
+                            tint = if (selected) accent.onPrimary else SpineColors.OnSurfaceVariant,
                             modifier = Modifier.size(24.dp),
                         )
                         if (selected) {
@@ -185,7 +187,7 @@ fun MainBottomBar(
                                         fontWeight = FontWeight.SemiBold,
                                         letterSpacing = (-0.1).sp,
                                     ),
-                                color = SpineColors.AccentOnPrimary,
+                                color = accent.onPrimary,
                             )
                         }
                     }
@@ -288,6 +290,7 @@ private fun MoreSheetItem(
     icon: ImageVector,
     onClick: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     ListItem(
         headlineContent = {
             Text(label, style = MaterialTheme.typography.titleSmall)
@@ -296,7 +299,7 @@ private fun MoreSheetItem(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = SpineColors.AccentPrimary,
+                tint = accent.primary,
                 modifier = Modifier.size(22.dp),
             )
         },

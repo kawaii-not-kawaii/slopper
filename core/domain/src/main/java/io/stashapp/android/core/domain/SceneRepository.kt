@@ -418,6 +418,26 @@ data class SceneFilter(
     val hasCaptions: Boolean? = null,
     val criteria: List<SceneFilterCriterion> = emptyList(),
 ) {
+    val activeCount: Int
+        get() =
+            listOf(
+                minResolution != null,
+                minRating100 != null || maxRating100 != null,
+                organized != null,
+                hasMarkers != null,
+                interactive != null,
+                performerIds.isNotEmpty(),
+                studioIds.isNotEmpty(),
+                tagIds.isNotEmpty(),
+                hasResumeTime != null,
+                minDurationSeconds != null || maxDurationSeconds != null,
+                minDate != null || maxDate != null,
+                minPlayCount != null || maxPlayCount != null,
+                minOCounter != null || maxOCounter != null,
+                orientation != null,
+                hasCaptions != null,
+            ).count { it } + criteria.count { it.isValid }
+
     val isActive: Boolean
         get() =
             minResolution != null ||
@@ -451,6 +471,22 @@ data class SceneFilter(
     }
 }
 
+data class SavedFilterPreset(
+    val id: String,
+    val name: String,
+    val filter: SceneFilter,
+    val sort: SceneSort = SceneSort.DateDesc,
+)
+
+/**
+ * A page of scenes plus the server's **total** match count, which is usually larger
+ * than [scenes] — callers that display "N results" must use [total], not `scenes.size`.
+ */
+data class ScenePage(
+    val scenes: List<SceneSummary>,
+    val total: Int,
+)
+
 interface SceneRepository {
     fun pagedScenes(query: SceneQuery): Flow<PagingData<SceneSummary>>
 
@@ -459,6 +495,12 @@ interface SceneRepository {
         query: SceneQuery,
         limit: Int,
     ): AppResult<List<SceneSummary>>
+
+    /** As [scenes], but also carries the total match count for result-count labels. */
+    suspend fun scenePage(
+        query: SceneQuery,
+        limit: Int,
+    ): AppResult<ScenePage>
 
     suspend fun scene(id: String): AppResult<SceneDetail>
 

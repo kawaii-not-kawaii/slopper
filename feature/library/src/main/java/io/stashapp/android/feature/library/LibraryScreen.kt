@@ -1,5 +1,6 @@
 package io.stashapp.android.feature.library
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.outlined.Search
@@ -53,10 +53,10 @@ import io.stashapp.android.core.designsystem.component.SceneCard
 import io.stashapp.android.core.designsystem.component.resolutionLabel
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
-import io.stashapp.android.core.designsystem.theme.MonoSmall
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpaceGrotesk
 import io.stashapp.android.core.designsystem.theme.SpineColors
+import io.stashapp.android.core.domain.FilterEntityKind
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,11 +67,16 @@ fun LibraryScreen(
     },
     onSettingsClick: () -> Unit,
     viewModel: LibraryViewModel = hiltViewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel(),
 ) {
     val ui by viewModel.state.collectAsStateWithLifecycle()
+    val presets by viewModel.presets.collectAsStateWithLifecycle()
+    val search by searchViewModel.state.collectAsStateWithLifecycle()
+    val recents by searchViewModel.recentSearches.collectAsStateWithLifecycle()
     val scenes = viewModel.scenes.collectAsLazyPagingItems()
 
     var showFilterSheet by remember { mutableStateOf(false) }
+    var showSearch by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     Scaffold(
@@ -82,6 +87,10 @@ fun LibraryScreen(
             inner = inner,
             filterActive = ui.query.filter.isActive,
             onOpenFilter = { showFilterSheet = true },
+            onOpenSearch = {
+                searchViewModel.setQuery(ui.searchText)
+                showSearch = true
+            },
             onSceneClick = onSceneClick,
             onPlayQueue = onPlayQueue,
         )
@@ -92,10 +101,49 @@ fun LibraryScreen(
             sheetState = sheetState,
             initialFilter = ui.query.filter,
             initialSort = ui.query.sort,
+            presets = presets,
             onDismiss = { showFilterSheet = false },
             onApply = { filter, sort ->
                 viewModel.setFilter(filter)
                 viewModel.setSort(sort)
+            },
+            onSavePreset = viewModel::savePreset,
+        )
+    }
+
+    if (showSearch) {
+        BackHandler { showSearch = false }
+        SearchOverlay(
+            query = search.query,
+            onQueryChange = searchViewModel::setQuery,
+            results = search.results,
+            recents = recents,
+            loading = search.loading,
+            error = search.error,
+            onDismiss = { showSearch = false },
+            onSceneClick = { scene ->
+                searchViewModel.rememberSearch()
+                val ids = search.results.scenes.map { it.id }
+                onSceneClick(scene.id, ids, ids.indexOf(scene.id).coerceAtLeast(0))
+                showSearch = false
+            },
+            onSeeAllScenes = {
+                searchViewModel.rememberSearch()
+                viewModel.setSearchText(search.query)
+                showSearch = false
+            },
+            onEntityClick = { kind, option ->
+                searchViewModel.rememberSearch()
+                viewModel.setSearchText("")
+                viewModel.setFilter(
+                    when (kind) {
+                        FilterEntityKind.Performer -> ui.query.filter.copy(performerIds = listOf(option.id))
+                        FilterEntityKind.Studio -> ui.query.filter.copy(studioIds = listOf(option.id))
+                        FilterEntityKind.Tag -> ui.query.filter.copy(tagIds = listOf(option.id))
+                        else -> ui.query.filter
+                    },
+                )
+                showSearch = false
             },
         )
     }
@@ -105,6 +153,7 @@ fun LibraryScreen(
 private fun SpineSearchBar(
     filterActive: Boolean,
     onOpenFilter: () -> Unit,
+    onOpenSearch: () -> Unit,
 ) {
     val accent = LocalAccentColors.current
     Row(
@@ -115,38 +164,28 @@ private fun SpineSearchBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        // Always-visible search field (decorative — real search in filter sheet)
         Row(
             modifier =
                 Modifier
                     .weight(1f)
                     .background(SpineColors.Surface, ShapeSmall)
                     .border(1.dp, SpineColors.Border, ShapeSmall)
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
-                    .clickable { /* TODO: open search keyboard */ },
+                    .clickable(onClick = onOpenSearch)
+                    .padding(horizontal = 12.dp, vertical = 11.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 Icons.Outlined.Search,
                 contentDescription = null,
                 tint = SpineColors.OnSurfaceMuted,
-                modifier = Modifier.size(14.dp),
+                modifier = Modifier.size(16.dp),
             )
             Spacer(modifier = Modifier.padding(start = 8.dp))
             Text(
                 "search · scene title, performer, tag…",
-                style = MonoSmall,
+                style = MetaMono.copy(fontSize = 12.sp),
                 color = SpineColors.OnSurfaceMuted,
                 modifier = Modifier.weight(1f),
-            )
-            Text(
-                "⌘K",
-                style = MetaMono,
-                color = SpineColors.OnSurfaceMuted,
-                modifier =
-                    Modifier
-                        .background(SpineColors.SurfaceHigh, RoundedCornerShape(3.dp))
-                        .padding(horizontal = 4.dp, vertical = 2.dp),
             )
         }
 
@@ -167,6 +206,7 @@ private fun ScenesGrid(
     inner: PaddingValues,
     filterActive: Boolean,
     onOpenFilter: () -> Unit,
+    onOpenSearch: () -> Unit,
     onSceneClick: (String, List<String>, Int) -> Unit,
     onPlayQueue: (List<String>, Int) -> Unit,
 ) {
@@ -245,6 +285,7 @@ private fun ScenesGrid(
                         SpineSearchBar(
                             filterActive = filterActive,
                             onOpenFilter = onOpenFilter,
+                            onOpenSearch = onOpenSearch,
                         )
 
                         // Filter chip row (active filters visual summary)

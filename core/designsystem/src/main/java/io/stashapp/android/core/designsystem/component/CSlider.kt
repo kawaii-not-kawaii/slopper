@@ -43,6 +43,7 @@ fun CSlider(
     valueLabel: String,
     modifier: Modifier = Modifier,
     steps: Int = 0,
+    showValue: Boolean = true,
 ) {
     val accent = LocalAccentColors.current
     Row(
@@ -64,29 +65,31 @@ fun CSlider(
                     inactiveTickColor = SpineColors.OnSurfaceFaint,
                 ),
         )
-        Spacer(Modifier.width(8.dp))
-        // Value bubble: accent-8% bg, accent-25% border, 4dp radius
-        Box(
-            modifier =
-                Modifier
-                    .width(60.dp)
-                    .background(
-                        accent.primary.copy(alpha = 0.08f),
-                        RoundedCornerShape(4.dp),
-                    ).border(
-                        1.dp,
-                        accent.primary.copy(alpha = 0.25f),
-                        RoundedCornerShape(4.dp),
-                    ).padding(horizontal = 8.dp, vertical = 4.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = valueLabel,
-                style = MonoSmall.copy(fontWeight = FontWeight.SemiBold),
-                color = accent.primary,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-            )
+        if (showValue) {
+            Spacer(Modifier.width(8.dp))
+            // Value bubble: accent-8% bg, accent-25% border, 4dp radius
+            Box(
+                modifier =
+                    Modifier
+                        .width(60.dp)
+                        .background(
+                            accent.primary.copy(alpha = 0.08f),
+                            RoundedCornerShape(4.dp),
+                        ).border(
+                            1.dp,
+                            accent.primary.copy(alpha = 0.25f),
+                            RoundedCornerShape(4.dp),
+                        ).padding(horizontal = 8.dp, vertical = 4.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = valueLabel,
+                    style = MonoSmall.copy(fontWeight = FontWeight.SemiBold),
+                    color = accent.primary,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }

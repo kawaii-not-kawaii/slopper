@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.stashapp.android.core.domain.SavedFilterPreset
 import io.stashapp.android.core.domain.SceneFilter
 import io.stashapp.android.core.domain.SceneQuery
 import io.stashapp.android.core.domain.SceneRepository
@@ -15,10 +16,12 @@ import io.stashapp.android.core.model.SceneSummary
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,6 +48,8 @@ class LibraryViewModel
         private val queryFlow = MutableStateFlow(SceneQuery(filter = presetFilter))
         private val uiFlow = MutableStateFlow(LibraryUiState(query = queryFlow.value))
         val state: StateFlow<LibraryUiState> = uiFlow.asStateFlow()
+        val presets: StateFlow<List<SavedFilterPreset>> =
+            uiPreferences.savedFilterPresets.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
         val scenes: Flow<PagingData<SceneSummary>> =
             queryFlow
@@ -73,6 +78,23 @@ class LibraryViewModel
         fun setFilter(filter: SceneFilter) = updateQuery { it.copy(filter = filter) }
 
         fun clearFilter() = updateQuery { it.copy(filter = SceneFilter()) }
+
+        fun savePreset(
+            name: String,
+            filter: SceneFilter = queryFlow.value.filter,
+            sort: SceneSort = queryFlow.value.sort,
+        ) {
+            viewModelScope.launch { uiPreferences.saveFilterPreset(name, filter, sort) }
+        }
+
+        fun applyPreset(id: String) {
+            val preset = presets.value.firstOrNull { it.id == id } ?: return
+            updateQuery { it.copy(filter = preset.filter, sort = preset.sort) }
+        }
+
+        fun deletePreset(id: String) {
+            viewModelScope.launch { uiPreferences.deleteFilterPreset(id) }
+        }
 
         /** Persist the current filter as the user's default. */
         fun saveAsDefault() {

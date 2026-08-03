@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
+import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
 import io.stashapp.android.core.designsystem.theme.SpineColors
@@ -53,6 +54,7 @@ fun NavCustomizeSheet(
     onApply: (List<String>) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    val accent = LocalAccentColors.current
     var selected by remember { mutableStateOf(visibleIds.toSet()) }
 
     // Keep the bar usable: cap visible items at 4 (+ the always-on More tab = 5).
@@ -76,15 +78,15 @@ fun NavCustomizeSheet(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .background(SpineColors.AccentPrimary.copy(alpha = 0.08f), ShapeSmall)
-                        .border(1.dp, SpineColors.AccentPrimary.copy(alpha = 0.20f), ShapeSmall)
+                        .background(accent.primary.copy(alpha = 0.08f), ShapeSmall)
+                        .border(1.dp, accent.primary.copy(alpha = 0.20f), ShapeSmall)
                         .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     Icons.Outlined.Info,
                     contentDescription = null,
-                    tint = SpineColors.AccentPrimary,
+                    tint = accent.primary,
                     modifier = Modifier.size(14.dp),
                 )
                 Spacer(Modifier.size(8.dp))
@@ -118,8 +120,8 @@ fun NavCustomizeSheet(
                         },
                         colors =
                             CheckboxDefaults.colors(
-                                checkedColor = SpineColors.AccentPrimary,
-                                checkmarkColor = SpineColors.AccentOnPrimary,
+                                checkedColor = accent.primary,
+                                checkmarkColor = accent.onPrimary,
                                 uncheckedColor = SpineColors.Border,
                             ),
                     )
@@ -127,7 +129,7 @@ fun NavCustomizeSheet(
                     Icon(
                         item.iconOutlined,
                         contentDescription = null,
-                        tint = if (isSelected) SpineColors.AccentPrimary else SpineColors.OnSurfaceVariant,
+                        tint = if (isSelected) accent.primary else SpineColors.OnSurfaceVariant,
                         modifier = Modifier.size(20.dp),
                     )
                     Spacer(Modifier.size(12.dp))
@@ -167,8 +169,8 @@ fun NavCustomizeSheet(
                     shape = ShapeSmall,
                     colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = SpineColors.AccentPrimary,
-                            contentColor = SpineColors.AccentOnPrimary,
+                            containerColor = accent.primary,
+                            contentColor = accent.onPrimary,
                         ),
                 ) {
                     Text("Apply")

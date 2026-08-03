@@ -50,6 +50,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
+import io.stashapp.android.core.designsystem.component.LocalPrivacyBlurEnabled
+import io.stashapp.android.core.designsystem.component.privacyBlur
 import io.stashapp.android.core.designsystem.theme.MetaMono
 import io.stashapp.android.core.designsystem.theme.ShapeMedium
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
@@ -235,6 +237,7 @@ private fun PerformerRow(
     performer: PerformerBrowseItem,
     onClick: (String) -> Unit,
 ) {
+    val blurThumbnails = LocalPrivacyBlurEnabled.current
     Row(
         modifier =
             Modifier
@@ -251,7 +254,8 @@ private fun PerformerRow(
             modifier =
                 Modifier
                     .size(44.dp)
-                    .clip(CircleShape),
+                    .clip(CircleShape)
+                    .privacyBlur(blurThumbnails),
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -329,6 +333,7 @@ private fun StudioCard(
     studio: StudioBrowseItem,
     onClick: (String) -> Unit,
 ) {
+    val blurThumbnails = LocalPrivacyBlurEnabled.current
     Box(
         modifier =
             Modifier
@@ -341,7 +346,7 @@ private fun StudioCard(
             model = studio.imageUrl,
             contentDescription = studio.name,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().privacyBlur(blurThumbnails),
         )
         // Bottom gradient overlay
         Box(
