@@ -76,6 +76,10 @@ class RootViewModel
             uiPreferences.accentPalette
                 .stateIn(viewModelScope, SharingStarted.Eagerly, "sage")
 
+        val blurThumbnails: StateFlow<Boolean> =
+            uiPreferences.blurThumbnails
+                .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
         init {
             viewModelScope.launch {
                 connectionRepository.activeServer().collectLatest { server ->
@@ -109,7 +113,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val rootViewModel: RootViewModel = hiltViewModel()
             val accentName by rootViewModel.accentPalette.collectAsStateWithLifecycle()
-            StashTheme(accentName = accentName) {
+            val blurThumbnails by rootViewModel.blurThumbnails.collectAsStateWithLifecycle()
+            StashTheme(accentName = accentName, blurThumbnails = blurThumbnails) {
                 StashAppContent(rootViewModel = rootViewModel, appReady = appReady)
             }
         }

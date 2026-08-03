@@ -58,6 +58,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import io.stashapp.android.core.designsystem.component.LocalPrivacyBlurEnabled
+import io.stashapp.android.core.designsystem.component.privacyBlur
 import io.stashapp.android.core.designsystem.component.resolutionLabel
 import io.stashapp.android.core.designsystem.theme.JetBrainsMono
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
@@ -143,6 +145,7 @@ private fun SceneBody(
 ) {
     val s = scene.summary
     val accent = LocalAccentColors.current
+    val blurThumbnails = LocalPrivacyBlurEnabled.current
 
     Column(
         Modifier
@@ -164,7 +167,7 @@ private fun SceneBody(
                 model = s.screenshotUrl,
                 contentDescription = s.title,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().privacyBlur(blurThumbnails),
             )
 
             // Back button — top-left
@@ -563,6 +566,7 @@ private fun Section(
 /** Spine-styled performer row: 36dp circle avatar, name, chevron */
 @Composable
 private fun PerformerRow(performer: PerformerRef) {
+    val blurThumbnails = LocalPrivacyBlurEnabled.current
     Surface(
         color = SpineColors.Surface,
         shape = ShapeSmall,
@@ -581,7 +585,8 @@ private fun PerformerRow(performer: PerformerRef) {
                 modifier =
                     Modifier
                         .size(36.dp)
-                        .clip(CircleShape),
+                        .clip(CircleShape)
+                        .privacyBlur(blurThumbnails),
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(

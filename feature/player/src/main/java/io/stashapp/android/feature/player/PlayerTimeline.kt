@@ -125,7 +125,7 @@ internal fun TimelineBar(
                 )
                 if (bufferedFraction > 0f) {
                     drawRoundRect(
-                        color = Color(0x59A8B0C0),
+                        color = SpineColors.OnSurfaceVariant.copy(alpha = 0.35f),
                         size = Size(size.width * bufferedFraction, th),
                         cornerRadius =
                             androidx.compose.ui.geometry

@@ -35,3 +35,34 @@ query FindTagsList($filter: FindFilterType) {
     }
   }
 }
+
+query FindGroupsList($filter: FindFilterType) {
+  findGroups(filter: $filter) {
+    count
+    groups {
+      id
+      name
+    }
+  }
+}
+
+query FindGalleriesList($filter: FindFilterType) {
+  findGalleries(filter: $filter) {
+    count
+    galleries {
+      id
+      title
+    }
+  }
+}
+
+query FindFoldersList($filter: FindFilterType) {
+  findFolders(filter: $filter) {
+    count
+    folders {
+      id
+      path
+      basename
+    }
+  }
+}

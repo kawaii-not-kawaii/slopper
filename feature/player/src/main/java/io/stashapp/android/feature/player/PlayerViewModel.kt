@@ -401,18 +401,10 @@ class PlayerViewModel
             val newState = !(_state.value.queue?.shuffled ?: false)
             queue.setShuffled(newState)
             val snapshot = queue.snapshot()
-            // "next up" after the current item in the (possibly freshly shuffled)
-            // order — gives the user immediate confirmation that shuffle worked.
-            val nextId = snapshot.items.getOrNull(snapshot.currentIndex + 1)
             _state.update {
                 it.copy(
                     queue = snapshot,
-                    banner =
-                        if (newState) {
-                            "Shuffle on" + (nextId?.let { id -> " · next: #$id" } ?: "")
-                        } else {
-                            "Shuffle off"
-                        },
+                    banner = if (newState) "Shuffle on · random next" else "Shuffle off",
                 )
             }
             clearBannerLater()

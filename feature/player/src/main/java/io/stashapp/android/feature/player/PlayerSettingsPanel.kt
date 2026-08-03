@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
@@ -58,7 +57,7 @@ internal fun PlayerSettingsPanel(
                 Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(0.40f)
-                    .background(Color(0xF20B0F16))
+                    .background(SpineColors.Bg.copy(alpha = 0.95f))
                     .drawBehind {
                         // Left border only — drawBehind draws a single edge (NOT .border() which adds all 4 sides)
                         drawLine(

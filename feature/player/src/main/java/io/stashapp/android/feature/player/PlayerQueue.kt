@@ -2,6 +2,7 @@ package io.stashapp.android.feature.player
 
 import io.stashapp.android.core.model.QueueState
 import io.stashapp.android.core.model.RepeatMode
+import kotlin.random.Random
 
 /**
  * Pure queue state machine — no Android dependencies. Keeps shuffle reversible
@@ -10,22 +11,26 @@ import io.stashapp.android.core.model.RepeatMode
  */
 class PlayerQueue private constructor(
     private val originalOrder: List<String>,
-    private var shuffledOrder: List<String>,
     private var currentIndex: Int,
     private var shuffled: Boolean,
     private var repeatMode: RepeatMode,
+    private val random: Random,
 ) {
-    private val activeOrder: List<String> get() = if (shuffled) shuffledOrder else originalOrder
+    private val distinctItemCount = originalOrder.toSet().size
+    private val history = mutableListOf(currentIndex)
+    private var historyIndex = 0
 
     fun snapshot() =
         QueueState(
-            items = activeOrder,
+            items = originalOrder,
             currentIndex = currentIndex,
             shuffled = shuffled,
             repeatMode = repeatMode,
+            hasPreviousInHistory = shuffled && historyIndex > 0,
+            hasShuffleAlternative = distinctItemCount > 1,
         )
 
-    fun currentId(): String? = activeOrder.getOrNull(currentIndex)
+    fun currentId(): String? = originalOrder.getOrNull(currentIndex)
 
     fun setRepeat(mode: RepeatMode) {
         repeatMode = mode
@@ -33,61 +38,80 @@ class PlayerQueue private constructor(
 
     fun setShuffled(enabled: Boolean) {
         if (enabled == shuffled) return
-        val pivot = currentId()
         shuffled = enabled
-        if (enabled) {
-            // Put current first, then shuffle the rest
-            val rest = (originalOrder - setOfNotNull(pivot)).shuffled()
-            shuffledOrder = listOfNotNull(pivot) + rest
-            currentIndex = 0
-        } else {
-            currentIndex = originalOrder.indexOf(pivot).coerceAtLeast(0)
-        }
+        history.clear()
+        history += currentIndex
+        historyIndex = 0
     }
 
-    /** Returns the id to play next, or null if queue ended. */
+    /** Returns the id to play next, or null if the ordered queue ended. */
     fun advance(): String? {
-        if (repeatMode == RepeatMode.ONE) return activeOrder.getOrNull(currentIndex)
-        val nextIdx = currentIndex + 1
-        if (nextIdx > activeOrder.lastIndex) {
+        if (repeatMode == RepeatMode.ONE) return currentId()
+        if (shuffled) return advanceRandomly()
+
+        val nextIndex = currentIndex + 1
+        if (nextIndex > originalOrder.lastIndex) {
             return if (repeatMode == RepeatMode.ALL) {
                 currentIndex = 0
-                activeOrder.firstOrNull()
+                currentId()
             } else {
                 null
             }
         }
-        currentIndex = nextIdx
-        return activeOrder[nextIdx]
+        currentIndex = nextIndex
+        return currentId()
+    }
+
+    private fun advanceRandomly(): String? {
+        if (distinctItemCount < 2) return null
+
+        val currentId = currentId()
+        var nextIndex: Int
+        do {
+            nextIndex = random.nextInt(originalOrder.size)
+        } while (originalOrder[nextIndex] == currentId)
+
+        while (history.lastIndex > historyIndex) history.removeAt(history.lastIndex)
+        history += nextIndex
+        historyIndex += 1
+        currentIndex = nextIndex
+        return currentId()
     }
 
     fun previous(): String? {
-        val prevIdx = currentIndex - 1
-        if (prevIdx < 0) {
+        if (shuffled) {
+            if (historyIndex == 0) return null
+            historyIndex -= 1
+            currentIndex = history[historyIndex]
+            return currentId()
+        }
+
+        val previousIndex = currentIndex - 1
+        if (previousIndex < 0) {
             return if (repeatMode == RepeatMode.ALL) {
-                currentIndex = activeOrder.lastIndex
-                activeOrder.lastOrNull()
+                currentIndex = originalOrder.lastIndex
+                currentId()
             } else {
                 null
             }
         }
-        currentIndex = prevIdx
-        return activeOrder[prevIdx]
+        currentIndex = previousIndex
+        return currentId()
     }
 
     companion object {
         fun from(
             ids: List<String>,
             startIndex: Int,
+            random: Random = Random.Default,
         ): PlayerQueue {
             require(ids.isNotEmpty()) { "Queue cannot be empty" }
-            val safeIdx = startIndex.coerceIn(0, ids.lastIndex)
             return PlayerQueue(
                 originalOrder = ids,
-                shuffledOrder = ids,
-                currentIndex = safeIdx,
+                currentIndex = startIndex.coerceIn(0, ids.lastIndex),
                 shuffled = false,
                 repeatMode = RepeatMode.OFF,
+                random = random,
             )
         }
     }

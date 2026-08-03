@@ -56,6 +56,7 @@ fun SpineResumeCard(
     modifier: Modifier = Modifier,
 ) {
     val accent = LocalAccentColors.current
+    val blurThumbnails = LocalPrivacyBlurEnabled.current
     Surface(
         color = SpineColors.Surface,
         shape = ShapeMedium,
@@ -85,7 +86,8 @@ fun SpineResumeCard(
                         Modifier
                             .fillMaxWidth()
                             .fillMaxHeight()
-                            .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)),
+                            .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp))
+                            .privacyBlur(blurThumbnails),
                 )
                 // Frosted glass play button overlay
                 val playBgModifier =

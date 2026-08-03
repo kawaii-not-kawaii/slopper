@@ -440,14 +440,8 @@ fun PlayerScreen(
                                     .orEmpty()
                                     .toPersistentList(),
                             playbackSpeed = state.playbackSpeed,
-                            canSkipPrev =
-                                state.queue?.let {
-                                    it.currentIndex > 0 || it.repeatMode == RepeatMode.ALL
-                                } ?: false,
-                            canSkipNext =
-                                state.queue?.let {
-                                    it.currentIndex < it.items.lastIndex || it.repeatMode != RepeatMode.OFF
-                                } ?: false,
+                            canSkipPrev = state.queue?.hasPrevious() ?: false,
+                            canSkipNext = state.queue?.hasNext() ?: false,
                             codecLabel = codecLabel(),
                             rotationLocked = rotationLocked,
                             resizeMode = resizeMode,

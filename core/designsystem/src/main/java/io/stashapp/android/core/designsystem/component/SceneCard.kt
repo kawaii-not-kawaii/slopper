@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import io.stashapp.android.core.designsystem.theme.LocalAccentColors
 import io.stashapp.android.core.designsystem.theme.ShapeSmall
@@ -61,6 +62,7 @@ fun SceneCard(
     onLongClick: () -> Unit = {},
 ) {
     val accent = LocalAccentColors.current
+    val blurThumbnails = LocalPrivacyBlurEnabled.current
     var pressed by remember { mutableStateOf(false) }
     val overlayAlpha by animateColorAsState(
         if (pressed) Color.Black.copy(alpha = 0.85f) else Color.Transparent,
@@ -88,7 +90,7 @@ fun SceneCard(
                     // screenshots occasionally have slightly off aspect
                     // ratios and letterboxing makes the grid feel broken.
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().privacyBlur(blurThumbnails),
                 )
 
                 // Bottom gradient scrim for legibility of overlaid chips
@@ -99,7 +101,7 @@ fun SceneCard(
                             .background(
                                 Brush.verticalGradient(
                                     0.45f to Color.Transparent,
-                                    1.0f to Color(0xEB0A0D12),
+                                    1.0f to SpineColors.Bg.copy(alpha = 0.92f),
                                 ),
                             ),
                 )
@@ -142,7 +144,7 @@ fun SceneCard(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     durationSeconds?.takeIf { it > 0 }?.let {
-                        Chip(text = formatDuration(it))
+                        SceneDurationBadge(durationSeconds = it)
                     }
                     resolution?.let { Chip(text = it) }
                 }
@@ -189,6 +191,26 @@ fun SceneCard(
             color = MaterialTheme.colorScheme.onSurface,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+/** Compact duration badge shared by scene cards and search rows. */
+@Composable
+fun SceneDurationBadge(
+    durationSeconds: Double,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier,
+        color = SpineColors.SurfaceTop,
+        contentColor = SpineColors.OnSurface,
+        shape = RoundedCornerShape(3.dp),
+    ) {
+        Text(
+            text = formatDuration(durationSeconds),
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 8.sp, fontWeight = FontWeight.SemiBold),
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
         )
     }
 }
