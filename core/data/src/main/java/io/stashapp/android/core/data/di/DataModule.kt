@@ -10,8 +10,10 @@ import io.stashapp.android.core.data.connection.EndpointStateHolder
 import io.stashapp.android.core.data.prefs.PlayerPreferences
 import io.stashapp.android.core.data.prefs.UiPreferences
 import io.stashapp.android.core.data.scene.DefaultSceneRepository
+import io.stashapp.android.core.data.scene.PlaybackQueryHolder
 import io.stashapp.android.core.domain.BrowseRepository
 import io.stashapp.android.core.domain.ConnectionRepository
+import io.stashapp.android.core.domain.PlaybackQuerySource
 import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.domain.UiSettings
@@ -41,6 +43,10 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindBrowseRepository(impl: DefaultBrowseRepository): BrowseRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPlaybackQuerySource(impl: PlaybackQueryHolder): PlaybackQuerySource
 
     @Binds
     @Singleton

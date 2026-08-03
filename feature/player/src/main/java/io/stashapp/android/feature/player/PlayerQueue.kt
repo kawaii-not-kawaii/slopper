@@ -10,15 +10,29 @@ import kotlin.random.Random
  * intended sequence.
  */
 class PlayerQueue private constructor(
-    private val originalOrder: List<String>,
+    private var originalOrder: List<String>,
     private var currentIndex: Int,
     private var shuffled: Boolean,
     private var repeatMode: RepeatMode,
     private val random: Random,
 ) {
-    private val distinctItemCount = originalOrder.toSet().size
+    private val distinctItemCount get() = originalOrder.toSet().size
     private val history = mutableListOf(currentIndex)
     private var historyIndex = 0
+
+    /**
+     * Indices not yet played in the current shuffle cycle, in the order they will be
+     * drawn. Drawing without replacement is what stops a scene reappearing before the
+     * rest of the queue has been seen — picking uniformly at random each time would
+     * only avoid the immediate repeat.
+     */
+    private val bag = mutableListOf<Int>()
+
+    private fun refillBag(excluding: Int?) {
+        bag.clear()
+        originalOrder.indices.filterTo(bag) { it != excluding }
+        bag.shuffle(random)
+    }
 
     fun snapshot() =
         QueueState(
@@ -32,6 +46,26 @@ class PlayerQueue private constructor(
 
     fun currentId(): String? = originalOrder.getOrNull(currentIndex)
 
+    /**
+     * Swap in a wider pool — the whole filtered library rather than the page the
+     * library had loaded — keeping the scene that is playing.
+     *
+     * Playback history is dropped because its indices refer to the old list. Ignored
+     * if [ids] doesn't contain the current scene, so a stale or mismatched fetch can
+     * never strand the player on the wrong video.
+     */
+    fun replacePool(ids: List<String>) {
+        val playing = currentId() ?: return
+        val index = ids.indexOf(playing)
+        if (index < 0) return
+        originalOrder = ids
+        currentIndex = index
+        history.clear()
+        history += index
+        historyIndex = 0
+        if (shuffled) refillBag(excluding = index)
+    }
+
     fun setRepeat(mode: RepeatMode) {
         repeatMode = mode
     }
@@ -42,6 +76,7 @@ class PlayerQueue private constructor(
         history.clear()
         history += currentIndex
         historyIndex = 0
+        if (enabled) refillBag(excluding = currentIndex) else bag.clear()
     }
 
     /** Returns the id to play next, or null if the ordered queue ended. */
@@ -65,11 +100,10 @@ class PlayerQueue private constructor(
     private fun advanceRandomly(): String? {
         if (distinctItemCount < 2) return null
 
-        val currentId = currentId()
-        var nextIndex: Int
-        do {
-            nextIndex = random.nextInt(originalOrder.size)
-        } while (originalOrder[nextIndex] == currentId)
+        // Every scene has played — start a fresh cycle. Shuffle loops on its own;
+        // Repeat governs ordered playback only.
+        if (bag.isEmpty()) refillBag(excluding = currentIndex)
+        val nextIndex = bag.removeAt(bag.lastIndex)
 
         while (history.lastIndex > historyIndex) history.removeAt(history.lastIndex)
         history += nextIndex

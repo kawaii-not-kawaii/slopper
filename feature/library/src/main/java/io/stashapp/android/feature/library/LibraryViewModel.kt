@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.stashapp.android.core.domain.PlaybackQuerySource
 import io.stashapp.android.core.domain.SavedFilterPreset
 import io.stashapp.android.core.domain.SceneFilter
 import io.stashapp.android.core.domain.SceneQuery
@@ -41,6 +42,7 @@ class LibraryViewModel
         savedState: SavedStateHandle,
         private val sceneRepository: SceneRepository,
         private val uiPreferences: UiSettings,
+        private val playbackQuery: PlaybackQuerySource,
     ) : ViewModel() {
         /** Filter derived from an optional nav preset like "tag:42". */
         private val presetFilter: SceneFilter = parsePreset(savedState["preset"])
@@ -57,6 +59,10 @@ class LibraryViewModel
                 .cachedIn(viewModelScope)
 
         init {
+            // Publish the starting query too — updateQuery only fires on change, so
+            // without this the player sees nothing until the user touches a filter.
+            playbackQuery.set(queryFlow.value)
+
             // If we weren't launched with a preset, apply the user's default filter
             // (if any). Deep-links win — a preset is a more specific intent.
             if (!presetFilter.isActive) {
@@ -117,6 +123,9 @@ class LibraryViewModel
             val next = transform(queryFlow.value)
             queryFlow.value = next
             uiFlow.value = uiFlow.value.copy(query = next)
+            // Publish for the player: shuffle needs the whole filtered set, and the
+            // filter is too large to pass through a navigation route.
+            playbackQuery.set(next)
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.stashapp.android.core.common.AppResult
+import io.stashapp.android.core.domain.PlaybackQuerySource
 import io.stashapp.android.core.domain.PlayerSettings
 import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.model.QueueState
@@ -67,6 +68,7 @@ class PlayerViewModel
         application: Application,
         savedState: SavedStateHandle,
         private val sceneRepository: SceneRepository,
+        private val playbackQuery: PlaybackQuerySource,
         private val endpointProvider: StashEndpointProvider,
         private val okHttpClient: OkHttpClient,
         val preferences: PlayerSettings,
@@ -408,6 +410,31 @@ class PlayerViewModel
                 )
             }
             clearBannerLater()
+            if (newState) widenShufflePool()
+        }
+
+        /**
+         * Replace the queue with every scene matching the library's current filter, so
+         * shuffle draws from the whole filtered set rather than the page that happened
+         * to be loaded when playback started.
+         *
+         * Best-effort: launched without a query (deep link, or playback started from a
+         * home rail), or a failed fetch, simply leaves the existing queue in place.
+         */
+        private fun widenShufflePool() {
+            val query = playbackQuery.current() ?: return
+            viewModelScope.launch {
+                val ids = sceneRepository.sceneIds(query)
+                if (ids !is AppResult.Success || ids.data.size <= queue.snapshot().items.size) return@launch
+                queue.replacePool(ids.data)
+                _state.update {
+                    it.copy(
+                        queue = queue.snapshot(),
+                        banner = "Shuffle on · ${ids.data.size} scenes",
+                    )
+                }
+                clearBannerLater()
+            }
         }
 
         fun cycleRepeat() {

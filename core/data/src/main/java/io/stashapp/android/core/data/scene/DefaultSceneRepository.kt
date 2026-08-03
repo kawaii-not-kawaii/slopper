@@ -13,6 +13,7 @@ import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.model.SceneDetail
 import io.stashapp.android.core.model.SceneSummary
 import io.stashapp.android.core.network.StashEndpointProvider
+import io.stashapp.android.graphql.FindSceneIdsQuery
 import io.stashapp.android.graphql.FindSceneQuery
 import io.stashapp.android.graphql.FindScenesQuery
 import io.stashapp.android.graphql.SceneAddPlayMutation
@@ -107,6 +108,50 @@ class DefaultSceneRepository
                             // The server's match count, not the size of this page.
                             total = result.count,
                         ),
+                    )
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: ApolloException) {
+                toAppResult(e)
+            }
+        }
+
+        override suspend fun sceneIds(
+            query: io.stashapp.android.core.domain.SceneQuery,
+            limit: Int,
+        ): AppResult<List<String>> {
+            endpointProvider.current()
+                ?: return AppResult.Failure(AppError.Auth("No server connected"))
+            return try {
+                val findFilter =
+                    FindFilterType(
+                        q = Optional.presentIfNotNull(query.searchText),
+                        page = Optional.present(1),
+                        // Stash treats -1 as "every match".
+                        per_page = Optional.present(limit),
+                        sort = Optional.present(query.sort.gqlSort),
+                        direction = Optional.present(SortDirectionEnum.valueOf(query.sort.gqlDir)),
+                    )
+                val response =
+                    apollo
+                        .query(
+                            FindSceneIdsQuery(
+                                filter = Optional.present(findFilter),
+                                scene_filter = Optional.presentIfNotNull(query.filter.toGql()),
+                            ),
+                        ).execute()
+                if (response.hasErrors()) {
+                    AppResult.Failure(
+                        AppError.Server(response.errors?.joinToString { it.message } ?: "Unknown error"),
+                    )
+                } else {
+                    AppResult.Success(
+                        response.data
+                            ?.findScenes
+                            ?.scenes
+                            .orEmpty()
+                            .map { it.id },
                     )
                 }
             } catch (e: CancellationException) {

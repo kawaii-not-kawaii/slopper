@@ -11,16 +11,72 @@ import kotlin.random.Random
 
 class PlayerQueueTest {
     @Test
-    fun `shuffle draws every next scene randomly without immediate repeats`() {
-        val queue = PlayerQueue.from(listOf("a", "b", "c", "d"), startIndex = 0, random = Random(7))
+    fun `shuffle plays every scene once before any repeats`() {
+        val ids = listOf("a", "b", "c", "d", "e", "f")
+        val queue = PlayerQueue.from(ids, startIndex = 0, random = Random(7))
         queue.setShuffled(true)
 
-        repeat(100) {
+        val played = mutableListOf(queue.currentId())
+        repeat(ids.size - 1) {
+            val next = queue.advance()
+            assertNotNull(next)
+            played += next
+        }
+        // Drawing without replacement: one full cycle covers the queue exactly.
+        assertEquals(ids.toSet(), played.toSet())
+        assertEquals(ids.size, played.distinct().size)
+    }
+
+    @Test
+    fun `shuffle keeps going past a full cycle without needing repeat`() {
+        val ids = listOf("a", "b", "c")
+        val queue = PlayerQueue.from(ids, startIndex = 0, random = Random(7))
+        queue.setShuffled(true)
+        // Repeat stays OFF — shuffle loops on its own; Repeat governs ordered play.
+
+        repeat(ids.size * 4) {
             val previous = queue.currentId()
             val next = queue.advance()
             assertNotNull(next)
             assertNotEquals(previous, next)
         }
+    }
+
+    @Test
+    fun `each shuffle cycle covers every scene before repeating one`() {
+        val ids = listOf("a", "b", "c", "d")
+        val queue = PlayerQueue.from(ids, startIndex = 0, random = Random(5))
+        queue.setShuffled(true)
+
+        // First cycle: the 3 not currently playing, then the bag refills.
+        val firstCycle = (1 until ids.size).map { queue.advance() }
+        assertEquals(ids.size - 1, firstCycle.distinct().size)
+        assertFalse(firstCycle.contains("a")) // the scene we started on
+    }
+
+    @Test
+    fun `replacePool widens the queue and keeps the playing scene`() {
+        val queue = PlayerQueue.from(listOf("a", "b"), startIndex = 1, random = Random(5))
+        queue.setShuffled(true)
+        assertEquals("b", queue.currentId())
+
+        queue.replacePool(listOf("a", "b", "c", "d", "e"))
+
+        assertEquals("b", queue.currentId())
+        assertEquals(5, queue.snapshot().items.size)
+        // The wider pool is drawn from immediately.
+        val seen = (1..4).map { queue.advance() }
+        assertEquals(4, seen.distinct().size)
+        assertFalse(seen.contains("b"))
+    }
+
+    @Test
+    fun `replacePool is ignored when it would drop the playing scene`() {
+        val queue = PlayerQueue.from(listOf("a", "b"), startIndex = 1, random = Random(5))
+        queue.replacePool(listOf("x", "y", "z"))
+
+        assertEquals("b", queue.currentId())
+        assertEquals(2, queue.snapshot().items.size)
     }
 
     @Test
