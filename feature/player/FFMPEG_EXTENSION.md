@@ -17,7 +17,7 @@ box. No NDK setup, no local build step.
 - **Player factory** (`StashPlayerFactory.kt`):
   ```kotlin
   val renderersFactory = NextRenderersFactory(context)
-      .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+      .setExtensionRendererMode(rendererMode.media3Value)
       .setEnableDecoderFallback(true)
   ```
 - **Runtime detection** (`CodecCapabilities.kt`): reflectively checks
@@ -30,9 +30,17 @@ box. No NDK setup, no local build step.
 **Audio:** Vorbis, Opus, FLAC, ALAC, PCM μ-law / A-law, MP3, AMR-NB/WB, AAC,
 AC3, EAC3, DTS, TrueHD, MLP.
 
-**Video (software fallback):** H.264, HEVC, VP8, VP9. Hardware decoders are
-preferred when available; software only kicks in when MediaCodec can't handle
-a stream.
+**Video:** H.264, HEVC, VP8, VP9. Renderer ordering determines whether these
+run in software or hardware when both are available. Media3's `ON` mode puts
+FFmpeg after the platform renderer (software fallback); `PREFER` puts FFmpeg
+first (software preferred).
+
+For a controlled comparison, build with
+`-Pslopper.ffmpegRendererMode=prefer` or
+`-Pslopper.ffmpegRendererMode=on`. The production default is `on`: Android's
+hardware MediaCodec decoders are tried first and FFmpeg remains available only
+as a fallback. See `tools/playback-ab/README.md` for the complete test and
+capture protocol.
 
 ## Size cost
 

@@ -4,8 +4,8 @@ package io.stashapp.android.feature.player
  * Runtime detection of the Media3 FFmpeg decoder extension.
  *
  * The extension AAR ships a single `FfmpegLibrary` class — its presence on the
- * classpath means [StashPlayerFactory]'s `EXTENSION_RENDERER_MODE_PREFER` will
- * actually find software decoders for AC3/EAC3/DTS/Opus/TrueHD/etc.
+ * classpath means [StashPlayerFactory] can use software decoders as fallbacks
+ * for AC3/EAC3/DTS/Opus/TrueHD/etc.
  *
  * We use reflection instead of a compile-time import so the app compiles and
  * runs with or without the extension present — which is exactly the contract

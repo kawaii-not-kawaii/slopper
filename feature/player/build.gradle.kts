@@ -1,9 +1,48 @@
+import org.gradle.api.GradleException
+
 plugins {
     alias(libs.plugins.stash.android.feature)
 }
 
+val ffmpegRendererMode =
+    providers
+        .gradleProperty("slopper.ffmpegRendererMode")
+        .orElse("on")
+        .map { it.lowercase() }
+        .get()
+        .also { mode ->
+            if (mode !in setOf("on", "prefer")) {
+                throw GradleException(
+                    "slopper.ffmpegRendererMode must be 'on' or 'prefer' (was '$mode')",
+                )
+            }
+        }
+
+val playbackDiagnostics =
+    providers
+        .gradleProperty("slopper.playbackDiagnostics")
+        .orElse("false")
+        .map { value ->
+            value.toBooleanStrictOrNull()
+                ?: throw GradleException(
+                    "slopper.playbackDiagnostics must be 'true' or 'false' (was '$value')",
+                )
+        }.get()
+
 android {
     namespace = "io.stashapp.android.feature.player"
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    defaultConfig {
+        // Production uses platform MediaCodec decoders first and retains
+        // FFmpeg as a fallback. The playback A/B tooling can still build both
+        // renderer orders explicitly with diagnostics enabled.
+        buildConfigField("String", "FFMPEG_RENDERER_MODE", "\"$ffmpegRendererMode\"")
+        buildConfigField("boolean", "PLAYBACK_DIAGNOSTICS", playbackDiagnostics.toString())
+    }
 }
 
 dependencies {
