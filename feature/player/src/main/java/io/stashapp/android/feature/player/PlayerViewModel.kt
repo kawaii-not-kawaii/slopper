@@ -393,6 +393,20 @@ class PlayerViewModel
             loadAndPlay(next, autoResume = false)
         }
 
+        /** Retry the current queue item after a transient network or decoder failure. */
+        fun retryCurrent() {
+            val currentId =
+                _state.value.current?.summary?.id
+                    ?: queue.currentId()
+                    ?: return
+            val retryPosition = _position.value.positionMs.takeIf { it > 0L }
+            loadAndPlay(
+                sceneId = currentId,
+                startAtMs = retryPosition,
+                autoResume = false,
+            )
+        }
+
         fun skipPrevious() {
             val prev = queue.previous() ?: return
             _state.update { it.copy(queue = queue.snapshot()) }

@@ -19,8 +19,10 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,9 +32,11 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -333,12 +337,6 @@ fun PlayerScreen(
             state.banner?.let { BannerPill(it) }
         }
 
-        state.error?.let { err ->
-            Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
-                Text("Playback error: $err", color = Color.White)
-            }
-        }
-
         // COMPLY-01 (per D-04, RESEARCH §F2): control-overlay layer inset
         // away from system bars. SurfaceView/PlayerView + gesture-detection
         // layers stay full-bleed (they are SIBLINGS of this Box). Only the
@@ -521,6 +519,37 @@ fun PlayerScreen(
             },
             modifier = Modifier.align(Alignment.CenterEnd),
         )
+
+        // Render recovery above the gesture and transport layers so a decoder
+        // error cannot leave the user staring at an inert player. Retry keeps
+        // the current queue position; Skip advances through the same VM path as
+        // the transport control.
+        state.error?.let { err ->
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.78f))
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Text("Playback error: $err", color = Color.White)
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Button(onClick = viewModel::retryCurrent) {
+                            Text("Retry")
+                        }
+                        if (state.queue?.hasNext() == true) {
+                            OutlinedButton(onClick = viewModel::skipNext) {
+                                Text("Skip")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

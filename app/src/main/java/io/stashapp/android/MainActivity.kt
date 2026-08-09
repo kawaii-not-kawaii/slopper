@@ -109,7 +109,6 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        requestHighestRefreshRate()
         setContent {
             val rootViewModel: RootViewModel = hiltViewModel()
             val accentName by rootViewModel.accentPalette.collectAsStateWithLifecycle()
@@ -120,49 +119,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /**
-     * Opt in to the display's highest available refresh rate. Samsung/Pixel
-     * devices with 120 Hz panels default to 60 Hz unless the window requests
-     * otherwise — this is the main reason Compose animations feel jittery on
-     * those devices out of the box.
-     *
-     * On Android 11+ we pick the display mode with the highest refresh rate
-     * that shares our resolution. On Android 14+ we also set
-     * `frameRateBoostOnTouchEnabled` so touch interactions get the full
-     * refresh rate even on apps whose content is otherwise detected as
-     * low-motion.
-     */
-    private fun requestHighestRefreshRate() {
-        val window = window ?: return
-        val display =
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                display
-            } else {
-                @Suppress("DEPRECATION")
-                windowManager.defaultDisplay
-            } ?: return
-
-        val supportedModes = display.supportedModes
-        val currentMode = display.mode
-        val bestMode =
-            supportedModes
-                .filter {
-                    it.physicalWidth == currentMode.physicalWidth &&
-                        it.physicalHeight == currentMode.physicalHeight
-                }.maxByOrNull { it.refreshRate }
-                ?: currentMode
-
-        val lp = window.attributes
-        lp.preferredDisplayModeId = bestMode.modeId
-        // preferredRefreshRate is a softer hint; pair with modeId for maximum
-        // compatibility across older OEM variants.
-        lp.preferredRefreshRate = bestMode.refreshRate
-        window.attributes = lp
-
-        if (android.os.Build.VERSION.SDK_INT >= 34) {
-            runCatching { window.setFrameRateBoostOnTouchEnabled(true) }
-        }
-    }
 }
 
 /** Routes whose chrome includes the bottom navigation bar. Others (player,
