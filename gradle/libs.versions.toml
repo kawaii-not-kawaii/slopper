@@ -6,7 +6,7 @@ ksp = "2.3.9"
 hilt = "2.59.2"
 apollo = "5.0.1"
 ktlint = "14.2.0"
-detekt = "2.0.0-alpha.5"
+detekt = "2.0.0-alpha.6"
 dependencyCheck = "12.2.2"
 
 # AndroidX / Compose
