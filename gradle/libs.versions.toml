@@ -18,7 +18,7 @@ composeBom = "2026.06.01"
 navigationCompose = "2.9.8"
 hiltNavigationCompose = "1.4.0"
 paging = "3.5.0"
-pagingCompose = "3.5.0"
+pagingCompose = "3.5.1"
 datastore = "1.2.1"
 securityCrypto = "1.1.0"
 
