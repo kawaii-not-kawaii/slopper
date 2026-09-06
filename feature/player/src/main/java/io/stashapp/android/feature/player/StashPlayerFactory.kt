@@ -138,6 +138,7 @@ private class StashStreamAuthInterceptor(
 
         val finalRequest =
             if (apiKey != null &&
+                endpoint != null &&
                 request.url.matchesOrigin(endpoint.baseUrl)
             ) {
                 request.newBuilder().addHeader("ApiKey", apiKey).build()

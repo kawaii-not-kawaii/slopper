@@ -12,6 +12,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.stashapp.android.core.common.AppResult
 import io.stashapp.android.core.domain.PlaybackQuerySource
@@ -48,6 +49,9 @@ data class PlayerUiState(
     val videoFrameRate: Float? = null,
     /** Transient banner text (e.g. "Shuffle on · next: …"). Shown for a few seconds. */
     val banner: String? = null,
+    /** Name of the video decoder actually in use, once one has been initialised
+     *  (e.g. `c2.qti.avc.decoder`, `ffmpeg`). Drives the codec badge. */
+    val videoDecoder: String? = null,
 )
 
 /**
@@ -96,6 +100,7 @@ class PlayerViewModel
         private val _position = MutableStateFlow(PlayerPositionState())
         val position: StateFlow<PlayerPositionState> = _position.asStateFlow()
 
+        @OptIn(UnstableApi::class)
         val player: ExoPlayer by lazy {
             StashPlayerFactory(
                 context = getApplication(),
@@ -103,6 +108,7 @@ class PlayerViewModel
                 endpointProvider = endpointProvider,
             ).build().also { p ->
                 p.addListener(playerListener)
+                p.addAnalyticsListener(analyticsListener)
                 p.playWhenReady = true
             }
         }
@@ -142,6 +148,23 @@ class PlayerViewModel
                     if (fps != null && _state.value.videoFrameRate != fps) {
                         _state.update { it.copy(videoFrameRate = fps) }
                     }
+                }
+            }
+
+        // The codec badge used to be derived from classpath presence, so it read
+        // "hardware" even while every frame was decoded on the CPU. Report the
+        // decoder Media3 actually picked instead — it is the only on-device
+        // evidence that EXTENSION_RENDERER_MODE_ON is doing its job.
+        @OptIn(UnstableApi::class)
+        private val analyticsListener =
+            object : AnalyticsListener {
+                override fun onVideoDecoderInitialized(
+                    eventTime: AnalyticsListener.EventTime,
+                    decoderName: String,
+                    initializedTimestampMs: Long,
+                    initializationDurationMs: Long,
+                ) {
+                    _state.update { it.copy(videoDecoder = decoderName) }
                 }
             }
 
@@ -198,8 +221,12 @@ class PlayerViewModel
                                 durationMs = p.duration.takeIf { d -> d > 0 } ?: 0L,
                                 bufferedMs = p.bufferedPosition.coerceAtLeast(0L),
                             )
-                        // 250ms gives a smooth-looking progress bar without burning too much CPU
-                        delay(250)
+                        // 250ms gives a smooth-looking progress bar without burning too much CPU.
+                        // While paused the playhead cannot move on its own, so drop to 1Hz —
+                        // still fast enough that a seek or a buffering update lands promptly,
+                        // but it stops waking the CPU 4x/sec for an unchanging number when the
+                        // user parks on the pause button.
+                        delay(if (p.isPlaying) TICK_PLAYING_MS else TICK_IDLE_MS)
                     }
                 }
         }
@@ -243,6 +270,12 @@ class PlayerViewModel
 
         companion object {
             val PLAYBACK_SPEEDS = floatArrayOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
+
+            /** Playhead sampling interval while the video is actually advancing. */
+            private const val TICK_PLAYING_MS = 250L
+
+            /** Sampling interval while paused — the playhead only moves if the user seeks. */
+            private const val TICK_IDLE_MS = 1_000L
 
             fun formatSpeed(speed: Float): String =
                 when {
@@ -485,11 +518,13 @@ class PlayerViewModel
             clearBannerLater()
         }
 
+        @OptIn(UnstableApi::class)
         override fun onCleared() {
             positionTicker?.cancel()
             // Fire one last activity write so the server has our final position.
             flushActivityToServer(final = true)
             player.removeListener(playerListener)
+            player.removeAnalyticsListener(analyticsListener)
             player.release()
             super.onCleared()
         }

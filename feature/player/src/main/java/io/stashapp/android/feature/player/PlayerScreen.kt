@@ -57,6 +57,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -118,6 +121,24 @@ fun PlayerScreen(
     var stepRight by remember { mutableStateOf<StepSeek?>(null) }
     // D-11: right-anchored player settings panel
     var showSettingsPanel by remember { mutableStateOf(false) }
+
+    // Stop decoding once the player is genuinely off-screen. Without this,
+    // backgrounding the app leaves ExoPlayer decoding video and pulling the
+    // stream over the network with nothing to draw it on — the single biggest
+    // avoidable battery drain in the player.
+    //
+    // ON_STOP, not ON_PAUSE: an activity in picture-in-picture is paused but
+    // still STARTED, so ON_STOP fires only when the player is really hidden and
+    // PiP playback keeps running.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_STOP) viewModel.player.pause()
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     // Force landscape unless rotation is locked to the current orientation.
     DisposableEffect(activity, rotationLocked) {
@@ -440,7 +461,7 @@ fun PlayerScreen(
                             playbackSpeed = state.playbackSpeed,
                             canSkipPrev = state.queue?.hasPrevious() ?: false,
                             canSkipNext = state.queue?.hasNext() ?: false,
-                            codecLabel = codecLabel(),
+                            codecLabel = decoderBadge(state.videoDecoder),
                             rotationLocked = rotationLocked,
                             resizeMode = resizeMode,
                             doubleTapSeekSec = doubleTapSeekSec,
@@ -586,12 +607,6 @@ private fun enterPip(activity: Activity) {
         activity.enterPictureInPictureMode(params)
     }
 }
-
-private fun codecLabel(): String =
-    when {
-        CodecCapabilities.ffmpegExtensionUsable -> "HW+FF"
-        else -> "HW"
-    }
 
 @OptIn(UnstableApi::class)
 private fun nextResize(current: Int): Int =
