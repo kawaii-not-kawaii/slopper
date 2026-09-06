@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DecoderCounters
 import androidx.media3.exoplayer.DecoderReuseEvaluation
@@ -22,10 +21,12 @@ import androidx.media3.exoplayer.analytics.AnalyticsListener
  * logged. All timestamps in event lines are elapsed realtime milliseconds so
  * they can be aligned with the ADB sampler without depending on wall-clock
  * synchronization.
+ *
+ * An AnalyticsListener earns its keep by implementing many callbacks, hence the
+ * TooManyFunctions suppression: splitting this into helper classes to satisfy
+ * the 20-per-class cap would scatter one coherent log format across several
+ * files for no benefit.
  */
-// An AnalyticsListener earns its keep by implementing many callbacks; splitting
-// this into helper classes to satisfy the 20-per-class cap would scatter one
-// coherent log format across several files for no benefit.
 @Suppress("TooManyFunctions")
 @androidx.annotation.OptIn(UnstableApi::class)
 internal class PlaybackDiagnostics(
@@ -249,8 +250,7 @@ internal class PlaybackDiagnostics(
             "processing_offset_us=$totalVideoFrameProcessingOffsetUs " +
             "processing_offset_frames=$videoFrameProcessingOffsetCount"
 
-    private fun valueOrUnknown(value: Int): String =
-        if (value == Format.NO_VALUE) "unknown" else value.toString()
+    private fun valueOrUnknown(value: Int): String = if (value == Format.NO_VALUE) "unknown" else value.toString()
 
     private fun floatOrUnknown(value: Float): String =
         if (value == Format.NO_VALUE.toFloat() || !value.isFinite()) "unknown" else value.toString()
