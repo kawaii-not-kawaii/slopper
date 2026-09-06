@@ -434,10 +434,7 @@ class PlayerViewModel
 
         /** Retry the current queue item after a transient network or decoder failure. */
         fun retryCurrent() {
-            val currentId =
-                _state.value.current?.summary?.id
-                    ?: queue.currentId()
-                    ?: return
+            val currentId = _state.value.current?.summary?.id ?: queue.currentId() ?: return
             val retryPosition = _position.value.positionMs.takeIf { it > 0L }
             loadAndPlay(
                 sceneId = currentId,
