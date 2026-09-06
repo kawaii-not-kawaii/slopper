@@ -65,6 +65,12 @@ data class PlayerPositionState(
     val bufferedMs: Long = 0L,
 )
 
+// 21 functions against a cap of 20: this VM owns the player, the queue, the
+// transport controls and the Stash activity sync, and each of those is a handful
+// of one-line delegations to ExoPlayer. Splitting it would move functions across
+// a seam without reducing the surface. Revisit if the activity-sync half grows
+// enough to justify its own class.
+@Suppress("TooManyFunctions")
 @HiltViewModel
 class PlayerViewModel
     @Inject
