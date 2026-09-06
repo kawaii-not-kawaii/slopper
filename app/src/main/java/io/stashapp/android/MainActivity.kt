@@ -118,7 +118,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 /** Routes whose chrome includes the bottom navigation bar. Others (player,
