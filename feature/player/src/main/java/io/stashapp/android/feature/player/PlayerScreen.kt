@@ -449,7 +449,7 @@ fun PlayerScreen(
                             playbackSpeed = state.playbackSpeed,
                             canSkipPrev = state.queue?.hasPrevious() ?: false,
                             canSkipNext = state.queue?.hasNext() ?: false,
-                            codecLabel = codecLabel(),
+                            codecLabel = decoderBadge(state.videoDecoder),
                             rotationLocked = rotationLocked,
                             resizeMode = resizeMode,
                             doubleTapSeekSec = doubleTapSeekSec,
@@ -595,12 +595,6 @@ private fun enterPip(activity: Activity) {
         activity.enterPictureInPictureMode(params)
     }
 }
-
-private fun codecLabel(): String =
-    when {
-        CodecCapabilities.ffmpegExtensionUsable -> "HW+FF"
-        else -> "HW"
-    }
 
 @OptIn(UnstableApi::class)
 private fun nextResize(current: Int): Int =

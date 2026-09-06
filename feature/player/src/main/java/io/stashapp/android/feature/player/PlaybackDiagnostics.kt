@@ -23,6 +23,10 @@ import androidx.media3.exoplayer.analytics.AnalyticsListener
  * they can be aligned with the ADB sampler without depending on wall-clock
  * synchronization.
  */
+// An AnalyticsListener earns its keep by implementing many callbacks; splitting
+// this into helper classes to satisfy the 20-per-class cap would scatter one
+// coherent log format across several files for no benefit.
+@Suppress("TooManyFunctions")
 @androidx.annotation.OptIn(UnstableApi::class)
 internal class PlaybackDiagnostics(
     context: Context,
