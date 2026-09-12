@@ -84,6 +84,37 @@ progress:
 
 - Macrobenchmark execution (PERF-MB-01), formal screenshot audit, COMPLY-07-3BTN, COMPLY-02-NAV-EVENT, WR-02 ViewModel refactor, APOLLO-CACHE-01 — all deferred, none in this milestone.
 
+## Known Gaps (filter/settings/search redesign, 2026-08-03)
+
+Landed in `8c40394` (#60) and `b03933d` (#61). Three limitations are deliberate and
+were accepted at the time; none is a regression, and each has an exit path.
+
+- **SHUFFLE-POOL-01 — shuffle only widens when playback starts from the Library.**
+  `PlayerQueue`'s pool is the id list the caller passed, which is whatever the library
+  had paged in (~40 of ~1900). On shuffle-on the player asks `PlaybackQuerySource` for
+  the active `SceneQuery` and refetches every matching id, but only `LibraryViewModel`
+  publishes there — start from a Home rail, Browse, or a deep link and nothing is
+  published, so the narrow pool stands. Diagnosable from the banner: `Shuffle on · N
+  scenes` widened, `Shuffle on · random next` did not. **Exit:** publish the query from
+  `HomeViewModel`/`BrowseViewModel` too, or give the player a repository-backed queue
+  instead of a nav-arg id list.
+
+- **BLUR-VIDEO-01 — thumbnail blur does not cover video playback.** `privacyBlur` is
+  applied at the 8 `AsyncImage` call sites; the ExoPlayer surface is untouched, so the
+  player shows real content with blur on. As specified (the ask was thumbnails), but it
+  means player screenshots are not safe to share. **Exit:** if screenshot-safety during
+  playback is ever wanted, it needs a blur/obscure on the video surface itself, not the
+  Coil path.
+
+- **SEARCH-TOPRESULT-01 — top-result card uses an exact/prefix title match.** Omitted
+  when ambiguous rather than guessing. Fine in practice, but it is a heuristic, not
+  relevance ranking from the server.
+
+Also fixed in passing and worth knowing about, since the local gate did not catch any
+of them — all three were found by eye on-device, with `ktlintCheck detekt test
+assembleDebug` green throughout: shuffle drawing with replacement, the search field
+resizing on tap, and the player scrim being sized in raw pixels rather than dp.
+
 ## Deferred Dependency Bumps (next toolchain pass)
 
 Surfaced 2026-07-11 during a Dependabot sweep — closed as blocked (not stale CI; each verified to fail against current master AGP 9.2.1 / compileSdk 36 / Kotlin 2.3.20). The 6 safe leaf bumps landed in `c269dd5`; these three need a deliberate toolchain move:
@@ -135,7 +166,28 @@ Surfaced 2026-07-11 during a Dependabot sweep — closed as blocked (not stale C
 
 The final local gate `./gradlew :app:assembleDebug detekt ktlintCheck test lint --no-daemon` passed on 2026-08-01 (896 tasks: 137 executed, 759 up-to-date). The JVM suite has 61 passing tests across 16 reports; there are no `androidTest` tests. Quality, documentation, and launcher-name changes are tracked in GitHub PR #58 (`Fix project quality gates and app label`); the launcher label is now **Slopper**. Verify the live PR state instead of relying on a hard-coded commit hash.
 
-**Next:** install `/home/yun/Slopper-0.2.0-alpha-arm64.apk` from Taildrop on the Galaxy S23+ and run current device UAT. The release build passed and its v2 signature was verified with the Android debug certificate, but installation and runtime remain unconfirmed. If GitHub PR #58 is not yet merged, merge it only after required CI passes.
+**Since then (2026-08-03):** two PRs landed on `master`. #60 (`8c40394`) rebuilt the
+filter sheet, settings and search overlay on new Spine primitives, per
+`design_handoff_filter_settings_search/`, and added saved filter presets, a
+default-on thumbnail blur, and the accent-palette fixes. #61 (`b03933d`) fixed
+shuffle, the player bottom scrim, and the search field resizing when tapped. Both
+were verified on a Pixel 9 Pro against the live server; see **Known Gaps** above for
+what was deliberately left.
+
+Search, which was previously dead code (`SearchOverlay` unreferenced, the search bar's
+click handler a `TODO`), now works against the server for scenes, performers, studios
+and tags.
+
+**Next:** no committed work is outstanding. Candidates, in rough order of value:
+1. **SHUFFLE-POOL-01** — publish the query from Home/Browse so shuffle spans the
+   library regardless of where playback started.
+2. Device UAT of the redesign on the **Galaxy S23+** — everything so far was verified
+   on the Pixel 9 Pro only. A debug APK was sent via Taildrop on 2026-08-03.
+3. The v1.0 carried debt above (macrobenchmarks, screenshot audit, COMPLY-07-3BTN).
+
+Note the local gate (`ktlintCheck detekt test assembleDebug`) stayed green through
+three user-visible defects in #61 — it verifies compilation and unit tests, not
+appearance or behaviour. Treat "gate green" accordingly.
 
 ## Decisions (accumulated)
 

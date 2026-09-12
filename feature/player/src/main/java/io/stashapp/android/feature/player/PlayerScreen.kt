@@ -19,8 +19,10 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,9 +32,11 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -53,6 +57,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -114,6 +121,24 @@ fun PlayerScreen(
     var stepRight by remember { mutableStateOf<StepSeek?>(null) }
     // D-11: right-anchored player settings panel
     var showSettingsPanel by remember { mutableStateOf(false) }
+
+    // Stop decoding once the player is genuinely off-screen. Without this,
+    // backgrounding the app leaves ExoPlayer decoding video and pulling the
+    // stream over the network with nothing to draw it on — the single biggest
+    // avoidable battery drain in the player.
+    //
+    // ON_STOP, not ON_PAUSE: an activity in picture-in-picture is paused but
+    // still STARTED, so ON_STOP fires only when the player is really hidden and
+    // PiP playback keeps running.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_STOP) viewModel.player.pause()
+            }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     // Force landscape unless rotation is locked to the current orientation.
     DisposableEffect(activity, rotationLocked) {
@@ -333,12 +358,6 @@ fun PlayerScreen(
             state.banner?.let { BannerPill(it) }
         }
 
-        state.error?.let { err ->
-            Box(Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
-                Text("Playback error: $err", color = Color.White)
-            }
-        }
-
         // COMPLY-01 (per D-04, RESEARCH §F2): control-overlay layer inset
         // away from system bars. SurfaceView/PlayerView + gesture-detection
         // layers stay full-bleed (they are SIBLINGS of this Box). Only the
@@ -442,7 +461,7 @@ fun PlayerScreen(
                             playbackSpeed = state.playbackSpeed,
                             canSkipPrev = state.queue?.hasPrevious() ?: false,
                             canSkipNext = state.queue?.hasNext() ?: false,
-                            codecLabel = codecLabel(),
+                            codecLabel = decoderBadge(state.videoDecoder),
                             rotationLocked = rotationLocked,
                             resizeMode = resizeMode,
                             doubleTapSeekSec = doubleTapSeekSec,
@@ -521,6 +540,37 @@ fun PlayerScreen(
             },
             modifier = Modifier.align(Alignment.CenterEnd),
         )
+
+        // Render recovery above the gesture and transport layers so a decoder
+        // error cannot leave the user staring at an inert player. Retry keeps
+        // the current queue position; Skip advances through the same VM path as
+        // the transport control.
+        state.error?.let { err ->
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.78f))
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Text("Playback error: $err", color = Color.White)
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Button(onClick = viewModel::retryCurrent) {
+                            Text("Retry")
+                        }
+                        if (state.queue?.hasNext() == true) {
+                            OutlinedButton(onClick = viewModel::skipNext) {
+                                Text("Skip")
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -557,12 +607,6 @@ private fun enterPip(activity: Activity) {
         activity.enterPictureInPictureMode(params)
     }
 }
-
-private fun codecLabel(): String =
-    when {
-        CodecCapabilities.ffmpegExtensionUsable -> "HW+FF"
-        else -> "HW"
-    }
 
 @OptIn(UnstableApi::class)
 private fun nextResize(current: Int): Int =

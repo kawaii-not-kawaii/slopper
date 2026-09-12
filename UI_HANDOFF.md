@@ -41,8 +41,9 @@ phone-side front-end for browsing, searching, and playing that library.
   feel free to propose a design that diverges from Material if it serves the product.
 - Edge-to-edge rendering is on (`enableEdgeToEdge()`), so designs must account for the
   status bar / nav-gesture insets.
-- Highest-refresh-rate panels (90/120 Hz) are explicitly opted into — animations should
-  feel fluid.
+- The app follows the system refresh policy. During playback, Media3 declares the
+  video's native frame rate so supported panels can enter VRR or select a matching
+  mode without pinning the entire app to 90/120 Hz.
 
 ---
 

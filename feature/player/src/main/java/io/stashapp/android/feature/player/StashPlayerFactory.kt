@@ -21,10 +21,9 @@ import okhttp3.OkHttpClient
  * Builds the Stash ExoPlayer instance.
  *
  * Key decisions:
- *  - [DefaultRenderersFactory] is set to [EXTENSION_RENDERER_MODE_PREFER] so that
- *    when the FFmpeg extension is present on the classpath, its software decoders
- *    are preferred over built-in ones. This gives us AC3/EAC3/Opus/Vorbis/DTS etc.
- *    without falling back to libVLC.
+ *  - FFmpeg renderer ordering is selected at build time. Production defaults
+ *    to `on`, which places FFmpeg after MediaCodec so software decoding is only
+ *    used as a fallback. `prefer` remains available for controlled A/B tests.
  *  - [OkHttpDataSource] reuses our OkHttp client and adds the `ApiKey` header so
  *    the stream URL can be fetched from a private Stash server.
  *  - [DefaultTrackSelector] is configured to prefer HDR + highest bitrate by
@@ -37,6 +36,7 @@ class StashPlayerFactory(
     private val endpointProvider: StashEndpointProvider,
 ) {
     fun build(): ExoPlayer {
+        val rendererMode = FfmpegRendererMode.fromBuildConfig(BuildConfig.FFMPEG_RENDERER_MODE)
         val trackSelector =
             DefaultTrackSelector(context).apply {
                 setParameters(
@@ -64,14 +64,13 @@ class StashPlayerFactory(
                 DefaultDataSource.Factory(context, delegate).createDataSource()
             }
 
-        // NextRenderersFactory is a drop-in replacement for DefaultRenderersFactory
-        // that ships prebuilt FFmpeg software decoders. We still configure
-        // EXTENSION_RENDERER_MODE_PREFER so MediaCodec wins when it can handle
-        // the codec natively — the extension only kicks in for codecs the
-        // hardware doesn't support (AC3, EAC3, DTS, TrueHD, etc.).
+        // Media3's names are easy to misread: ON appends extension renderers
+        // after the platform renderers, while PREFER inserts them before the
+        // platform renderers. Keeping this mapping explicit makes the A/B test
+        // auditable and prevents the comment from drifting from actual behavior.
         val renderersFactory =
             NextRenderersFactory(context)
-                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+                .setExtensionRendererMode(rendererMode.media3Value)
                 .setEnableDecoderFallback(true)
 
         return ExoPlayer
@@ -96,6 +95,32 @@ class StashPlayerFactory(
             // Media3 calls Surface.setFrameRate() under the hood with the
             // declared video fps, which cues compositor-side VRR scheduling.
             .build()
+            .also { player ->
+                if (BuildConfig.PLAYBACK_DIAGNOSTICS) {
+                    player.addAnalyticsListener(
+                        PlaybackDiagnostics(
+                            context = context.applicationContext,
+                            rendererMode = rendererMode.buildValue,
+                        ),
+                    )
+                }
+            }
+    }
+}
+
+@OptIn(UnstableApi::class)
+private enum class FfmpegRendererMode(
+    val buildValue: String,
+    val media3Value: Int,
+) {
+    ON("on", DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON),
+    PREFER("prefer", DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER),
+    ;
+
+    companion object {
+        fun fromBuildConfig(value: String): FfmpegRendererMode =
+            entries.firstOrNull { it.buildValue == value }
+                ?: error("Unsupported FFmpeg renderer mode: $value")
     }
 }
 
