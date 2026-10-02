@@ -568,8 +568,7 @@ internal fun clearTopResult(
     if (normalized.isEmpty()) return null
     val exact = scenes.filter { it.displayTitle.equals(normalized, ignoreCase = true) }
     if (exact.size == 1) return exact.single()
-    val prefix = scenes.filter { it.displayTitle.startsWith(normalized, ignoreCase = true) }
-    return prefix.singleOrNull()
+    return scenes.singleOrNull { it.displayTitle.startsWith(normalized, ignoreCase = true) }
 }
 
 internal fun highlightedText(
@@ -600,5 +599,5 @@ private fun sceneMeta(scene: SceneSummary): String =
     listOfNotNull(
         scene.studio?.name,
         resolutionLabel(scene.width, scene.height),
-        scene.rating100?.let { "★%.1f".format(it / 20f) },
+        scene.rating100?.let { String.format(java.util.Locale.ROOT, "★%.1f", it / 20f) },
     ).joinToString(" · ")

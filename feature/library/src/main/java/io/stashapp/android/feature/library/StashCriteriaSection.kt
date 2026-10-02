@@ -13,14 +13,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedCard
@@ -28,6 +35,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +59,10 @@ import io.stashapp.android.core.domain.SceneFilterInput
 import io.stashapp.android.core.domain.SceneFilterModifier
 import io.stashapp.android.core.domain.SceneOrientation
 import io.stashapp.android.core.domain.SceneResolution
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -236,37 +250,161 @@ private fun TextInput(
     onChange: (SceneFilterCriterion) -> Unit,
     label: String,
 ) {
-    val numeric = criterion.field.input == SceneFilterInput.Number || criterion.field.input == SceneFilterInput.Duration
+    val input = criterion.field.input
+    val numeric = input == SceneFilterInput.Number || input == SceneFilterInput.Duration
+    val pickable = input == SceneFilterInput.Date || input == SceneFilterInput.Timestamp
+    val withTime = input == SceneFilterInput.Timestamp
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        OutlinedTextField(
+        CriterionField(
             value = criterion.value,
             onValueChange = { raw ->
                 onChange(criterion.copy(value = if (numeric) raw.filter(Char::isDigit) else raw))
             },
-            label = { Text(label) },
-            keyboardOptions =
-                androidx.compose.foundation.text.KeyboardOptions(
-                    keyboardType = if (numeric) KeyboardType.Number else KeyboardType.Text,
-                ),
+            label = label,
+            numeric = numeric,
+            pickable = pickable,
+            withTime = withTime,
             modifier = Modifier.weight(1f),
         )
         if (criterion.modifier == SceneFilterModifier.Between ||
             criterion.modifier == SceneFilterModifier.NotBetween
         ) {
-            OutlinedTextField(
+            CriterionField(
                 value = criterion.value2.orEmpty(),
                 onValueChange = { raw ->
                     onChange(criterion.copy(value2 = if (numeric) raw.filter(Char::isDigit) else raw))
                 },
-                label = { Text("To") },
-                keyboardOptions =
-                    androidx.compose.foundation.text.KeyboardOptions(
-                        keyboardType = if (numeric) KeyboardType.Number else KeyboardType.Text,
-                    ),
+                label = "To",
+                numeric = numeric,
+                pickable = pickable,
+                withTime = withTime,
                 modifier = Modifier.weight(1f),
             )
         }
     }
+}
+
+/** Text field whose trailing calendar icon fills it from a date (+ optional time) picker. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CriterionField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    numeric: Boolean,
+    pickable: Boolean,
+    withTime: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    var showPicker by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        keyboardOptions =
+            KeyboardOptions(keyboardType = if (numeric) KeyboardType.Number else KeyboardType.Text),
+        trailingIcon =
+            if (pickable) {
+                {
+                    IconButton(onClick = { showPicker = true }) {
+                        Icon(
+                            imageVector = Icons.Outlined.CalendarMonth,
+                            contentDescription = if (withTime) "Pick date and time" else "Pick date",
+                        )
+                    }
+                }
+            } else {
+                null
+            },
+        modifier = modifier,
+    )
+
+    if (showPicker) {
+        DateTimePickerDialog(
+            initial = value,
+            withTime = withTime,
+            onDismiss = { showPicker = false },
+            onConfirm = {
+                onValueChange(it)
+                showPicker = false
+            },
+        )
+    }
+}
+
+/** Two-step picker: date first, then (for timestamps) a time step. Emits `YYYY-MM-DD[ HH:MM]`. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DateTimePickerDialog(
+    initial: String,
+    withTime: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: (String) -> Unit,
+) {
+    var pickingTime by remember { mutableStateOf(false) }
+    var pickedDate by remember { mutableStateOf(LocalDate.now()) }
+    val (initialHour, initialMinute) = initial.timeParts()
+
+    if (!pickingTime) {
+        val dateState = rememberDatePickerState(initialSelectedDateMillis = initial.toDateMillis())
+        DatePickerDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        pickedDate = dateState.selectedDateMillis?.toUtcDate() ?: LocalDate.now()
+                        if (withTime) pickingTime = true else onConfirm(pickedDate.toString())
+                    },
+                ) { Text(if (withTime) "Next" else "OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) { Text("Cancel") }
+            },
+        ) {
+            DatePicker(state = dateState)
+        }
+    } else {
+        val timeState =
+            rememberTimePickerState(
+                initialHour = initialHour,
+                initialMinute = initialMinute,
+                is24Hour = true,
+            )
+        DatePickerDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val time = String.format(Locale.ROOT, "%02d:%02d", timeState.hour, timeState.minute)
+                        onConfirm("$pickedDate $time")
+                    },
+                ) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) { Text("Cancel") }
+            },
+        ) {
+            TimePicker(state = timeState)
+        }
+    }
+}
+
+/** `YYYY-MM-DD` prefix of a field value as UTC-midnight epoch millis; null when unparseable. */
+internal fun String.toDateMillis(): Long? =
+    runCatching { LocalDate.parse(trim().take(10)) }
+        .getOrNull()
+        ?.atStartOfDay(ZoneOffset.UTC)
+        ?.toInstant()
+        ?.toEpochMilli()
+
+internal fun Long.toUtcDate(): LocalDate = Instant.ofEpochMilli(this).atZone(ZoneOffset.UTC).toLocalDate()
+
+/** `HH:MM` suffix of a timestamp field value; 00:00 when absent or unparseable. */
+internal fun String.timeParts(): Pair<Int, Int> {
+    val parts = trim().split(" ").getOrNull(1)?.split(":")
+    return ((parts?.getOrNull(0)?.toIntOrNull() ?: 0).coerceIn(0, 23)) to
+        ((parts?.getOrNull(1)?.toIntOrNull() ?: 0).coerceIn(0, 59))
 }
 
 private fun valueLabel(input: SceneFilterInput): String =

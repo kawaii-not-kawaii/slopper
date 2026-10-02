@@ -84,7 +84,6 @@ fun FilterSheet(
     onApply: (SceneFilter, SceneSort) -> Unit,
     onSavePreset: (String, SceneFilter, SceneSort) -> Unit,
 ) {
-    val accent = LocalAccentColors.current
     var filter by remember(initialFilter) { mutableStateOf(initialFilter) }
     var sort by remember(initialSort) { mutableStateOf(initialSort) }
     var showSaveDialog by remember { mutableStateOf(false) }
