@@ -7,7 +7,7 @@ hilt = "2.59.2"
 apollo = "5.0.1"
 ktlint = "14.2.0"
 detekt = "2.0.0-alpha.5"
-dependencyCheck = "12.2.2"
+dependencyCheck = "13.0.0"
 
 # AndroidX / Compose
 coreKtx = "1.18.0"
