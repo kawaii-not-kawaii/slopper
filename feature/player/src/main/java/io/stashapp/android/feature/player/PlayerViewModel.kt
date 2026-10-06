@@ -131,7 +131,7 @@ class PlayerViewModel
         private var periodicSync: Job? = null
 
         // Outlives viewModelScope so the last activity write isn't cancelled on exit.
-        private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
         private val playerListener =
             object : Player.Listener {
@@ -361,6 +361,9 @@ class PlayerViewModel
             // watched since the previous flush, never the running total.
             val playedSince = accumulatedPlaySeconds
             accumulatedPlaySeconds = 0.0
+            // flushWatchInterval() closed the running interval; if playback continues
+            // past this (periodic) flush, open the next one so time keeps accruing.
+            if (!final && player.isPlaying) watchStartedAtMs = System.currentTimeMillis()
             // Parked at (or near) the end means "finished": clear the resume point so
             // the scene reopens from the start instead of at the credits.
             val finished = duration > 0 && rawPosition >= duration * RESUME_CLEAR_FRACTION
@@ -377,11 +380,18 @@ class PlayerViewModel
             // activityScope, not viewModelScope: the final flush runs from onCleared(),
             // after viewModelScope has been cancelled, and must still reach the server.
             activityScope.launch {
-                sceneRepository.saveActivity(
-                    sceneId = id,
-                    resumeTimeSeconds = position,
-                    playDurationSeconds = playedSince,
-                )
+                val saved =
+                    sceneRepository.saveActivity(
+                        sceneId = id,
+                        resumeTimeSeconds = position,
+                        playDurationSeconds = playedSince,
+                    )
+                // Transient failure: give the delta back so the next flush retries it.
+                // (Runs on Main like every other accumulator access.) Skipped once the
+                // scene has changed, so time is never credited to the wrong scene.
+                if (saved is AppResult.Failure && activeSceneId == id) {
+                    accumulatedPlaySeconds += playedSince
+                }
                 if (shouldCompletePlay) sceneRepository.addPlay(id)
             }
 
