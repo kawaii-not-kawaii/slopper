@@ -20,12 +20,17 @@ import io.stashapp.android.core.domain.SceneRepository
 import io.stashapp.android.core.model.QueueState
 import io.stashapp.android.core.model.RepeatMode
 import io.stashapp.android.core.model.SceneDetail
-import io.stashapp.android.core.network.StashEndpointProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -69,7 +74,6 @@ class PlayerViewModel
         savedState: SavedStateHandle,
         private val sceneRepository: SceneRepository,
         private val playbackQuery: PlaybackQuerySource,
-        private val endpointProvider: StashEndpointProvider,
         private val okHttpClient: OkHttpClient,
         val preferences: PlayerSettings,
     ) : AndroidViewModel(application) {
@@ -100,7 +104,6 @@ class PlayerViewModel
             StashPlayerFactory(
                 context = getApplication(),
                 okHttpClient = okHttpClient,
-                endpointProvider = endpointProvider,
             ).build().also { p ->
                 p.addListener(playerListener)
                 p.playWhenReady = true
@@ -116,6 +119,9 @@ class PlayerViewModel
         private var completionReported: Boolean = false
         private var periodicSync: Job? = null
 
+        // Outlives viewModelScope so the last activity write isn't cancelled on exit.
+        private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
         private val playerListener =
             object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
@@ -124,8 +130,30 @@ class PlayerViewModel
 
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     _state.update { it.copy(isPlaying = isPlaying) }
-                    if (isPlaying) startWatchInterval() else flushWatchInterval()
+                    if (isPlaying) {
+                        startWatchInterval()
+                    } else {
+                        flushWatchInterval()
+                        // A deliberate pause (not a rebuffer) is the moment users leave, so
+                        // persist the position now rather than waiting for the next tick.
+                        if (!player.playWhenReady) {
+                            periodicSync?.cancel()
+                            periodicSync = null
+                            flushActivityToServer(final = false)
+                        }
+                    }
                 }
+
+                override fun onTimelineChanged(
+                    timeline: androidx.media3.common.Timeline,
+                    reason: Int,
+                ) = publishPosition()
+
+                override fun onPositionDiscontinuity(
+                    oldPosition: Player.PositionInfo,
+                    newPosition: Player.PositionInfo,
+                    reason: Int,
+                ) = publishPosition()
 
                 override fun onPlayerError(error: PlaybackException) {
                     _state.update { it.copy(error = humanize(error), isPlaying = false) }
@@ -186,27 +214,43 @@ class PlayerViewModel
             startPositionTicker()
         }
 
+        private fun publishPosition() {
+            val p = player
+            _position.value =
+                PlayerPositionState(
+                    positionMs = p.currentPosition.coerceAtLeast(0L),
+                    durationMs = p.duration.takeIf { d -> d > 0 } ?: 0L,
+                    bufferedMs = p.bufferedPosition.coerceAtLeast(0L),
+                )
+        }
+
+        /**
+         * Ticks only while playing: a paused or backgrounded player has nothing to
+         * animate, so the 250ms loop (and the recompositions it triggers) stops.
+         * Seeks and timeline changes publish on their own via [publishPosition].
+         */
         private fun startPositionTicker() {
             if (positionTicker?.isActive == true) return
             positionTicker =
                 viewModelScope.launch {
-                    while (true) {
-                        val p = player
-                        _position.value =
-                            PlayerPositionState(
-                                positionMs = p.currentPosition.coerceAtLeast(0L),
-                                durationMs = p.duration.takeIf { d -> d > 0 } ?: 0L,
-                                bufferedMs = p.bufferedPosition.coerceAtLeast(0L),
-                            )
-                        // 250ms gives a smooth-looking progress bar without burning too much CPU
-                        delay(250)
-                    }
+                    _state
+                        .map { it.isPlaying }
+                        .distinctUntilChanged()
+                        .collectLatest { playing ->
+                            publishPosition()
+                            while (playing) {
+                                // 250ms gives a smooth-looking progress bar without burning too much CPU
+                                delay(250)
+                                publishPosition()
+                            }
+                        }
                 }
         }
 
         /** Direct seek request from the UI (e.g. progress-bar drag end). */
         fun seekTo(positionMs: Long) {
             player.seekTo(positionMs.coerceAtLeast(0L))
+            publishPosition()
         }
 
         /** Nudge — e.g. for double-tap seek. */
@@ -214,6 +258,7 @@ class PlayerViewModel
             val p = player
             val target = (p.currentPosition + deltaMs).coerceAtLeast(0L)
             p.seekTo(target)
+            publishPosition()
         }
 
         /** Set playback speed directly (used by PlayerSettingsPanel). */
@@ -242,6 +287,9 @@ class PlayerViewModel
         }
 
         companion object {
+            /** Position fraction at which the resume point is cleared as "finished". */
+            private const val RESUME_CLEAR_FRACTION = 0.95
+
             val PLAYBACK_SPEEDS = floatArrayOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
 
             fun formatSpeed(speed: Float): String =
@@ -306,22 +354,32 @@ class PlayerViewModel
         private fun flushActivityToServer(final: Boolean) {
             val id = activeSceneId ?: return
             flushWatchInterval()
-            val position = (player.currentPosition / 1000.0).coerceAtLeast(0.0)
+            val rawPosition = (player.currentPosition / 1000.0).coerceAtLeast(0.0)
             val duration = (player.duration / 1000.0).takeIf { it > 0 } ?: 0.0
+            // Stash *adds* playDuration to the scene total, so send only the time
+            // watched since the previous flush, never the running total.
+            val playedSince = accumulatedPlaySeconds
+            accumulatedPlaySeconds = 0.0
+            // Parked at (or near) the end means "finished": clear the resume point so
+            // the scene reopens from the start instead of at the credits.
+            val finished = duration > 0 && rawPosition >= duration * RESUME_CLEAR_FRACTION
+            val position = if (finished) 0.0 else rawPosition
 
             // If we watched at least 85% of the scene, record a completed play
             // exactly once per session to keep play_count accurate.
             val shouldCompletePlay =
                 !completionReported &&
                     duration > 0 &&
-                    position >= duration * 0.85
+                    rawPosition >= duration * 0.85
             if (shouldCompletePlay) completionReported = true
 
-            viewModelScope.launch {
+            // activityScope, not viewModelScope: the final flush runs from onCleared(),
+            // after viewModelScope has been cancelled, and must still reach the server.
+            activityScope.launch {
                 sceneRepository.saveActivity(
                     sceneId = id,
                     resumeTimeSeconds = position,
-                    playDurationSeconds = accumulatedPlaySeconds,
+                    playDurationSeconds = playedSince,
                 )
                 if (shouldCompletePlay) sceneRepository.addPlay(id)
             }
@@ -330,7 +388,6 @@ class PlayerViewModel
                 periodicSync?.cancel()
                 periodicSync = null
                 activeSceneId = null
-                accumulatedPlaySeconds = 0.0
                 completionReported = false
             }
         }
@@ -369,6 +426,12 @@ class PlayerViewModel
                         detail.summary.resumeTimeSeconds
                             ?.let { (it * 1000).toLong() }
                             ?.takeIf { it > 2_000 }
+                            // Ignore a stale resume point parked at the end (older clients
+                            // saved the final position), which would end the scene at once.
+                            ?.takeIf { ms ->
+                                val dur = detail.summary.durationSeconds
+                                dur == null || dur <= 0.0 || ms < dur * 1000 * RESUME_CLEAR_FRACTION
+                            }
                     else -> null
                 }
             seekTo?.let { player.seekTo(it) }
@@ -376,6 +439,15 @@ class PlayerViewModel
         }
 
         private fun onSceneEnded() {
+            // Record the finished play (and clear the resume point) before moving on.
+            flushActivityToServer(final = false)
+            if (_state.value.queue?.repeatMode == RepeatMode.ONE) {
+                // Same scene again: rewind in place instead of re-fetching and re-preparing.
+                completionReported = false
+                player.seekTo(0L)
+                player.play()
+                return
+            }
             val next = queue.advance()
             if (next == null) {
                 // Queue exhausted with RepeatMode.OFF — emit a banner so the user knows

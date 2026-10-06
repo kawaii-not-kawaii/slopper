@@ -12,9 +12,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import io.github.anilbeesetti.nextlib.media3ext.ffdecoder.NextRenderersFactory
-import io.stashapp.android.core.network.StashEndpointProvider
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
 /**
@@ -34,7 +31,6 @@ import okhttp3.OkHttpClient
 class StashPlayerFactory(
     private val context: Context,
     private val okHttpClient: OkHttpClient,
-    private val endpointProvider: StashEndpointProvider,
 ) {
     fun build(): ExoPlayer {
         val trackSelector =
@@ -46,21 +42,11 @@ class StashPlayerFactory(
                 )
             }
 
-        // Wrap OkHttp with an origin-scoped interceptor that attaches the ApiKey
-        // ONLY when the request URL belongs to the configured Stash origin.
-        // Using the header via OkHttpDataSource.setDefaultRequestProperties
-        // would stick the key onto every request — including cross-origin
-        // redirects (Issue M2 from the security review), leaking it to any
-        // CDN / proxy the server might bounce to.
-        val scopedClient =
-            okHttpClient
-                .newBuilder()
-                .addInterceptor(StashStreamAuthInterceptor(endpointProvider))
-                .build()
-
+        // [okHttpClient] already carries the origin-scoped ApiKey network interceptor
+        // (see StashAuthInterceptor), which is re-evaluated on every redirect hop.
         val dataSourceFactory: DataSource.Factory =
             DataSource.Factory {
-                val delegate = OkHttpDataSource.Factory(scopedClient)
+                val delegate = OkHttpDataSource.Factory(okHttpClient)
                 DefaultDataSource.Factory(context, delegate).createDataSource()
             }
 
@@ -96,38 +82,5 @@ class StashPlayerFactory(
             // Media3 calls Surface.setFrameRate() under the hood with the
             // declared video fps, which cues compositor-side VRR scheduling.
             .build()
-    }
-}
-
-/**
- * Origin-scoped auth interceptor. Mirrors the image loader's logic — both
- * exist because OkHttp's `defaultRequestProperties` leak across redirects.
- */
-private class StashStreamAuthInterceptor(
-    private val endpointProvider: StashEndpointProvider,
-) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
-        val endpoint = endpointProvider.current()
-        val request = chain.request()
-        val apiKey = endpoint?.apiKey?.takeIf { it.isNotBlank() }
-
-        val finalRequest =
-            if (apiKey != null &&
-                endpoint != null &&
-                request.url.matchesOrigin(endpoint.baseUrl)
-            ) {
-                request.newBuilder().addHeader("ApiKey", apiKey).build()
-            } else {
-                request
-            }
-
-        return chain.proceed(finalRequest)
-    }
-
-    private fun okhttp3.HttpUrl.matchesOrigin(baseUrl: String): Boolean {
-        val base = baseUrl.toHttpUrlOrNull() ?: return false
-        return scheme.equals(base.scheme, ignoreCase = true) &&
-            host.equals(base.host, ignoreCase = true) &&
-            port == base.port
     }
 }
