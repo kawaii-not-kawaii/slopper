@@ -24,6 +24,7 @@ class ConnectionStore
     ) {
         private val prefs = openPrefs(context)
 
+        @Suppress("TooGenericExceptionCaught")
         private fun openPrefs(context: Context): SharedPreferences =
             try {
                 createPrefs(context)
@@ -55,6 +56,7 @@ class ConnectionStore
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
             )
 
+        @Suppress("TooGenericExceptionCaught")
         fun currentServer(): StashServer? =
             try {
                 readServer()
