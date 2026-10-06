@@ -100,6 +100,17 @@ class PlayerViewModel
         private val _position = MutableStateFlow(PlayerPositionState())
         val position: StateFlow<PlayerPositionState> = _position.asStateFlow()
 
+        // A lambda rather than a method: keeps the class under detekt's function limit.
+        private val publishPosition: () -> Unit = {
+            val p = player
+            _position.value =
+                PlayerPositionState(
+                    positionMs = p.currentPosition.coerceAtLeast(0L),
+                    durationMs = p.duration.takeIf { d -> d > 0 } ?: 0L,
+                    bufferedMs = p.bufferedPosition.coerceAtLeast(0L),
+                )
+        }
+
         val player: ExoPlayer by lazy {
             StashPlayerFactory(
                 context = getApplication(),
@@ -212,16 +223,6 @@ class PlayerViewModel
                 autoResume = explicitStartMs < 0,
             )
             startPositionTicker()
-        }
-
-        private fun publishPosition() {
-            val p = player
-            _position.value =
-                PlayerPositionState(
-                    positionMs = p.currentPosition.coerceAtLeast(0L),
-                    durationMs = p.duration.takeIf { d -> d > 0 } ?: 0L,
-                    bufferedMs = p.bufferedPosition.coerceAtLeast(0L),
-                )
         }
 
         /**

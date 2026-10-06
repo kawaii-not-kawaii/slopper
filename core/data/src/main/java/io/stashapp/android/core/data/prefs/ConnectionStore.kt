@@ -27,9 +27,7 @@ class ConnectionStore
         private fun openPrefs(context: Context): SharedPreferences =
             try {
                 createPrefs(context)
-            } catch (
-                @Suppress("TooGenericExceptionCaught") e: Exception,
-            ) {
+            } catch (e: Exception) {
                 // Keystore entry and encrypted file out of sync (restore, OS upgrade, key
                 // invalidation): decrypting throws forever and would crash every launch.
                 // The stored credentials are unrecoverable, so drop them and let the user
@@ -60,9 +58,7 @@ class ConnectionStore
         fun currentServer(): StashServer? =
             try {
                 readServer()
-            } catch (
-                @Suppress("TooGenericExceptionCaught") e: Exception,
-            ) {
+            } catch (e: Exception) {
                 // Individual values can fail to decrypt even when the file opens.
                 Log.w(TAG, "Stored connection undecryptable; clearing", e)
                 prefs.edit().clear().apply()
