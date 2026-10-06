@@ -13,6 +13,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.stashapp.android.core.network.StashAuthInterceptor
 import io.stashapp.android.core.network.StashEndpointProvider
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,6 +27,7 @@ object NetworkModule {
     @Singleton
     fun provideOkHttpClient(
         @ApplicationContext context: Context,
+        endpointProvider: StashEndpointProvider,
     ): OkHttpClient {
         val builder =
             OkHttpClient
@@ -33,6 +35,9 @@ object NetworkModule {
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
+                // Network (not application) interceptor so the key is re-evaluated on
+                // every redirect hop and never forwarded to another origin.
+                .addNetworkInterceptor(StashAuthInterceptor(endpointProvider))
         // Log request method + URL only in debug builds so release builds don't
         // leak URL query strings (scene IDs, search terms) into logcat.
         if ((context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
@@ -57,15 +62,15 @@ object NetworkModule {
             // to support switching endpoints at runtime without rebuilding the client.
             .serverUrl("http://localhost/graphql")
             .okHttpClient(okHttpClient)
-            .addHttpInterceptor(StashAuthInterceptor(endpointProvider))
+            .addHttpInterceptor(StashEndpointInterceptor(endpointProvider))
             .build()
 }
 
 /**
- * Rewrites every GraphQL request to hit the currently-configured Stash endpoint
- * and attaches the API key header if one is set.
+ * Rewrites every GraphQL request to hit the currently-configured Stash endpoint.
+ * The API key header is added at the OkHttp network layer by [StashAuthInterceptor].
  */
-private class StashAuthInterceptor(
+private class StashEndpointInterceptor(
     private val endpointProvider: StashEndpointProvider,
 ) : HttpInterceptor {
     override suspend fun intercept(
@@ -77,10 +82,6 @@ private class StashAuthInterceptor(
                 ?: error("No Stash endpoint configured. Connect to a server first.")
 
         // Apollo 4 Builder sets URL at construction via newBuilder(method, url).
-        val builder = request.newBuilder(request.method, endpoint.graphqlUrl)
-        endpoint.apiKey?.takeIf { it.isNotBlank() }?.let { key ->
-            builder.addHeader("ApiKey", key)
-        }
-        return chain.proceed(builder.build())
+        return chain.proceed(request.newBuilder(request.method, endpoint.graphqlUrl).build())
     }
 }

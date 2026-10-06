@@ -53,6 +53,8 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
@@ -114,6 +116,13 @@ fun PlayerScreen(
     var stepRight by remember { mutableStateOf<StepSeek?>(null) }
     // D-11: right-anchored player settings panel
     var showSettingsPanel by remember { mutableStateOf(false) }
+
+    // There is no foreground service, so audio would keep playing with no notification
+    // and no controls until the OS reaps the process. Pause when the app is backgrounded
+    // (PiP keeps the activity visible, so it is exempt).
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) {
+        if (activity?.isInPictureInPictureMode != true) viewModel.player.pause()
+    }
 
     // Force landscape unless rotation is locked to the current orientation.
     DisposableEffect(activity, rotationLocked) {
