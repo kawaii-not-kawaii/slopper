@@ -1,10 +1,13 @@
 package io.stashapp.android.core.data.prefs
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.stashapp.android.core.model.StashServer
+import java.security.KeyStore
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,7 +22,29 @@ class ConnectionStore
     constructor(
         @ApplicationContext context: Context,
     ) {
-        private val prefs =
+        private val prefs = openPrefs(context)
+
+        @Suppress("TooGenericExceptionCaught")
+        private fun openPrefs(context: Context): SharedPreferences =
+            try {
+                createPrefs(context)
+            } catch (e: Exception) {
+                // Keystore entry and encrypted file out of sync (restore, OS upgrade, key
+                // invalidation): decrypting throws forever and would crash every launch.
+                // The stored credentials are unrecoverable, so drop them and let the user
+                // reconnect rather than leaving the app unusable.
+                Log.w(TAG, "Encrypted connection store unreadable; resetting", e)
+                runCatching {
+                    KeyStore.getInstance("AndroidKeyStore").apply {
+                        load(null)
+                        deleteEntry(MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                    }
+                }
+                context.deleteSharedPreferences(FILE_NAME)
+                createPrefs(context)
+            }
+
+        private fun createPrefs(context: Context): SharedPreferences =
             EncryptedSharedPreferences.create(
                 context,
                 FILE_NAME,
@@ -31,7 +56,18 @@ class ConnectionStore
                 EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM,
             )
 
-        fun currentServer(): StashServer? {
+        @Suppress("TooGenericExceptionCaught")
+        fun currentServer(): StashServer? =
+            try {
+                readServer()
+            } catch (e: Exception) {
+                // Individual values can fail to decrypt even when the file opens.
+                Log.w(TAG, "Stored connection undecryptable; clearing", e)
+                prefs.edit().clear().apply()
+                null
+            }
+
+        private fun readServer(): StashServer? {
             val url = prefs.getString(KEY_URL, null)?.takeIf { it.isNotBlank() } ?: return null
             return StashServer(
                 baseUrl = url,
@@ -54,6 +90,7 @@ class ConnectionStore
         }
 
         private companion object {
+            const val TAG = "ConnectionStore"
             const val FILE_NAME = "stash_connection"
             const val KEY_URL = "url"
             const val KEY_API_KEY = "api_key"

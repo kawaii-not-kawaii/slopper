@@ -10,14 +10,10 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.crossfade
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.stashapp.android.core.domain.UiSettings
-import io.stashapp.android.core.network.StashEndpointProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import okio.Path.Companion.toOkioPath
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,7 +23,7 @@ class StashImageLoaderFactory
     @Inject
     constructor(
         @ApplicationContext private val context: Context,
-        private val endpointProvider: StashEndpointProvider,
+        private val okHttpClient: OkHttpClient,
         private val uiSettings: UiSettings,
     ) : SingletonImageLoader.Factory {
         @Volatile
@@ -56,11 +52,9 @@ class StashImageLoaderFactory
 
         /** [cacheMb] null means "resolve from preferences lazily", inside the disk-cache initializer. */
         private fun buildImageLoader(cacheMb: Int?): ImageLoader {
-            val authClient =
-                OkHttpClient
-                    .Builder()
-                    .addInterceptor(StashAuthImageInterceptor(endpointProvider))
-                    .build()
+            // Share the app client: same connection pool / TLS sessions, and its network
+            // interceptor attaches the ApiKey only to the Stash origin on every hop.
+            val authClient = okHttpClient
 
             return ImageLoader
                 .Builder(context)
@@ -87,32 +81,3 @@ class StashImageLoaderFactory
                 }.build()
         }
     }
-
-private class StashAuthImageInterceptor(
-    private val endpointProvider: StashEndpointProvider,
-) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val endpoint = endpointProvider.current()
-        val request = chain.request()
-        val apiKey = endpoint?.apiKey?.takeIf { it.isNotBlank() }
-
-        val finalRequest =
-            if (apiKey != null &&
-                endpoint != null &&
-                request.url.matchesOrigin(endpoint.baseUrl)
-            ) {
-                request.newBuilder().addHeader("ApiKey", apiKey).build()
-            } else {
-                request
-            }
-
-        return chain.proceed(finalRequest)
-    }
-
-    private fun okhttp3.HttpUrl.matchesOrigin(baseUrl: String): Boolean {
-        val base = baseUrl.toHttpUrlOrNull() ?: return false
-        return scheme.equals(base.scheme, ignoreCase = true) &&
-            host.equals(base.host, ignoreCase = true) &&
-            port == base.port
-    }
-}
