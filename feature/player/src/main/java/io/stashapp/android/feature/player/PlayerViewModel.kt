@@ -12,6 +12,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.stashapp.android.core.common.AppResult
 import io.stashapp.android.core.domain.PlaybackQuerySource
@@ -53,6 +54,9 @@ data class PlayerUiState(
     val videoFrameRate: Float? = null,
     /** Transient banner text (e.g. "Shuffle on · next: …"). Shown for a few seconds. */
     val banner: String? = null,
+    /** Name of the video decoder actually in use, once one has been initialised
+     *  (e.g. `c2.qti.avc.decoder`, `ffmpeg`). Drives the codec badge. */
+    val videoDecoder: String? = null,
 )
 
 /**
@@ -66,6 +70,12 @@ data class PlayerPositionState(
     val bufferedMs: Long = 0L,
 )
 
+// 21 functions against a cap of 20: this VM owns the player, the queue, the
+// transport controls and the Stash activity sync, and each of those is a handful
+// of one-line delegations to ExoPlayer. Splitting it would move functions across
+// a seam without reducing the surface. Revisit if the activity-sync half grows
+// enough to justify its own class.
+@Suppress("TooManyFunctions")
 @HiltViewModel
 class PlayerViewModel
     @Inject
@@ -111,12 +121,14 @@ class PlayerViewModel
                 )
         }
 
+        @OptIn(UnstableApi::class)
         val player: ExoPlayer by lazy {
             StashPlayerFactory(
                 context = getApplication(),
                 okHttpClient = okHttpClient,
             ).build().also { p ->
                 p.addListener(playerListener)
+                p.addAnalyticsListener(analyticsListener)
                 p.playWhenReady = true
             }
         }
@@ -181,6 +193,23 @@ class PlayerViewModel
                     if (fps != null && _state.value.videoFrameRate != fps) {
                         _state.update { it.copy(videoFrameRate = fps) }
                     }
+                }
+            }
+
+        // The codec badge used to be derived from classpath presence, so it read
+        // "hardware" even while every frame was decoded on the CPU. Report the
+        // decoder Media3 actually picked instead — it is the only on-device
+        // evidence that EXTENSION_RENDERER_MODE_ON is doing its job.
+        @OptIn(UnstableApi::class)
+        private val analyticsListener =
+            object : AnalyticsListener {
+                override fun onVideoDecoderInitialized(
+                    eventTime: AnalyticsListener.EventTime,
+                    decoderName: String,
+                    initializedTimestampMs: Long,
+                    initializationDurationMs: Long,
+                ) {
+                    _state.update { it.copy(videoDecoder = decoderName) }
                 }
             }
 
@@ -476,6 +505,20 @@ class PlayerViewModel
             loadAndPlay(next, autoResume = false)
         }
 
+        /** Retry the current queue item after a transient network or decoder failure. */
+        fun retryCurrent() {
+            // Split rather than chained: ktlint force-wraps any chain of four or
+            // more operators, and `_state.value.current?.summary?.id` is exactly four.
+            val current = _state.value.current
+            val currentId = current?.summary?.id ?: queue.currentId() ?: return
+            val retryPosition = _position.value.positionMs.takeIf { it > 0L }
+            loadAndPlay(
+                sceneId = currentId,
+                startAtMs = retryPosition,
+                autoResume = false,
+            )
+        }
+
         fun skipPrevious() {
             val prev = queue.previous() ?: return
             _state.update { it.copy(queue = queue.snapshot()) }
@@ -554,11 +597,13 @@ class PlayerViewModel
             clearBannerLater()
         }
 
+        @OptIn(UnstableApi::class)
         override fun onCleared() {
             positionTicker?.cancel()
             // Fire one last activity write so the server has our final position.
             flushActivityToServer(final = true)
             player.removeListener(playerListener)
+            player.removeAnalyticsListener(analyticsListener)
             player.release()
             super.onCleared()
         }
