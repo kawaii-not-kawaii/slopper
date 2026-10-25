@@ -3,7 +3,14 @@
 **Repo source of truth for phase/milestone detail:** `.planning/STATE.md` (v1.1 complete — AGP-9 toolchain).
 This file tracks the current working session state on top of that.
 
-## Current work: filter date/time pickers (2026-10-01)
+## Current work: GitHub PR cleanup (2026-10-21)
+
+Done — 0 open PRs. #80 merged (`1f14727`) on user's call without device testing; #68 closed (contained in #80).
+#80 + #81 still need an on-device check (see TODO.md).
+APK v7 built from `1f14727` (versionCode 6→7 in `app/build.gradle.kts`, **uncommitted**) at
+`/home/yun/Slopper-0.2.0-alpha-v7-{arm64,armv7}.apk`.
+
+## Previous work: filter date/time pickers (2026-10-01)
 
 - **Ask:** every typed date/time field in the filters gets a picker so nothing has to be typed.
 - **Found:** exactly one typed surface exists — Stash criteria editor (`feature/library/.../StashCriteriaSection.kt`):
