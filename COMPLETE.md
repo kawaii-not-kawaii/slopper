@@ -2,6 +2,8 @@
 
 One line per finished item so nothing is re-done or re-litigated.
 
+- 2026-10-25 — Archived 8 stale remote branches as `archive/<branch>` tags (verified on remote) and deleted
+  them; only `master` remains. Restore with `git push origin archive/<b>^{commit}:refs/heads/<b>`.
 - 2026-10-21 — Built release APK v7 (0.2.0-alpha, versionCode 7, master `1f14727` = #80 + #81 + #82;
   debug-cert v2-signed, R8-minified) → `/home/yun/Slopper-0.2.0-alpha-v7-{arm64,armv7}.apk`;
   Taildropped arm64 to oppo-find-x9-ultra.
