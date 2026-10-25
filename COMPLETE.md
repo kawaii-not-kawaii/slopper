@@ -2,6 +2,8 @@
 
 One line per finished item so nothing is re-done or re-litigated.
 
+- 2026-10-25 — Fixed release.yml signing failure: buildscript bcprov forced to 1.85.x vs AGP-bundled
+  bcpkix/bcutil 1.79. Pinned bcprov 1.79 and added a Dependabot ignore for `org.bouncycastle:*`. Verified by a manual run.
 - 2026-10-25 — Released v0.3.0 on GitHub (versionName 0.3.0, versionCode 8). Adopted SemVer, added
   `CHANGELOG.md`, and stopped `release.yml` attaching its debug APK. Assets: arm64 + armv7 APKs + SHA256SUMS.
 - 2026-10-25 — Archived 8 stale remote branches as `archive/<branch>` tags (verified on remote) and deleted
