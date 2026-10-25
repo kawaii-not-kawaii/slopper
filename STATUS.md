@@ -3,12 +3,22 @@
 **Repo source of truth for phase/milestone detail:** `.planning/STATE.md` (v1.1 complete — AGP-9 toolchain).
 This file tracks the current working session state on top of that.
 
-## Current work: GitHub PR cleanup (2026-10-21)
+## Current work: first public GitHub Release, v0.3.0 (2026-10-25)
+
+- **Versioning (decided):** SemVer `MAJOR.MINOR.PATCH`, tag `vX.Y.Z`; 0.x = pre-stable. versionCode +1 per APK.
+  This release: versionName `0.3.0`, versionCode 8. The old `v1.0` tag is the *planning milestone*, not an app
+  version. Left in place, but it sorts above v0.x tags.
+- **Changelog:** `CHANGELOG.md` (Keep a Changelog style). Add a section for every release.
+- **Release flow:** build `:app:assembleRelease` locally (signed with this machine's debug key), stage in
+  `/home/yun/slopper-releases/vX.Y.Z/` with `SHA256SUMS.txt`, then
+  `gh release create vX.Y.Z <assets> --notes-file …`. `release.yml` no longer attaches its debug-variant
+  APK to releases.
+- **Not done:** a real release signing key and CI-built releases (see TODO.md).
+
+## Previous: GitHub PR cleanup (2026-10-21)
 
 Done — 0 open PRs. #80 merged (`1f14727`) on user's call without device testing; #68 closed (contained in #80).
 #80 + #81 still need an on-device check (see TODO.md).
-APK v7 built from `1f14727` (versionCode 6→7 in `app/build.gradle.kts`, **uncommitted**) at
-`/home/yun/Slopper-0.2.0-alpha-v7-{arm64,armv7}.apk`.
 
 ## Previous work: filter date/time pickers (2026-10-01)
 

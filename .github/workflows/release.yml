@@ -1,8 +1,10 @@
 name: Release APK
 
 # Dedicated APK build channel, kept separate from ci.yml so the compile-only
-# gate stays clean. Builds a (debug-signed) arm64 APK for sideload review and,
-# on a version tag, attaches it to a GitHub Release.
+# gate stays clean. Builds a (debug-signed) arm64 debug APK as a workflow artifact
+# for sideload review. It is NOT attached to GitHub Releases: release APKs are
+# built locally (minified release variant) and uploaded with the release, so a
+# debug-variant APK (different package id) never ends up next to them.
 #
 # NOTE (Phase 10 CI-SIGNING): AGP 9 signing validation currently throws an EdEC
 # NoClassDefFoundError on CI runners (works locally). This workflow opts into
@@ -20,7 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write # create/attach the GitHub Release on tag builds
+  contents: read
 
 jobs:
   build-apk:
@@ -61,22 +63,6 @@ jobs:
           path: app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
           if-no-files-found: error
           retention-days: 14
-
-      # On a version tag, publish the APK as a GitHub Release asset. Uses the
-      # preinstalled gh CLI + GITHUB_TOKEN — no external (unpinned) action, so
-      # the SHA-pinned-dependencies posture is preserved.
-      - name: Attach APK to GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          APK=app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
-          # Create the release if it doesn't exist yet (ignore "already exists").
-          gh release create "${GITHUB_REF_NAME}" \
-            --title "${GITHUB_REF_NAME}" \
-            --notes "Debug-signed sideload APK (arm64-v8a). Built from ${GITHUB_SHA}." \
-            --verify-tag "$APK" || \
-          gh release upload "${GITHUB_REF_NAME}" "$APK" --clobber
 
       - name: Upload build reports + stacktrace on failure
         if: failure()

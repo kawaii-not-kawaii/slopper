@@ -2,6 +2,8 @@
 
 One line per finished item so nothing is re-done or re-litigated.
 
+- 2026-10-25 — Released v0.3.0 on GitHub (versionName 0.3.0, versionCode 8). Adopted SemVer, added
+  `CHANGELOG.md`, and stopped `release.yml` attaching its debug APK. Assets: arm64 + armv7 APKs + SHA256SUMS.
 - 2026-10-25 — Archived 8 stale remote branches as `archive/<branch>` tags (verified on remote) and deleted
   them; only `master` remains. Restore with `git push origin archive/<b>^{commit}:refs/heads/<b>`.
 - 2026-10-21 — Built release APK v7 (0.2.0-alpha, versionCode 7, master `1f14727` = #80 + #81 + #82;

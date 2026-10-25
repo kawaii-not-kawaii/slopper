@@ -14,8 +14,8 @@ android {
         applicationId = "io.stashapp.android"
         // SemVer: 0.x = pre-release; 1.0 will be the first public/stable release.
         // Bump versionCode on every APK push; versionName on milestones.
-        versionCode = 7
-        versionName = "0.2.0-alpha"
+        versionCode = 8
+        versionName = "0.3.0"
         vectorDrawables.useSupportLibrary = true
     }
 
