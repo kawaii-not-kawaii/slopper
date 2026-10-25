@@ -11,7 +11,10 @@ buildscript {
             google()
         }
         dependencies {
-            classpath("org.bouncycastle:bcprov-jdk18on:1.85.2")
+            // Must equal the bcpkix/bcutil version AGP bundles (AGP 9.2.1 → 1.79;
+            // check `./gradlew buildEnvironment`). BC split classes between these
+            // jars after 1.79, so a newer bcprov alone breaks validateSigning*.
+            classpath("org.bouncycastle:bcprov-jdk18on:1.79")
         }
     }
 }
